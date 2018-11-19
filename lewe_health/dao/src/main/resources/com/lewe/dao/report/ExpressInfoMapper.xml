@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.report.ExpressInfoMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.report.ExpressInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="channel_id" jdbcType="INTEGER" property="channelId" />
+    <result column="hospital_id" jdbcType="BIGINT" property="hospitalId" />
+    <result column="hospital_group_id" jdbcType="INTEGER" property="hospitalGroupId" />
+    <result column="operator_id" jdbcType="BIGINT" property="operatorId" />
+    <result column="express_name" jdbcType="VARCHAR" property="expressName" />
+    <result column="express_code" jdbcType="VARCHAR" property="expressCode" />
+    <result column="express_time" jdbcType="TIMESTAMP" property="expressTime" />
+    <result column="report_infoIds" jdbcType="VARCHAR" property="reportInfoids" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, channel_id, hospital_id, hospital_group_id, operator_id, express_name, express_code, 
+    express_time, report_infoIds, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from express_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from express_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.report.ExpressInfo">
+    insert into express_info (id, channel_id, hospital_id, 
+      hospital_group_id, operator_id, express_name, 
+      express_code, express_time, report_infoIds, 
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{channelId,jdbcType=INTEGER}, #{hospitalId,jdbcType=BIGINT}, 
+      #{hospitalGroupId,jdbcType=INTEGER}, #{operatorId,jdbcType=BIGINT}, #{expressName,jdbcType=VARCHAR}, 
+      #{expressCode,jdbcType=VARCHAR}, #{expressTime,jdbcType=TIMESTAMP}, #{reportInfoids,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.report.ExpressInfo">
+    insert into express_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="channelId != null">
+        channel_id,
+      </if>
+      <if test="hospitalId != null">
+        hospital_id,
+      </if>
+      <if test="hospitalGroupId != null">
+        hospital_group_id,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="expressName != null">
+        express_name,
+      </if>
+      <if test="expressCode != null">
+        express_code,
+      </if>
+      <if test="expressTime != null">
+        express_time,
+      </if>
+      <if test="reportInfoids != null">
+        report_infoIds,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="channelId != null">
+        #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalId != null">
+        #{hospitalId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalGroupId != null">
+        #{hospitalGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=BIGINT},
+      </if>
+      <if test="expressName != null">
+        #{expressName,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCode != null">
+        #{expressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="expressTime != null">
+        #{expressTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportInfoids != null">
+        #{reportInfoids,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.report.ExpressInfo">
+    update express_info
+    <set>
+      <if test="channelId != null">
+        channel_id = #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalId != null">
+        hospital_id = #{hospitalId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalGroupId != null">
+        hospital_group_id = #{hospitalGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=BIGINT},
+      </if>
+      <if test="expressName != null">
+        express_name = #{expressName,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCode != null">
+        express_code = #{expressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="expressTime != null">
+        express_time = #{expressTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportInfoids != null">
+        report_infoIds = #{reportInfoids,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.report.ExpressInfo">
+    update express_info
+    set channel_id = #{channelId,jdbcType=INTEGER},
+      hospital_id = #{hospitalId,jdbcType=BIGINT},
+      hospital_group_id = #{hospitalGroupId,jdbcType=INTEGER},
+      operator_id = #{operatorId,jdbcType=BIGINT},
+      express_name = #{expressName,jdbcType=VARCHAR},
+      express_code = #{expressCode,jdbcType=VARCHAR},
+      express_time = #{expressTime,jdbcType=TIMESTAMP},
+      report_infoIds = #{reportInfoids,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	SELECT count(id) FROM express_info
+  	<where>
+    	<if test="channelId != null">
+    		channel_id = #{channelId}
+    	</if>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="hospitalGroupId != null">
+    		and hospital_group_id = #{hospitalGroupId}
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(express_name,express_code) LIKE #{keyword}
+	    </if>
+    </where>
+  </select>
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM express_info
+  	<where>
+    	<if test="channelId != null">
+    		channel_id = #{channelId}
+    	</if>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="hospitalGroupId != null">
+    		and hospital_group_id = #{hospitalGroupId}
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(express_name,express_code) LIKE #{keyword}
+	    </if>
+    </where>
+    ORDER BY id DESC
+    <if test="startIndex !=null and pageSize !=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+</mapper>

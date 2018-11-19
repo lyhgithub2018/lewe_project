@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.check.GasBagDefaultMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.check.GasBagDefault">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="time_space" jdbcType="INTEGER" property="timeSpace" />
+    <result column="check_point" jdbcType="INTEGER" property="checkPoint" />
+    <result column="check_time" jdbcType="INTEGER" property="checkTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, time_space, check_point, check_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from check_gas_bag_default
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from check_gas_bag_default
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.check.GasBagDefault">
+    insert into check_gas_bag_default (id, time_space, check_point, 
+      check_time)
+    values (#{id,jdbcType=BIGINT}, #{timeSpace,jdbcType=INTEGER}, #{checkPoint,jdbcType=INTEGER}, 
+      #{checkTime,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.check.GasBagDefault">
+    insert into check_gas_bag_default
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="timeSpace != null">
+        time_space,
+      </if>
+      <if test="checkPoint != null">
+        check_point,
+      </if>
+      <if test="checkTime != null">
+        check_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="timeSpace != null">
+        #{timeSpace,jdbcType=INTEGER},
+      </if>
+      <if test="checkPoint != null">
+        #{checkPoint,jdbcType=INTEGER},
+      </if>
+      <if test="checkTime != null">
+        #{checkTime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.check.GasBagDefault">
+    update check_gas_bag_default
+    <set>
+      <if test="timeSpace != null">
+        time_space = #{timeSpace,jdbcType=INTEGER},
+      </if>
+      <if test="checkPoint != null">
+        check_point = #{checkPoint,jdbcType=INTEGER},
+      </if>
+      <if test="checkTime != null">
+        check_time = #{checkTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.check.GasBagDefault">
+    update check_gas_bag_default
+    set time_space = #{timeSpace,jdbcType=INTEGER},
+      check_point = #{checkPoint,jdbcType=INTEGER},
+      check_time = #{checkTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectAllList"  resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM check_gas_bag_default
+  </select>
+</mapper>

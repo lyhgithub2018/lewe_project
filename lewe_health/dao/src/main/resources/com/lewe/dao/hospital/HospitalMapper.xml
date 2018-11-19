@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.hospital.HospitalMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.hospital.Hospital">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="hospital_name" jdbcType="VARCHAR" property="hospitalName" />
+    <result column="hospital_code" jdbcType="VARCHAR" property="hospitalCode" />
+    <result column="channel_id" jdbcType="INTEGER" property="channelId" />
+    <result column="is_hospital" jdbcType="TINYINT" property="isHospital" />
+    <result column="check_item_ids" jdbcType="VARCHAR" property="checkItemIds" />
+    <result column="province_code" jdbcType="VARCHAR" property="provinceCode" />
+    <result column="city_code" jdbcType="VARCHAR" property="cityCode" />
+    <result column="county_code" jdbcType="VARCHAR" property="countyCode" />
+    <result column="area_code_name" jdbcType="VARCHAR" property="areaCodeName" />
+    <result column="detail_address" jdbcType="VARCHAR" property="detailAddress" />
+    <result column="logo_url" jdbcType="VARCHAR" property="logoUrl" />
+    <result column="report_need_aduit" jdbcType="TINYINT" property="reportNeedAduit" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
+    <result column="is_del" jdbcType="TINYINT" property="isDel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, hospital_name, hospital_code, channel_id, is_hospital, check_item_ids, province_code, 
+    city_code, county_code, area_code_name, detail_address, logo_url, report_need_aduit, 
+    create_time, update_time, creator_id, is_del
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hospital
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hospital
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.hospital.Hospital">
+    insert into hospital (id, hospital_name, hospital_code, 
+      channel_id, is_hospital, check_item_ids, 
+      province_code, city_code, county_code, 
+      area_code_name, detail_address, logo_url, 
+      report_need_aduit, create_time, update_time, 
+      creator_id, is_del)
+    values (#{id,jdbcType=BIGINT}, #{hospitalName,jdbcType=VARCHAR}, #{hospitalCode,jdbcType=VARCHAR}, 
+      #{channelId,jdbcType=INTEGER}, #{isHospital,jdbcType=TINYINT}, #{checkItemIds,jdbcType=VARCHAR}, 
+      #{provinceCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, 
+      #{areaCodeName,jdbcType=VARCHAR}, #{detailAddress,jdbcType=VARCHAR}, #{logoUrl,jdbcType=VARCHAR}, 
+      #{reportNeedAduit,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{creatorId,jdbcType=BIGINT}, #{isDel,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.hospital.Hospital" useGeneratedKeys="true" keyProperty="id">
+    insert into hospital
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="hospitalName != null">
+        hospital_name,
+      </if>
+      <if test="hospitalCode != null">
+        hospital_code,
+      </if>
+      <if test="channelId != null">
+        channel_id,
+      </if>
+      <if test="isHospital != null">
+        is_hospital,
+      </if>
+      <if test="checkItemIds != null">
+        check_item_ids,
+      </if>
+      <if test="provinceCode != null">
+        province_code,
+      </if>
+      <if test="cityCode != null">
+        city_code,
+      </if>
+      <if test="countyCode != null">
+        county_code,
+      </if>
+      <if test="areaCodeName != null">
+        area_code_name,
+      </if>
+      <if test="detailAddress != null">
+        detail_address,
+      </if>
+      <if test="logoUrl != null">
+        logo_url,
+      </if>
+      <if test="reportNeedAduit != null">
+        report_need_aduit,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="creatorId != null">
+        creator_id,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalName != null">
+        #{hospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalCode != null">
+        #{hospitalCode,jdbcType=VARCHAR},
+      </if>
+      <if test="channelId != null">
+        #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="isHospital != null">
+        #{isHospital,jdbcType=TINYINT},
+      </if>
+      <if test="checkItemIds != null">
+        #{checkItemIds,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null">
+        #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null">
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null">
+        #{countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCodeName != null">
+        #{areaCodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="logoUrl != null">
+        #{logoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="reportNeedAduit != null">
+        #{reportNeedAduit,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorId != null">
+        #{creatorId,jdbcType=BIGINT},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.hospital.Hospital">
+    update hospital
+    <set>
+      <if test="hospitalName != null">
+        hospital_name = #{hospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalCode != null">
+        hospital_code = #{hospitalCode,jdbcType=VARCHAR},
+      </if>
+      <if test="channelId != null">
+        channel_id = #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="isHospital != null">
+        is_hospital = #{isHospital,jdbcType=TINYINT},
+      </if>
+      <if test="checkItemIds != null">
+        check_item_ids = #{checkItemIds,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null">
+        province_code = #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null">
+        city_code = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null">
+        county_code = #{countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCodeName != null">
+        area_code_name = #{areaCodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        detail_address = #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="logoUrl != null">
+        logo_url = #{logoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="reportNeedAduit != null">
+        report_need_aduit = #{reportNeedAduit,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorId != null">
+        creator_id = #{creatorId,jdbcType=BIGINT},
+      </if>
+      <if test="isDel != null">
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.hospital.Hospital">
+    update hospital
+    set hospital_name = #{hospitalName,jdbcType=VARCHAR},
+      hospital_code = #{hospitalCode,jdbcType=VARCHAR},
+      channel_id = #{channelId,jdbcType=INTEGER},
+      is_hospital = #{isHospital,jdbcType=TINYINT},
+      check_item_ids = #{checkItemIds,jdbcType=VARCHAR},
+      province_code = #{provinceCode,jdbcType=VARCHAR},
+      city_code = #{cityCode,jdbcType=VARCHAR},
+      county_code = #{countyCode,jdbcType=VARCHAR},
+      area_code_name = #{areaCodeName,jdbcType=VARCHAR},
+      detail_address = #{detailAddress,jdbcType=VARCHAR},
+      logo_url = #{logoUrl,jdbcType=VARCHAR},
+      report_need_aduit = #{reportNeedAduit,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      creator_id = #{creatorId,jdbcType=BIGINT},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	SELECT COUNT(id) FROM hospital
+  	<where>
+    	<if test="accountId != null">
+    		creator_id = #{accountId}
+    	</if>
+    	<if test="channelId != null">
+    		and channel_id = #{channelId}
+    	</if>
+    	<if test="hospitalName != null">
+    		and hospital_name = #{hospitalName}
+    	</if>
+    	<if test="hospitalCode != null">
+    		and hospital_code = #{hospitalCode}
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null">
+	        and CONCAT(hospital_name,hospital_code) LIKE #{keyword}
+	    </if>
+	    <if test="isDel != null">
+        	and is_del = #{isDel}
+      	</if>
+    </where>
+  </select>
+  
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM hospital
+  	<where>
+    	<if test="accountId != null">
+    		creator_id = #{accountId}
+    	</if>
+    	<if test="channelId != null">
+    		and channel_id = #{channelId}
+    	</if>
+    	<if test="hospitalName != null">
+    		and hospital_name = #{hospitalName}
+    	</if>
+    	<if test="hospitalCode != null">
+    		and hospital_code = #{hospitalCode}
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null">
+	        and CONCAT(hospital_name,hospital_code) LIKE #{keyword}
+	    </if>
+	    <if test="isDel != null">
+        	and is_del = #{isDel}
+      	</if>
+    </where>
+    ORDER BY id DESC
+    <if test="startIndex!=null and pageSize!=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  
+  <select id="selectByHospitalCode" parameterType="string" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM hospital
+  	<where>
+    	<if test="hospitalCode != null">
+    		and hospital_code = #{hospitalCode}
+    	</if>
+    </where>
+  </select>
+</mapper>

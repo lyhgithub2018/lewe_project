@@ -1,0 +1,948 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.report.ReportInfoMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.report.ReportInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="customer_phone" jdbcType="VARCHAR" property="customerPhone" />
+    <result column="sample_code" jdbcType="VARCHAR" property="sampleCode" />
+    <result column="sample_name" jdbcType="VARCHAR" property="sampleName" />
+    <result column="sample_phone" jdbcType="VARCHAR" property="samplePhone" />
+    <result column="sample_sex" jdbcType="TINYINT" property="sampleSex" />
+    <result column="sample_age" jdbcType="INTEGER" property="sampleAge" />
+    <result column="sample_birthday" jdbcType="DATE" property="sampleBirthday" />
+    <result column="sample_height" jdbcType="INTEGER" property="sampleHeight" />
+    <result column="sample_weight" jdbcType="DOUBLE" property="sampleWeight" />
+    <result column="submit_time" jdbcType="TIMESTAMP" property="submitTime" />
+    <result column="submit_questionnaire" jdbcType="TINYINT" property="submitQuestionnaire" />
+    <result column="submit_way" jdbcType="TINYINT" property="submitWay" />
+    <result column="channel_id" jdbcType="INTEGER" property="channelId" />
+    <result column="hospital_id" jdbcType="BIGINT" property="hospitalId" />
+    <result column="hospital_group_id" jdbcType="INTEGER" property="hospitalGroupId" />
+    <result column="hospital_room_id" jdbcType="BIGINT" property="hospitalRoomId" />
+    <result column="hospital_doctor_id" jdbcType="BIGINT" property="hospitalDoctorId" />
+    <result column="hospital_scan_time" jdbcType="TIMESTAMP" property="hospitalScanTime" />
+    <result column="express_name" jdbcType="VARCHAR" property="expressName" />
+    <result column="express_code" jdbcType="VARCHAR" property="expressCode" />
+    <result column="express_time" jdbcType="TIMESTAMP" property="expressTime" />
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+    <result column="check_item_id" jdbcType="INTEGER" property="checkItemId" />
+    <result column="check_device_id" jdbcType="INTEGER" property="checkDeviceId" />
+    <result column="check_substrate_id" jdbcType="INTEGER" property="checkSubstrateId" />
+    <result column="check_substrate_dosage" jdbcType="INTEGER" property="checkSubstrateDosage" />
+    <result column="check_status" jdbcType="TINYINT" property="checkStatus" />
+    <result column="check_account_id" jdbcType="BIGINT" property="checkAccountId" />
+    <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime" />
+    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
+    <result column="audit_account_id" jdbcType="BIGINT" property="auditAccountId" />
+    <result column="take_antibiotics" jdbcType="TINYINT" property="takeAntibiotics" />
+    <result column="antibiotics_name" jdbcType="VARCHAR" property="antibioticsName" />
+    <result column="helicobacter_pylori_check" jdbcType="TINYINT" property="helicobacterPyloriCheck" />
+    <result column="hp_check_result" jdbcType="VARCHAR" property="hpCheckResult" />
+    <result column="gastroscope_enteroscopy_check" jdbcType="TINYINT" property="gastroscopeEnteroscopyCheck" />
+    <result column="ge_check_result" jdbcType="VARCHAR" property="geCheckResult" />
+    <result column="food_medicine_allergy" jdbcType="TINYINT" property="foodMedicineAllergy" />
+    <result column="allergy_food" jdbcType="VARCHAR" property="allergyFood" />
+    <result column="beset_health_problem" jdbcType="VARCHAR" property="besetHealthProblem" />
+    <result column="gas_check_result" jdbcType="VARCHAR" property="gasCheckResult" />
+    <result column="gas_check_suggestion" jdbcType="VARCHAR" property="gasCheckSuggestion" />
+    <result column="sys_report_code" jdbcType="VARCHAR" property="sysReportCode" />
+    <result column="report_create_time" jdbcType="TIMESTAMP" property="reportCreateTime" />
+    <result column="report_name" jdbcType="VARCHAR" property="reportName" />
+    <result column="report_status" jdbcType="TINYINT" property="reportStatus" />
+    <result column="report_result" jdbcType="INTEGER" property="reportResult" />
+    <result column="report_result_description" jdbcType="VARCHAR" property="reportResultDescription" />
+    <result column="report_data_analysis" jdbcType="VARCHAR" property="reportDataAnalysis" />
+    <result column="intervention_suggestion" jdbcType="VARCHAR" property="interventionSuggestion" />
+    <result column="report_picture_ids" jdbcType="VARCHAR" property="reportPictureIds" />
+    <result column="report_pdf_ids" jdbcType="VARCHAR" property="reportPdfIds" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, customer_id, customer_phone, sample_code, sample_name, sample_phone, sample_sex, 
+    sample_age, sample_birthday, sample_height, sample_weight, submit_time, submit_questionnaire, 
+    submit_way, channel_id, hospital_id, hospital_group_id, hospital_room_id, hospital_doctor_id, 
+    hospital_scan_time, express_name, express_code, express_time,check_time, check_item_id, check_device_id, 
+    check_substrate_id, check_substrate_dosage, check_status, check_account_id, audit_time, 
+    audit_status, audit_account_id, take_antibiotics, antibiotics_name, helicobacter_pylori_check, 
+    hp_check_result, gastroscope_enteroscopy_check, ge_check_result, food_medicine_allergy, 
+    allergy_food, beset_health_problem, gas_check_result, gas_check_suggestion, sys_report_code, 
+    report_create_time, report_name, report_status, report_result, report_result_description, 
+    report_data_analysis, intervention_suggestion, report_picture_ids, report_pdf_ids
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from report_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from report_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.report.ReportInfo">
+    insert into report_info (id, customer_id, customer_phone, 
+      sample_code, sample_name, sample_phone, 
+      sample_sex, sample_age, sample_birthday, 
+      sample_height, sample_weight, submit_time, 
+      submit_questionnaire, submit_way, channel_id, 
+      hospital_id, hospital_group_id, hospital_room_id, 
+      hospital_doctor_id, hospital_scan_time, express_name, 
+      express_code, check_time, check_item_id, 
+      check_device_id, check_substrate_id, check_substrate_dosage, 
+      check_status, check_account_id, audit_time, 
+      audit_status, audit_account_id, take_antibiotics, 
+      antibiotics_name, helicobacter_pylori_check, 
+      hp_check_result, gastroscope_enteroscopy_check, 
+      ge_check_result, food_medicine_allergy, allergy_food, 
+      beset_health_problem, gas_check_result, gas_check_suggestion, 
+      sys_report_code, report_create_time, report_name, 
+      report_status, report_result, report_result_description, 
+      report_data_analysis, intervention_suggestion, 
+      report_picture_ids, report_pdf_ids)
+    values (#{id,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{customerPhone,jdbcType=VARCHAR}, 
+      #{sampleCode,jdbcType=VARCHAR}, #{sampleName,jdbcType=VARCHAR}, #{samplePhone,jdbcType=VARCHAR}, 
+      #{sampleSex,jdbcType=TINYINT}, #{sampleAge,jdbcType=INTEGER}, #{sampleBirthday,jdbcType=DATE}, 
+      #{sampleHeight,jdbcType=INTEGER}, #{sampleWeight,jdbcType=DOUBLE}, #{submitTime,jdbcType=TIMESTAMP}, 
+      #{submitQuestionnaire,jdbcType=TINYINT}, #{submitWay,jdbcType=TINYINT}, #{channelId,jdbcType=INTEGER}, 
+      #{hospitalId,jdbcType=BIGINT}, #{hospitalGroupId,jdbcType=INTEGER}, #{hospitalRoomId,jdbcType=BIGINT}, 
+      #{hospitalDoctorId,jdbcType=BIGINT}, #{hospitalScanTime,jdbcType=TIMESTAMP}, #{expressName,jdbcType=VARCHAR}, 
+      #{expressCode,jdbcType=VARCHAR}, #{checkTime,jdbcType=TIMESTAMP}, #{checkItemId,jdbcType=INTEGER}, 
+      #{checkDeviceId,jdbcType=INTEGER}, #{checkSubstrateId,jdbcType=INTEGER}, #{checkSubstrateDosage,jdbcType=INTEGER}, 
+      #{checkStatus,jdbcType=TINYINT}, #{checkAccountId,jdbcType=BIGINT}, #{auditTime,jdbcType=TIMESTAMP}, 
+      #{auditStatus,jdbcType=TINYINT}, #{auditAccountId,jdbcType=BIGINT}, #{takeAntibiotics,jdbcType=TINYINT}, 
+      #{antibioticsName,jdbcType=VARCHAR}, #{helicobacterPyloriCheck,jdbcType=TINYINT}, 
+      #{hpCheckResult,jdbcType=VARCHAR}, #{gastroscopeEnteroscopyCheck,jdbcType=TINYINT}, 
+      #{geCheckResult,jdbcType=VARCHAR}, #{foodMedicineAllergy,jdbcType=TINYINT}, #{allergyFood,jdbcType=VARCHAR}, 
+      #{besetHealthProblem,jdbcType=VARCHAR}, #{gasCheckResult,jdbcType=VARCHAR}, #{gasCheckSuggestion,jdbcType=VARCHAR}, 
+      #{sysReportCode,jdbcType=VARCHAR}, #{reportCreateTime,jdbcType=TIMESTAMP}, #{reportName,jdbcType=VARCHAR}, 
+      #{reportStatus,jdbcType=TINYINT}, #{reportResult,jdbcType=INTEGER}, #{reportResultDescription,jdbcType=VARCHAR}, 
+      #{reportDataAnalysis,jdbcType=VARCHAR}, #{interventionSuggestion,jdbcType=VARCHAR}, 
+      #{reportPictureIds,jdbcType=VARCHAR}, #{reportPdfIds,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.report.ReportInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into report_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="customerId != null">
+        customer_id,
+      </if>
+      <if test="customerPhone != null">
+        customer_phone,
+      </if>
+      <if test="sampleCode != null">
+        sample_code,
+      </if>
+      <if test="sampleName != null">
+        sample_name,
+      </if>
+      <if test="samplePhone != null">
+        sample_phone,
+      </if>
+      <if test="sampleSex != null">
+        sample_sex,
+      </if>
+      <if test="sampleAge != null">
+        sample_age,
+      </if>
+      <if test="sampleBirthday != null">
+        sample_birthday,
+      </if>
+      <if test="sampleHeight != null">
+        sample_height,
+      </if>
+      <if test="sampleWeight != null">
+        sample_weight,
+      </if>
+      <if test="submitTime != null">
+        submit_time,
+      </if>
+      <if test="submitQuestionnaire != null">
+        submit_questionnaire,
+      </if>
+      <if test="submitWay != null">
+        submit_way,
+      </if>
+      <if test="channelId != null">
+        channel_id,
+      </if>
+      <if test="hospitalId != null">
+        hospital_id,
+      </if>
+      <if test="hospitalGroupId != null">
+        hospital_group_id,
+      </if>
+      <if test="hospitalRoomId != null">
+        hospital_room_id,
+      </if>
+      <if test="hospitalDoctorId != null">
+        hospital_doctor_id,
+      </if>
+      <if test="hospitalScanTime != null">
+        hospital_scan_time,
+      </if>
+      <if test="expressName != null">
+        express_name,
+      </if>
+      <if test="expressCode != null">
+        express_code,
+      </if>
+      <if test="checkTime != null">
+        check_time,
+      </if>
+      <if test="checkItemId != null">
+        check_item_id,
+      </if>
+      <if test="checkDeviceId != null">
+        check_device_id,
+      </if>
+      <if test="checkSubstrateId != null">
+        check_substrate_id,
+      </if>
+      <if test="checkSubstrateDosage != null">
+        check_substrate_dosage,
+      </if>
+      <if test="checkStatus != null">
+        check_status,
+      </if>
+      <if test="checkAccountId != null">
+        check_account_id,
+      </if>
+      <if test="auditTime != null">
+        audit_time,
+      </if>
+      <if test="auditStatus != null">
+        audit_status,
+      </if>
+      <if test="auditAccountId != null">
+        audit_account_id,
+      </if>
+      <if test="takeAntibiotics != null">
+        take_antibiotics,
+      </if>
+      <if test="antibioticsName != null">
+        antibiotics_name,
+      </if>
+      <if test="helicobacterPyloriCheck != null">
+        helicobacter_pylori_check,
+      </if>
+      <if test="hpCheckResult != null">
+        hp_check_result,
+      </if>
+      <if test="gastroscopeEnteroscopyCheck != null">
+        gastroscope_enteroscopy_check,
+      </if>
+      <if test="geCheckResult != null">
+        ge_check_result,
+      </if>
+      <if test="foodMedicineAllergy != null">
+        food_medicine_allergy,
+      </if>
+      <if test="allergyFood != null">
+        allergy_food,
+      </if>
+      <if test="besetHealthProblem != null">
+        beset_health_problem,
+      </if>
+      <if test="gasCheckResult != null">
+        gas_check_result,
+      </if>
+      <if test="gasCheckSuggestion != null">
+        gas_check_suggestion,
+      </if>
+      <if test="sysReportCode != null">
+        sys_report_code,
+      </if>
+      <if test="reportCreateTime != null">
+        report_create_time,
+      </if>
+      <if test="reportName != null">
+        report_name,
+      </if>
+      <if test="reportStatus != null">
+        report_status,
+      </if>
+      <if test="reportResult != null">
+        report_result,
+      </if>
+      <if test="reportResultDescription != null">
+        report_result_description,
+      </if>
+      <if test="reportDataAnalysis != null">
+        report_data_analysis,
+      </if>
+      <if test="interventionSuggestion != null">
+        intervention_suggestion,
+      </if>
+      <if test="reportPictureIds != null">
+        report_picture_ids,
+      </if>
+      <if test="reportPdfIds != null">
+        report_pdf_ids,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="customerId != null">
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="customerPhone != null">
+        #{customerPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleCode != null">
+        #{sampleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleName != null">
+        #{sampleName,jdbcType=VARCHAR},
+      </if>
+      <if test="samplePhone != null">
+        #{samplePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleSex != null">
+        #{sampleSex,jdbcType=TINYINT},
+      </if>
+      <if test="sampleAge != null">
+        #{sampleAge,jdbcType=INTEGER},
+      </if>
+      <if test="sampleBirthday != null">
+        #{sampleBirthday,jdbcType=DATE},
+      </if>
+      <if test="sampleHeight != null">
+        #{sampleHeight,jdbcType=INTEGER},
+      </if>
+      <if test="sampleWeight != null">
+        #{sampleWeight,jdbcType=DOUBLE},
+      </if>
+      <if test="submitTime != null">
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitQuestionnaire != null">
+        #{submitQuestionnaire,jdbcType=TINYINT},
+      </if>
+      <if test="submitWay != null">
+        #{submitWay,jdbcType=TINYINT},
+      </if>
+      <if test="channelId != null">
+        #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalId != null">
+        #{hospitalId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalGroupId != null">
+        #{hospitalGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalRoomId != null">
+        #{hospitalRoomId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalDoctorId != null">
+        #{hospitalDoctorId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalScanTime != null">
+        #{hospitalScanTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expressName != null">
+        #{expressName,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCode != null">
+        #{expressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null">
+        #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkItemId != null">
+        #{checkItemId,jdbcType=INTEGER},
+      </if>
+      <if test="checkDeviceId != null">
+        #{checkDeviceId,jdbcType=INTEGER},
+      </if>
+      <if test="checkSubstrateId != null">
+        #{checkSubstrateId,jdbcType=INTEGER},
+      </if>
+      <if test="checkSubstrateDosage != null">
+        #{checkSubstrateDosage,jdbcType=INTEGER},
+      </if>
+      <if test="checkStatus != null">
+        #{checkStatus,jdbcType=TINYINT},
+      </if>
+      <if test="checkAccountId != null">
+        #{checkAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="auditTime != null">
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditStatus != null">
+        #{auditStatus,jdbcType=TINYINT},
+      </if>
+      <if test="auditAccountId != null">
+        #{auditAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="takeAntibiotics != null">
+        #{takeAntibiotics,jdbcType=TINYINT},
+      </if>
+      <if test="antibioticsName != null">
+        #{antibioticsName,jdbcType=VARCHAR},
+      </if>
+      <if test="helicobacterPyloriCheck != null">
+        #{helicobacterPyloriCheck,jdbcType=TINYINT},
+      </if>
+      <if test="hpCheckResult != null">
+        #{hpCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="gastroscopeEnteroscopyCheck != null">
+        #{gastroscopeEnteroscopyCheck,jdbcType=TINYINT},
+      </if>
+      <if test="geCheckResult != null">
+        #{geCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="foodMedicineAllergy != null">
+        #{foodMedicineAllergy,jdbcType=TINYINT},
+      </if>
+      <if test="allergyFood != null">
+        #{allergyFood,jdbcType=VARCHAR},
+      </if>
+      <if test="besetHealthProblem != null">
+        #{besetHealthProblem,jdbcType=VARCHAR},
+      </if>
+      <if test="gasCheckResult != null">
+        #{gasCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="gasCheckSuggestion != null">
+        #{gasCheckSuggestion,jdbcType=VARCHAR},
+      </if>
+      <if test="sysReportCode != null">
+        #{sysReportCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reportCreateTime != null">
+        #{reportCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportName != null">
+        #{reportName,jdbcType=VARCHAR},
+      </if>
+      <if test="reportStatus != null">
+        #{reportStatus,jdbcType=TINYINT},
+      </if>
+      <if test="reportResult != null">
+        #{reportResult,jdbcType=INTEGER},
+      </if>
+      <if test="reportResultDescription != null">
+        #{reportResultDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="reportDataAnalysis != null">
+        #{reportDataAnalysis,jdbcType=VARCHAR},
+      </if>
+      <if test="interventionSuggestion != null">
+        #{interventionSuggestion,jdbcType=VARCHAR},
+      </if>
+      <if test="reportPictureIds != null">
+        #{reportPictureIds,jdbcType=VARCHAR},
+      </if>
+      <if test="reportPdfIds != null">
+        #{reportPdfIds,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.report.ReportInfo">
+    update report_info
+    <set>
+      <if test="customerId != null">
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="customerPhone != null">
+        customer_phone = #{customerPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleCode != null">
+        sample_code = #{sampleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleName != null">
+        sample_name = #{sampleName,jdbcType=VARCHAR},
+      </if>
+      <if test="samplePhone != null">
+        sample_phone = #{samplePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleSex != null">
+        sample_sex = #{sampleSex,jdbcType=TINYINT},
+      </if>
+      <if test="sampleAge != null">
+        sample_age = #{sampleAge,jdbcType=INTEGER},
+      </if>
+      <if test="sampleBirthday != null">
+        sample_birthday = #{sampleBirthday,jdbcType=DATE},
+      </if>
+      <if test="sampleHeight != null">
+        sample_height = #{sampleHeight,jdbcType=INTEGER},
+      </if>
+      <if test="sampleWeight != null">
+        sample_weight = #{sampleWeight,jdbcType=DOUBLE},
+      </if>
+      <if test="submitTime != null">
+        submit_time = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitQuestionnaire != null">
+        submit_questionnaire = #{submitQuestionnaire,jdbcType=TINYINT},
+      </if>
+      <if test="submitWay != null">
+        submit_way = #{submitWay,jdbcType=TINYINT},
+      </if>
+      <if test="channelId != null">
+        channel_id = #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalId != null">
+        hospital_id = #{hospitalId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalGroupId != null">
+        hospital_group_id = #{hospitalGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalRoomId != null">
+        hospital_room_id = #{hospitalRoomId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalDoctorId != null">
+        hospital_doctor_id = #{hospitalDoctorId,jdbcType=BIGINT},
+      </if>
+      <if test="hospitalScanTime != null">
+        hospital_scan_time = #{hospitalScanTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expressName != null">
+        express_name = #{expressName,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCode != null">
+        express_code = #{expressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="expressTime != null">
+        express_time = #{expressTime},
+      </if>
+      <if test="checkTime != null">
+        check_time = #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkItemId != null">
+        check_item_id = #{checkItemId,jdbcType=INTEGER},
+      </if>
+      <if test="checkDeviceId != null">
+        check_device_id = #{checkDeviceId,jdbcType=INTEGER},
+      </if>
+      <if test="checkSubstrateId != null">
+        check_substrate_id = #{checkSubstrateId,jdbcType=INTEGER},
+      </if>
+      <if test="checkSubstrateDosage != null">
+        check_substrate_dosage = #{checkSubstrateDosage,jdbcType=INTEGER},
+      </if>
+      <if test="checkStatus != null">
+        check_status = #{checkStatus,jdbcType=TINYINT},
+      </if>
+      <if test="checkAccountId != null">
+        check_account_id = #{checkAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="auditTime != null">
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditStatus != null">
+        audit_status = #{auditStatus,jdbcType=TINYINT},
+      </if>
+      <if test="auditAccountId != null">
+        audit_account_id = #{auditAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="takeAntibiotics != null">
+        take_antibiotics = #{takeAntibiotics,jdbcType=TINYINT},
+      </if>
+      <if test="antibioticsName != null">
+        antibiotics_name = #{antibioticsName,jdbcType=VARCHAR},
+      </if>
+      <if test="helicobacterPyloriCheck != null">
+        helicobacter_pylori_check = #{helicobacterPyloriCheck,jdbcType=TINYINT},
+      </if>
+      <if test="hpCheckResult != null">
+        hp_check_result = #{hpCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="gastroscopeEnteroscopyCheck != null">
+        gastroscope_enteroscopy_check = #{gastroscopeEnteroscopyCheck,jdbcType=TINYINT},
+      </if>
+      <if test="geCheckResult != null">
+        ge_check_result = #{geCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="foodMedicineAllergy != null">
+        food_medicine_allergy = #{foodMedicineAllergy,jdbcType=TINYINT},
+      </if>
+      <if test="allergyFood != null">
+        allergy_food = #{allergyFood,jdbcType=VARCHAR},
+      </if>
+      <if test="besetHealthProblem != null">
+        beset_health_problem = #{besetHealthProblem,jdbcType=VARCHAR},
+      </if>
+      <if test="gasCheckResult != null">
+        gas_check_result = #{gasCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="gasCheckSuggestion != null">
+        gas_check_suggestion = #{gasCheckSuggestion,jdbcType=VARCHAR},
+      </if>
+      <if test="sysReportCode != null">
+        sys_report_code = #{sysReportCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reportCreateTime != null">
+        report_create_time = #{reportCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportName != null">
+        report_name = #{reportName,jdbcType=VARCHAR},
+      </if>
+      <if test="reportStatus != null">
+        report_status = #{reportStatus,jdbcType=TINYINT},
+      </if>
+      <if test="reportResult != null">
+        report_result = #{reportResult,jdbcType=INTEGER},
+      </if>
+      <if test="reportResultDescription != null">
+        report_result_description = #{reportResultDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="reportDataAnalysis != null">
+        report_data_analysis = #{reportDataAnalysis,jdbcType=VARCHAR},
+      </if>
+      <if test="interventionSuggestion != null">
+        intervention_suggestion = #{interventionSuggestion,jdbcType=VARCHAR},
+      </if>
+      <if test="reportPictureIds != null">
+        report_picture_ids = #{reportPictureIds,jdbcType=VARCHAR},
+      </if>
+      <if test="reportPdfIds != null">
+        report_pdf_ids = #{reportPdfIds,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.report.ReportInfo">
+    update report_info
+    set customer_id = #{customerId,jdbcType=BIGINT},
+      customer_phone = #{customerPhone,jdbcType=VARCHAR},
+      sample_code = #{sampleCode,jdbcType=VARCHAR},
+      sample_name = #{sampleName,jdbcType=VARCHAR},
+      sample_phone = #{samplePhone,jdbcType=VARCHAR},
+      sample_sex = #{sampleSex,jdbcType=TINYINT},
+      sample_age = #{sampleAge,jdbcType=INTEGER},
+      sample_birthday = #{sampleBirthday,jdbcType=DATE},
+      sample_height = #{sampleHeight,jdbcType=INTEGER},
+      sample_weight = #{sampleWeight,jdbcType=DOUBLE},
+      submit_time = #{submitTime,jdbcType=TIMESTAMP},
+      submit_questionnaire = #{submitQuestionnaire,jdbcType=TINYINT},
+      submit_way = #{submitWay,jdbcType=TINYINT},
+      channel_id = #{channelId,jdbcType=INTEGER},
+      hospital_id = #{hospitalId,jdbcType=BIGINT},
+      hospital_group_id = #{hospitalGroupId,jdbcType=INTEGER},
+      hospital_room_id = #{hospitalRoomId,jdbcType=BIGINT},
+      hospital_doctor_id = #{hospitalDoctorId,jdbcType=BIGINT},
+      hospital_scan_time = #{hospitalScanTime,jdbcType=TIMESTAMP},
+      express_name = #{expressName,jdbcType=VARCHAR},
+      express_code = #{expressCode,jdbcType=VARCHAR},
+      check_time = #{checkTime,jdbcType=TIMESTAMP},
+      check_item_id = #{checkItemId,jdbcType=INTEGER},
+      check_device_id = #{checkDeviceId,jdbcType=INTEGER},
+      check_substrate_id = #{checkSubstrateId,jdbcType=INTEGER},
+      check_substrate_dosage = #{checkSubstrateDosage,jdbcType=INTEGER},
+      check_status = #{checkStatus,jdbcType=TINYINT},
+      check_account_id = #{checkAccountId,jdbcType=BIGINT},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      audit_status = #{auditStatus,jdbcType=TINYINT},
+      audit_account_id = #{auditAccountId,jdbcType=BIGINT},
+      take_antibiotics = #{takeAntibiotics,jdbcType=TINYINT},
+      antibiotics_name = #{antibioticsName,jdbcType=VARCHAR},
+      helicobacter_pylori_check = #{helicobacterPyloriCheck,jdbcType=TINYINT},
+      hp_check_result = #{hpCheckResult,jdbcType=VARCHAR},
+      gastroscope_enteroscopy_check = #{gastroscopeEnteroscopyCheck,jdbcType=TINYINT},
+      ge_check_result = #{geCheckResult,jdbcType=VARCHAR},
+      food_medicine_allergy = #{foodMedicineAllergy,jdbcType=TINYINT},
+      allergy_food = #{allergyFood,jdbcType=VARCHAR},
+      beset_health_problem = #{besetHealthProblem,jdbcType=VARCHAR},
+      gas_check_result = #{gasCheckResult,jdbcType=VARCHAR},
+      gas_check_suggestion = #{gasCheckSuggestion,jdbcType=VARCHAR},
+      sys_report_code = #{sysReportCode,jdbcType=VARCHAR},
+      report_create_time = #{reportCreateTime,jdbcType=TIMESTAMP},
+      report_name = #{reportName,jdbcType=VARCHAR},
+      report_status = #{reportStatus,jdbcType=TINYINT},
+      report_result = #{reportResult,jdbcType=INTEGER},
+      report_result_description = #{reportResultDescription,jdbcType=VARCHAR},
+      report_data_analysis = #{reportDataAnalysis,jdbcType=VARCHAR},
+      intervention_suggestion = #{interventionSuggestion,jdbcType=VARCHAR},
+      report_picture_ids = #{reportPictureIds,jdbcType=VARCHAR},
+      report_pdf_ids = #{reportPdfIds,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectBySampleCode" parameterType="string" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM report_info
+  	<where>
+    	<if test="sampleCode != null">
+    		sample_code = #{sampleCode}
+    	</if>
+    </where>
+  </select>
+  
+  <select id="selectCountByCustomerInfoQuery" parameterType="com.lewe.bean.customer.query.CustomerInfoQuery" resultType="java.lang.Integer">
+  	SELECT COUNT(id) FROM report_info
+  	<where>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="sex != null">
+    		and sample_sex = #{sex}
+    	</if>
+    	<if test="age != null">
+    		and sample_age = #{age}
+    	</if>
+    	<if test="reportStatus != null">
+    		and report_status = #{reportStatus}
+    	</if>
+    	<if test="beginDate != null">
+    		<![CDATA[ and submit_time >= #{beginDate} ]]>
+    	</if>
+    	<if test="endDate != null">
+    		<![CDATA[ and submit_time <= #{endDate} ]]>
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null">
+	        and CONCAT(customer_phone,sample_code,sample_name,sample_phone) LIKE #{keyword}
+	    </if>
+	    <if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+            and id in
+             <foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
+                 #{reportInfoId}
+             </foreach>
+        </if>
+    </where>
+  </select>
+ <!--  客户管理-客户信息列表查询 -->
+  <select id="selectListByCustomerInfoQuery" parameterType="com.lewe.bean.customer.query.CustomerInfoQuery" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM report_info
+  	<where>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="sex != null">
+    		and sample_sex = #{sex}
+    	</if>
+    	<if test="age != null">
+    		and sample_age = #{age}
+    	</if>
+    	<if test="reportStatus != null">
+    		and report_status = #{reportStatus}
+    	</if>
+    	<if test="beginDate != null and beginDate !='' ">
+    		<![CDATA[ and submit_time >= #{beginDate} ]]>
+    	</if>
+    	<if test="endDate != null and endDate !='' ">
+    		<![CDATA[ and submit_time <= #{endDate} ]]>
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(customer_phone,sample_code,sample_name,sample_phone) LIKE #{keyword}
+	    </if>
+	    <if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+            and id in
+             <foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
+                 #{reportInfoId}
+             </foreach>
+        </if>
+    </where>
+    ORDER BY id DESC
+    <if test="startIndex !=null and pageSize !=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  
+  <!-- 检测管理-检测样品列表count -->
+  <select id="selectCountBySampleInfoQuery" parameterType="com.lewe.bean.customer.query.SampleInfoQuery" resultType="java.lang.Integer">
+  	SELECT count(id) FROM report_info
+  	<where>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="hospitalGroupId != null">
+    		and hospital_group_id = #{hospitalGroupId}
+    	</if>
+    	<if test="sex != null">
+    		and sample_sex = #{sex}
+    	</if>
+    	<if test="age != null">
+    		and sample_age = #{age}
+    	</if>
+    	<if test="checkStatus != null">
+    		and check_status = #{checkStatus}
+    	</if>
+    	<if test="auditStatus != null">
+    		and audit_status = #{auditStatus}
+    	</if>
+    	<if test="beginDate != null and beginDate !='' ">
+    		<![CDATA[ and submit_time >= #{beginDate} ]]>
+    	</if>
+    	<if test="endDate != null and endDate !='' ">
+    		<![CDATA[ and submit_time <= #{endDate} ]]>
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+	    </if>
+    </where>
+  </select>
+  <!-- 检测管理-检测样品列表查询-->
+  <select id="selectListBySampleInfoQuery" parameterType="com.lewe.bean.customer.query.SampleInfoQuery" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM report_info
+  	<where>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="hospitalGroupId != null">
+    		and hospital_group_id = #{hospitalGroupId}
+    	</if>
+    	<if test="sex != null">
+    		and sample_sex = #{sex}
+    	</if>
+    	<if test="age != null">
+    		and sample_age = #{age}
+    	</if>
+    	<if test="checkStatus != null">
+    		and check_status = #{checkStatus}
+    	</if>
+    	<if test="auditStatus != null">
+    		and audit_status = #{auditStatus}
+    	</if>
+    	<if test="beginDate != null and beginDate !='' ">
+    		<![CDATA[ and submit_time >= #{beginDate} ]]>
+    	</if>
+    	<if test="endDate != null and endDate !='' ">
+    		<![CDATA[ and submit_time <= #{endDate} ]]>
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+	    </if>
+    </where>
+    ORDER BY id DESC
+    <if test="startIndex !=null and pageSize !=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM report_info
+  	<where>
+  		<if test="customerId != null">
+    		and customer_id = #{customerId}
+    	</if>
+    	<if test="channelId != null">
+    		and channel_id = #{channelId}
+    	</if>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="hospitalGroupId != null">
+    		and hospital_group_id = #{hospitalGroupId}
+    	</if>
+    	<if test="checkItemId != null">
+    		and check_item_id = #{checkItemId}
+    	</if>
+    	<if test="checkSubstrateId != null">
+    		and check_substrate_id = #{checkSubstrateId}
+    	</if>
+    	<if test="sex != null">
+    		and sample_sex = #{sex}
+    	</if>
+    	<if test="checkStatus != null">
+    		and check_status = #{checkStatus}
+    	</if>
+    	<if test="reportStatus != null">
+    		and report_status = #{reportStatus}
+    	</if>
+    	<if test="reportResult != null">
+    		and report_result = #{reportResult}
+    	</if>
+    	<if test="beginDate != null and beginDate !='' ">
+    		<![CDATA[ and submit_time >= #{beginDate} ]]>
+    	</if>
+    	<if test="endDate != null and endDate !='' ">
+    		<![CDATA[ and submit_time <= #{endDate} ]]>
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+	    </if>
+	     <if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+            and id in
+             <foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
+                 #{reportInfoId}
+             </foreach>
+        </if>
+        <if test="hospitalScanTime != null">
+    		and hospital_scan_time = #{hospitalScanTime}
+    	</if>
+    </where>
+    <if test="startIndex !=null and pageSize !=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	SELECT count(id) FROM report_info
+  	<where>
+  		<if test="customerId != null">
+    		and customer_id = #{customerId}
+    	</if>
+  		<if test="channelId != null">
+    		and channel_id = #{channelId}
+    	</if>
+    	<if test="hospitalId != null">
+    		and hospital_id = #{hospitalId}
+    	</if>
+    	<if test="hospitalGroupId != null">
+    		and hospital_group_id = #{hospitalGroupId}
+    	</if>
+    	<if test="checkItemId != null">
+    		and check_item_id = #{checkItemId}
+    	</if>
+    	<if test="checkSubstrateId != null">
+    		and check_substrate_id = #{checkSubstrateId}
+    	</if>
+    	<if test="sex != null">
+    		and sample_sex = #{sex}
+    	</if>
+    	<if test="checkStatus != null">
+    		and check_status = #{checkStatus}
+    	</if>
+    	<if test="reportStatus != null">
+    		and report_status = #{reportStatus}
+    	</if>
+    	<if test="reportResult != null">
+    		and report_result = #{reportResult}
+    	</if>
+    	<if test="beginDate != null and beginDate !='' ">
+    		<![CDATA[ and submit_time >= #{beginDate} ]]>
+    	</if>
+    	<if test="endDate != null and endDate !='' ">
+    		<![CDATA[ and submit_time <= #{endDate} ]]>
+    	</if>
+    	<!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null and keyword !=''">
+	        and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+	    </if>
+	    <if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+            and id in
+             <foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
+                 #{reportInfoId}
+             </foreach>
+        </if>
+        <if test="hospitalScanTime != null">
+    		and hospital_scan_time = #{hospitalScanTime}
+    	</if>
+    	<if test="checkTime != null">
+    		and check_time = #{checkTime}
+    	</if>
+    	<!-- 该参数用于查询某个底物是否在使用中 -->
+    	<if test="checkSubstrateIsUsed != null">
+    		and report_status !=5
+    	</if>
+    </where>
+    <if test="startIndex !=null and pageSize !=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  
+  <update id="updateCustomerPhoneByCustomerId" parameterType="java.util.Map">
+  	UPDATE report_info SET customer_phone= #{customerPhone} WHERE customer_id = #{customerId}
+  </update>
+</mapper>

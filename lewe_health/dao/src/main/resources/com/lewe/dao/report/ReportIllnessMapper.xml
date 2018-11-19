@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.report.ReportIllnessMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.report.ReportIllness">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="report_info_id" jdbcType="BIGINT" property="reportInfoId" />
+    <result column="illness_id" jdbcType="INTEGER" property="illnessId" />
+    <result column="illness_degree" jdbcType="TINYINT" property="illnessDegree" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, report_info_id, illness_id, illness_degree
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from report_illness
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from report_illness
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.report.ReportIllness">
+    insert into report_illness (id, report_info_id, illness_id, 
+      illness_degree)
+    values (#{id,jdbcType=INTEGER}, #{reportInfoId,jdbcType=BIGINT}, #{illnessId,jdbcType=INTEGER}, 
+      #{illnessDegree,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.report.ReportIllness">
+    insert into report_illness
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="reportInfoId != null">
+        report_info_id,
+      </if>
+      <if test="illnessId != null">
+        illness_id,
+      </if>
+      <if test="illnessDegree != null">
+        illness_degree,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="reportInfoId != null">
+        #{reportInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="illnessId != null">
+        #{illnessId,jdbcType=INTEGER},
+      </if>
+      <if test="illnessDegree != null">
+        #{illnessDegree,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.report.ReportIllness">
+    update report_illness
+    <set>
+      <if test="reportInfoId != null">
+        report_info_id = #{reportInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="illnessId != null">
+        illness_id = #{illnessId,jdbcType=INTEGER},
+      </if>
+      <if test="illnessDegree != null">
+        illness_degree = #{illnessDegree,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.report.ReportIllness">
+    update report_illness
+    set report_info_id = #{reportInfoId,jdbcType=BIGINT},
+      illness_id = #{illnessId,jdbcType=INTEGER},
+      illness_degree = #{illnessDegree,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM report_illness
+  	<where>
+	    <if test="reportInfoId != null">
+        	report_info_id = #{reportInfoId}
+      	</if>
+      	<if test="illnessId != null">
+        	and illness_id = #{illnessId}
+      	</if>
+      	<if test="illnessDegree != null">
+        	and illness_degree = #{illnessDegree}
+      	</if>
+    </where>
+    <if test="startIndex !=null and pageSize !=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  <delete id="deleteByReportInfoId" parameterType="java.lang.Long">
+   DELETE FROM report_illness WHERE report_info_id = #{reportInfoId}
+  </delete>
+</mapper>

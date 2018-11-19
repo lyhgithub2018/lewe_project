@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.customer.CustomerAccountMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.customer.CustomerAccount">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="fans_id" jdbcType="BIGINT" property="fansId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, phone, status, fans_id, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from customer_account
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from customer_account
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.customer.CustomerAccount">
+    insert into customer_account (id, phone, status, 
+      fans_id, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{fansId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.customer.CustomerAccount" useGeneratedKeys="true" keyProperty="id">
+    insert into customer_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="fansId != null">
+        fans_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="fansId != null">
+        #{fansId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.customer.CustomerAccount">
+    update customer_account
+    <set>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="fansId != null">
+        fans_id = #{fansId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.customer.CustomerAccount">
+    update customer_account
+    set phone = #{phone,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      fans_id = #{fansId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM customer_account
+  	WHERE phone = #{phone}
+  </select>
+  
+  <select id="selectListByMap" parameterType="java.util.Map" resultType="com.lewe.bean.customer.vo.CustomerFansInfo">
+  	SELECT 
+	  a.id,
+	  a.phone,
+	  b.nick_name as nickName,
+	  b.head_img_url as headImgUrl,
+	  a.status 
+	FROM
+	  customer_account AS a 
+	  LEFT JOIN fans AS b 
+	    ON a.fans_id = b.id 
+  	<where>
+    	<if test="status != null">
+    		a.status = #{status}
+    	</if>
+	    <!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null">
+	        and CONCAT(a.phone,b.nick_name) LIKE #{keyword}
+	    </if>
+    </where>
+    ORDER BY a.id DESC
+    <if test="startIndex!=null and pageSize!=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+  <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	SELECT 
+	  count(a.id)
+	FROM
+	  customer_account AS a 
+	  LEFT JOIN fans AS b 
+	    ON a.fans_id = b.id 
+  	<where>
+    	<if test="status != null">
+    		a.status = #{status}
+    	</if>
+	    <!-- 一个搜索关键词,多字段查询 -->
+    	<if test="keyword != null">
+	        and CONCAT(a.phone,b.nick_name) LIKE #{keyword}
+	    </if>
+    </where>
+    ORDER BY a.id DESC
+    <if test="startIndex!=null and pageSize!=null">
+    	LIMIT #{startIndex},#{pageSize}
+    </if>
+  </select>
+</mapper>

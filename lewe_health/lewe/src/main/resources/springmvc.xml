@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/context  
+       					http://www.springframework.org/schema/context/spring-context.xsd
+       					http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop.xsd
+       					http://www.springframework.org/schema/tx 
+       					http://www.springframework.org/schema/context/spring-tx.xsd">
+      <!-- 只扫描含有@Controller注解的类 --> 					
+      <context:component-scan base-package="com.lewe.web" use-default-filters="false">
+      	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+      </context:component-scan>
+      
+      <!-- 加载解析 @rquestMapping等注解的解析器 -->
+      <mvc:annotation-driven /> 
+      
+      <!-- 请求拦截器 -->
+      <mvc:interceptors>
+          <mvc:interceptor>
+              <mvc:mapping path="/**"/>
+              <bean class="com.lewe.web.interceptor.RequestInterceptor"></bean>
+          </mvc:interceptor>
+      </mvc:interceptors>
+      
+      <!-- 结果拦截器(利用spring aop拦截并获取@ResponseBody数据) -->
+	  <bean id="controllerMethodInterceptor" class="com.lewe.web.interceptor.ResultInterceptor"/>  
+	  <!-- AOP -->
+	  <aop:config proxy-target-class="true">  
+		<aop:pointcut id="controllerMethodPointcut" expression="execution(* com.lewe.web.controller..*(..)) and @annotation(org.springframework.web.bind.annotation.RequestMapping)"/>  
+		<aop:advisor advice-ref="controllerMethodInterceptor" pointcut-ref="controllerMethodPointcut" />  
+	  </aop:config>
+      
+      <!-- 视图解析器 -->
+      <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+      	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+      	<property name="prefix" value="/WEB-INF/jsp/"></property>
+      	<property name="suffix" value=".jsp"></property>
+      </bean>
+      
+      <mvc:cors>
+	  	<mvc:mapping path="/**" allowed-origins="*" allow-credentials="true" max-age="3600" allowed-methods="GET,POST,OPTIONS"/>
+	  </mvc:cors>
+       <!-- 文件上传 -->
+      <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>  
+</beans>

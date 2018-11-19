@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewe.dao.check.CheckItemSubstrateMapper">
+  <resultMap id="BaseResultMap" type="com.lewe.bean.check.CheckItemSubstrate">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="check_item_id" jdbcType="INTEGER" property="checkItemId" />
+    <result column="substrate_id" jdbcType="INTEGER" property="substrateId" />
+    <result column="substrate_name" jdbcType="VARCHAR" property="substrateName" />
+    <result column="substrate_dosage" jdbcType="INTEGER" property="substrateDosage" />
+    <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, check_item_id, substrate_id, substrate_name, substrate_dosage, creator_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from check_item_substrate
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from check_item_substrate
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lewe.bean.check.CheckItemSubstrate">
+    insert into check_item_substrate (id, check_item_id, substrate_id, 
+      substrate_name, substrate_dosage, creator_id)
+    values (#{id,jdbcType=BIGINT}, #{checkItemId,jdbcType=INTEGER}, #{substrateId,jdbcType=INTEGER}, 
+      #{substrateName,jdbcType=VARCHAR}, #{substrateDosage,jdbcType=INTEGER}, #{creatorId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lewe.bean.check.CheckItemSubstrate">
+    insert into check_item_substrate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="checkItemId != null">
+        check_item_id,
+      </if>
+      <if test="substrateId != null">
+        substrate_id,
+      </if>
+      <if test="substrateName != null">
+        substrate_name,
+      </if>
+      <if test="substrateDosage != null">
+        substrate_dosage,
+      </if>
+      <if test="creatorId != null">
+        creator_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="checkItemId != null">
+        #{checkItemId,jdbcType=INTEGER},
+      </if>
+      <if test="substrateId != null">
+        #{substrateId,jdbcType=INTEGER},
+      </if>
+      <if test="substrateName != null">
+        #{substrateName,jdbcType=VARCHAR},
+      </if>
+      <if test="substrateDosage != null">
+        #{substrateDosage,jdbcType=INTEGER},
+      </if>
+      <if test="creatorId != null">
+        #{creatorId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.check.CheckItemSubstrate">
+    update check_item_substrate
+    <set>
+      <if test="checkItemId != null">
+        check_item_id = #{checkItemId,jdbcType=INTEGER},
+      </if>
+      <if test="substrateId != null">
+        substrate_id = #{substrateId,jdbcType=INTEGER},
+      </if>
+      <if test="substrateName != null">
+        substrate_name = #{substrateName,jdbcType=VARCHAR},
+      </if>
+      <if test="substrateDosage != null">
+        substrate_dosage = #{substrateDosage,jdbcType=INTEGER},
+      </if>
+      <if test="creatorId != null">
+        creator_id = #{creatorId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lewe.bean.check.CheckItemSubstrate">
+    update check_item_substrate
+    set check_item_id = #{checkItemId,jdbcType=INTEGER},
+      substrate_id = #{substrateId,jdbcType=INTEGER},
+      substrate_name = #{substrateName,jdbcType=VARCHAR},
+      substrate_dosage = #{substrateDosage,jdbcType=INTEGER},
+      creator_id = #{creatorId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <delete id="deleteByItemId" parameterType="java.lang.Integer">
+   DELETE FROM check_item_substrate WHERE check_item_id = #{checkItemId}
+  </delete>
+  <select id="selectListByItemId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  SELECT <include refid="Base_Column_List" /> FROM check_item_substrate
+   WHERE check_item_id = #{checkItemId}
+  </select>
+</mapper>
