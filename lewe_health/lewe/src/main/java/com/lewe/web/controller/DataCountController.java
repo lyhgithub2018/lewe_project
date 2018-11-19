@@ -40,6 +40,21 @@ public class DataCountController extends BaseController{
 		return result;
 	}
 	/**
+	 * 预览报告
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("previewReport")
+	public ApiResult previewReport(HttpServletRequest request,Long reportInfoId,HttpServletResponse response) {
+		ApiResult result = new ApiResult();
+		Account loginAccount = getSessionAccount(request,result);
+		if(loginAccount!=null) {
+			JSONObject json = reportInfoService.previewReport(reportInfoId,loginAccount,result);
+			result.setData(json);
+		}
+		return result;
+	}
+	/**
 	 * 导出报告统计列表
 	 * @param request
 	 * @param response

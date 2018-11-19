@@ -49,6 +49,7 @@ import com.lewe.util.common.StringUtils;
 import com.lewe.util.common.aliyun.SMSUtil;
 import com.lewe.util.common.constants.AccountType;
 import com.lewe.util.common.constants.ReportStatus;
+import com.lewe.util.common.mei.nian.MeiNianReportUtil;
 
 @Service("checkManageService")
 public class CheckManageServiceImpl implements ICheckManageService{
@@ -559,13 +560,30 @@ public class CheckManageServiceImpl implements ICheckManageService{
 				update.setReportDataAnalysis(reportDataAnalysis);
 				reportInfoMapper.updateByPrimaryKeySelective(update);
 			}
-			
-			//生成报告图片和PDF TODO
-			if(hospital.getReportNeedAduit()==0) {//判断如果不需要审核,则报告的PDF及图片直接在这个接口生成
-				
-			}
 			String content = "提交了检测信息,姓名:"+reportInfo.getSampleName()+",检测编号:"+reportInfo.getSampleCode();
 			sysLogService.addSysLog(loginAccount, content, new Date());
+			
+			//判断如果是美年端的报告,则需要调用美年的保存信息接口(仅针对不需要审核的报告在这里处理,需要审核的则在审核接口里处理)
+			if(hospital!=null && hospital.getReportNeedAduit()==0) {
+				if(hospital.getHospitalName().contains("美年")) {
+					JSONObject param = new JSONObject();
+					param.put("hospitalName", hospital.getHospitalName());//门店名称
+					param.put("hospitalCode", hospital.getHospitalCode());//门店编码
+					param.put("name", checkInfoBo.getSampleName());//姓名
+					Byte sex = checkInfoBo.getSampleSex();
+					if(sex==1) {
+						json.put("sex", "M");//男
+					}else if(sex==2) {
+						json.put("sex", "F");//女
+					}
+					json.put("vid", checkInfoBo.getSampleCode());//采样编码
+					json.put("itemId", "10160");//项目编码(固定)
+					json.put("itemName", "肠道菌群无创检测");//项目名称(固定)
+					//json.put("npMark", "阳性");//阴阳性标识
+					json.put("reportNum", "4");//报告张数
+					MeiNianReportUtil.addCheckInfo(param);
+				}
+			}
 		}
 		return 1;
 	}
@@ -947,7 +965,8 @@ public class CheckManageServiceImpl implements ICheckManageService{
 				result.setMessage("请填写采样者姓名");
 				return 0;
 			}
-			if(StringUtils.isBlank(auditInfoBo.getSampleSex())) {
+			Byte sampleSex = auditInfoBo.getSampleSex();
+			if(StringUtils.isBlank(sampleSex)) {
 				result.setCode(BizCode.PARAM_EMPTY);
 				result.setMessage("请填写采样者性别");
 				return 0;
@@ -1025,6 +1044,27 @@ public class CheckManageServiceImpl implements ICheckManageService{
 			SMSUtil.sendReportNoticeSMS(reportInfo.getSamplePhone(), reportInfo.getSampleName());
 			String content = "提交了审核信息,姓名:"+reportInfo.getSampleName()+",检测编号:"+reportInfo.getSampleCode();
 			sysLogService.addSysLog(loginAccount, content, new Date());
+			
+			//判断如果是美年端的报告,则需要调用美年的保存信息接口
+			Hospital hospital = hospitalMapper.selectByPrimaryKey(auditInfoBo.getHospitalId());
+			if(hospital!=null && hospital.getHospitalName().contains("美年")) {
+				JSONObject json = new JSONObject();
+				json.put("hospitalName", hospital.getHospitalName());//门店名称
+				json.put("hospitalCode", hospital.getHospitalCode());//门店编码
+				json.put("name", auditInfoBo.getSampleName());//姓名
+				Byte sex = auditInfoBo.getSampleSex();
+				if(sex==1) {
+					json.put("sex", "M");//男
+				}else if(sex==2) {
+					json.put("sex", "F");//女
+				}
+				json.put("vid", auditInfoBo.getSampleCode());//采样编码
+				json.put("itemId", "10160");//项目编码(固定)
+				json.put("itemName", "肠道菌群无创检测");//项目名称(固定)
+				//json.put("npMark", "阳性");//阴阳性标识
+				json.put("reportNum", "4");//报告张数
+				MeiNianReportUtil.addCheckInfo(json);
+			}
 		}
 		return 1;
 	}

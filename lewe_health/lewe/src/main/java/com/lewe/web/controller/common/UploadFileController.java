@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lewe.bean.hospital.Hospital;
 import com.lewe.bean.report.ReportInfo;
 import com.lewe.bean.sys.SysFile;
+import com.lewe.dao.hospital.HospitalMapper;
 import com.lewe.dao.report.ReportInfoMapper;
 import com.lewe.dao.sys.SysFileMapper;
 import com.lewe.util.common.ApiResult;
@@ -23,6 +25,7 @@ import com.lewe.util.common.BizCode;
 import com.lewe.util.common.DateUtil;
 import com.lewe.util.common.PropertiesUtil;
 import com.lewe.util.common.StringUtils;
+import com.lewe.util.common.mei.nian.MeiNianReportUtil;
 import com.lewe.web.util.BASE64DecodedMultipartFile;
 
 /**
@@ -82,6 +85,8 @@ public class UploadFileController extends BaseController {
 	
 	@Autowired
 	private ReportInfoMapper reportInfoMapper;
+	@Autowired
+	private HospitalMapper hospitalMapper;
 	/**
 	 * 前端生成的报告PDF文件及图片调用该接口将报告上传到服务器
 	 * @param base64str base64字符串格式的文件
@@ -126,6 +131,15 @@ public class UploadFileController extends BaseController {
 			}
 			// 自己定义文件唯一名称
 			String fileName = DateUtil.getDays() + System.currentTimeMillis() + "." + fileType;
+			//美年端的文件名单独处理
+			ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportInfoId);
+			if(reportInfo!=null) {
+				Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
+				if(hospital!=null && hospital.getHospitalName().contains("美年")) {
+					//美年端用sampleCode+itemId保证报告文件名的唯一性
+					fileName = reportInfo.getSampleCode()+"10160"+ "." + fileType;
+				}
+			}
 			// 目标路径
 			String destPath = uploadPath + fileName;
 			File localFile = new File(destPath);
@@ -142,18 +156,21 @@ public class UploadFileController extends BaseController {
 			sysFileMapper.insertSelective(sysFile);
 			ReportInfo update = new ReportInfo();
 			update.setId(reportInfoId);
+			String pdfId = "";
+			String picIds = "";
 			if(type==1) {
-				update.setReportPdfIds(sysFile.getId()+"");//报告PDF文件id
+				pdfId = sysFile.getId()+"";
+				update.setReportPdfIds(pdfId);//报告PDF文件id
 			}else if(type==2) {
-				ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportInfoId);
 				if(reportInfo!=null) {
 					//报告图片只有第一张是前端动态生成的,需要调用该接口将其上传至服务器
 					//报告图片区分儿童版和成人版,默认的6张图片已上传至服务器指定位置.
 					if(reportInfo.getSampleAge()<18) {//儿童版
-						update.setReportPictureIds(sysFile.getId()+",1,2,3");//报告图片文件id
+						picIds = sysFile.getId()+",1,2,3";
 					}else {//成人版
-						update.setReportPictureIds(sysFile.getId()+",4,5,6");//报告图片文件id
+						picIds = sysFile.getId()+",4,5,6";
 					}
+					update.setReportPictureIds(sysFile.getId()+",4,5,6");//报告图片文件id
 				}
 			}
 			reportInfoMapper.updateByPrimaryKeySelective(update);
@@ -161,6 +178,30 @@ public class UploadFileController extends BaseController {
 			InputStream inputStream = reportFile.getInputStream();
             if(inputStream!=null) {
             	inputStream.close();
+            }
+            
+            //判断如果是美年端的报告,则需要调用美年的上传文件接口
+            if(reportInfo!=null) {
+            	Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
+            	if(hospital!=null && hospital.getHospitalName().contains("美年")) {
+            		if(type==1) {
+            			//上传PDF到美年端
+            			String param = "vid="+reportInfo.getSampleCode()+"&itemId=10160&fileType=pdf";
+            			MeiNianReportUtil.uploadFile(param, sysFile.getUrl());
+            		}else if(type==2) {
+            			if(picIds!=null) {
+            				String[] arr = picIds.split("\\,");
+            				for (String id : arr) {
+            					SysFile eachFile = sysFileMapper.selectByPrimaryKey(Long.valueOf(id));
+            					if(eachFile!=null) {
+            						//上传图片到美年端
+            						String param = "vid="+reportInfo.getSampleCode()+"&itemId=10160&fileType="+eachFile.getType();
+            						MeiNianReportUtil.uploadFile(param, eachFile.getUrl());
+            					}
+							}
+            			}
+            		}
+            	}
             }
 		} catch (Exception e) {
 			log.error("上传报告文件发生异常", e);

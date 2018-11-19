@@ -17,15 +17,19 @@ import com.lewe.bean.report.ReportInfo;
 import com.lewe.bean.report.vo.UsedCountInfo;
 import com.lewe.bean.sys.Account;
 import com.lewe.bean.sys.Channel;
+import com.lewe.bean.sys.SysFile;
 import com.lewe.dao.check.CheckItemMapper;
 import com.lewe.dao.report.ReportIllnessMapper;
 import com.lewe.dao.report.ReportInfoMapper;
 import com.lewe.dao.report.UsedCountMapper;
 import com.lewe.dao.sys.AccountMapper;
 import com.lewe.dao.sys.ChannelMapper;
+import com.lewe.dao.sys.SysFileMapper;
 import com.lewe.service.report.IReportInfoService;
 import com.lewe.serviceImpl.report.bo.ReportCountExcel;
 import com.lewe.serviceImpl.report.bo.UsedCountExcel;
+import com.lewe.util.common.ApiResult;
+import com.lewe.util.common.BizCode;
 import com.lewe.util.common.DateUtil;
 import com.lewe.util.common.Page;
 import com.lewe.util.common.StringUtils;
@@ -43,6 +47,8 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 	private ReportInfoMapper reportInfoMapper;
 	@Autowired
 	private ReportIllnessMapper reportIllnessMapper;
+	@Autowired
+	private SysFileMapper sysFileMapper;
 
 	public JSONObject reportCountList(String reportInfoQuery, Account loginAccount, Object apiResult) {
 		JSONObject json = new JSONObject();
@@ -370,5 +376,32 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 		// 生成Excel文件
         HSSFWorkbook book = ExcelUtil.createUsedCountExcel("用量统计报表",keyFields,valueFields,dataList);
 		return book;
+	}
+	public JSONObject previewReport(Long reportInfoId, Account loginAccount, Object apiResult) {
+		ApiResult result = (ApiResult)apiResult;
+		if(StringUtils.isBlank(reportInfoId)) {
+			result.setCode(BizCode.PARAM_EMPTY);
+			result.setMessage("参数reportInfoId为空");
+			return null;
+		}
+		List<String> urlList = new ArrayList<String>();
+		ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportInfoId);
+		if(reportInfo!=null) {
+			String reportPictureIds = reportInfo.getReportPictureIds();
+			if(reportPictureIds!=null) {
+				String[] arr = reportPictureIds.split("\\,");
+				if(arr!=null && arr.length>0) {
+					for (String id : arr) {
+						SysFile sysFile = sysFileMapper.selectByPrimaryKey(Long.valueOf(id));
+						if(sysFile!=null) {
+							urlList.add(sysFile.getUrl());
+						}
+					}
+				}
+			}
+		}
+		JSONObject json = new JSONObject();
+		json.put("urlList", urlList);
+		return json;
 	}
 }

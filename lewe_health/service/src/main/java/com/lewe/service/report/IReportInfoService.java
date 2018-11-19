@@ -43,4 +43,13 @@ public interface IReportInfoService {
 	 */
 	HSSFWorkbook exportUsedCountList(String usedCountQuery, Account loginAccount, Object apiResult);
 
+	/**
+	 * 预览报告
+	 * @param reportInfoQuery
+	 * @param loginAccount
+	 * @param result
+	 * @return
+	 */
+	JSONObject previewReport(Long reportInfoId, Account loginAccount, Object apiResult);
+
 }
