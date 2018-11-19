@@ -75,7 +75,6 @@ public class MeiNianReportUtil {
 		json.put("itemId", "FAEGERG");
 		json.put("itemName", "全渠道呼气检测");
 		json.put("reportNum", "1");
-		System.out.println("测试");
 		addCheckInfo(json);
 	}
 }

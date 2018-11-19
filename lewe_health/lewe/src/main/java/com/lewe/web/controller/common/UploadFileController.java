@@ -109,7 +109,6 @@ public class UploadFileController extends BaseController {
 				return result;
 			}
 			//将base64转成MultipartFile
-			System.out.println("============base64长度："+base64str.length());
 			MultipartFile reportFile = BASE64DecodedMultipartFile.base64ToMultipart(base64str);
 			request.setCharacterEncoding("utf-8"); // 设置编码
 			//文件上传路径
