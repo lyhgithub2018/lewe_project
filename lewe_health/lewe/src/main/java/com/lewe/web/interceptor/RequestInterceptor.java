@@ -51,7 +51,9 @@ public class RequestInterceptor implements HandlerInterceptor {
             sb.append("URL       : ").append(request.getRequestURL()).append("\n");
             sb.append("Controller: ").append(h.getBean().getClass().getName()).append("\n");
             sb.append("Method    : ").append(h.getMethod().getName()).append("\n");
-            sb.append("Params    : ").append(getParamString(request.getParameterMap()));
+            if(!h.getMethod().getName().equals("uploadReport")) {//由于前端上传报告文件传递的数据是base64字符串,内容巨多,因此不打印该参数
+            	sb.append("Params    : ").append(getParamString(request.getParameterMap()));
+            }
             LOGGER.info(sb.toString());
         }
         //String servletPath = request.getServletPath();

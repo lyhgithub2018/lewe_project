@@ -30,7 +30,7 @@
     		and b.county_code = #{countyCode}
     	</if>
     	<if test="queryDate != null">
-    		and a.hospital_scan_time = #{queryDate}
+    		and DATE_FORMAT(a.hospital_scan_time, '%Y-%m-%d') = #{queryDate}
     	</if>
     </where>
     GROUP BY a.channel_id, a.hospital_id, a.check_item_id )AS c
@@ -67,7 +67,7 @@
     		and b.county_code = #{countyCode}
     	</if>
     	<if test="queryDate != null">
-    		and a.hospital_scan_time = #{queryDate}
+    		and DATE_FORMAT(a.hospital_scan_time, '%Y-%m-%d') = #{queryDate}
     	</if>
     </where>
     GROUP BY a.channel_id, a.hospital_id, a.check_item_id 

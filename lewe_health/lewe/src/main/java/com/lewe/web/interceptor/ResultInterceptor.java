@@ -20,7 +20,7 @@ public class ResultInterceptor implements MethodInterceptor {
          String methodName = invocation.getMethod().getName();
          if(methodName.endsWith("List")) {
         	 //由于列表接口返回的数据一般都较多,因此不做日志记录(上线后下面代码注释掉)
-        	 LOGGER.info("接口返回结果:" + jsonMapper.writeValueAsString(result));
+        	 //LOGGER.info("接口返回结果:" + jsonMapper.writeValueAsString(result));
          }else {
         	 LOGGER.info("接口返回结果:" + jsonMapper.writeValueAsString(result));
          }

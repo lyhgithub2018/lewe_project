@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,6 +181,10 @@ public class AccountServiceImpl implements IAccountService{
 					return 0;
 				}
 				account.setUpdateTime(new Date());
+				String key = "lewe_loginAccountMenuTree:"+account.getId();
+				JedisUtil redis = JedisUtil.getInstance();
+				//账号编辑之后有可能更改了角色,因此清除一下缓存数据.
+				redis.del(key);
 				accountMapper.updateByPrimaryKeySelective(account);
 				content = "修改了一个账号信息,姓名:"+account.getName()+",账号:"+account.getAccount();
 			}
@@ -357,10 +362,18 @@ public class AccountServiceImpl implements IAccountService{
 					}
 				}
 				//按照产品原型页面上的顺序展示菜单
-				menuList.add(customerManager);
-				menuList.add(checkManager);
-				menuList.add(dataCount);
-				menuList.add(sysManager);
+				if(customerManager.getId()!=null) {
+					menuList.add(customerManager);
+				}
+				if(checkManager.getId()!=null) {
+					menuList.add(checkManager);
+				}
+				if(dataCount.getId()!=null) {
+					menuList.add(dataCount);
+				}
+				if(sysManager.getId()!=null) {
+					menuList.add(sysManager);
+				}
 				json.put("menuList", menuList);
 				return json;
 			}
@@ -370,29 +383,29 @@ public class AccountServiceImpl implements IAccountService{
 				String menuIds = role.getMenuIds();
 				if(StringUtils.isNotBlank(menuIds)) {
 					String[] arr = menuIds.split("\\,");
-					//1.先筛选出相同级别的菜单
-					List<MenuTree> tempList1 = new ArrayList<MenuTree>();
-					List<MenuTree> tempList2 = new ArrayList<MenuTree>();
-					List<MenuTree> tempList3 = new ArrayList<MenuTree>();
+					//1.先筛选出相同级别的菜单(用treeSet集合实现顺序排放)
+					Set<MenuTree> set1 = new TreeSet<MenuTree>();
+					Set<MenuTree> set2 = new TreeSet<MenuTree>();
+					Set<MenuTree> set3 = new TreeSet<MenuTree>();
 					for (String menuId : arr) {
 						MenuTree menu = menuMapper.selectByMenuId(Integer.valueOf(menuId));
 						if(menu!=null && menu.getLevel()==1) {
-							tempList1.add(menu);
+							set1.add(menu);
 						}
 						if(menu!=null && menu.getLevel()==2) {
-							tempList2.add(menu);
+							set2.add(menu);
 						}
 						if(menu!=null && menu.getLevel()==3) {
-							tempList3.add(menu);
+							set3.add(menu);
 						}
 					}
 					//2.从第三级菜单开始向上查询二级菜单
 					Set<MenuTree> secondParents = new HashSet<MenuTree>();
-					for (MenuTree menu : tempList3) {
+					for (MenuTree menu : set3) {
 						MenuTree secondParent = menuMapper.selectByMenuId(menu.getParentId());
 						secondParents.add(secondParent);
 					}
-					secondParents.addAll(tempList2);
+					secondParents.addAll(set2);
 					
 					//3.从第二级菜单向上查询一级菜单
 					Set<MenuTree> firstParents = new HashSet<MenuTree>();
@@ -400,12 +413,12 @@ public class AccountServiceImpl implements IAccountService{
 						MenuTree firstParent = menuMapper.selectByMenuId(menu.getParentId());
 						firstParents.add(firstParent);
 					}
-					firstParents.addAll(tempList1);
+					firstParents.addAll(set1);
 					
 					//4.分别查出当前角色的一级菜单的子菜单和二级菜单的子菜单
 					Map<String,Object> param = new HashMap<String,Object>();
 					List<MenuTree> secondMenuList = null;
-					for (MenuTree menuTree : tempList1) {
+					for (MenuTree menuTree : set1) {
 						param.put("parentId", menuTree.getId());
 						param.put("level", 2);
 						secondMenuList = menuMapper.selectAllChildrenByParam(param);
@@ -414,12 +427,12 @@ public class AccountServiceImpl implements IAccountService{
 						}
 					}
 					List<MenuTree> thirdMenuList = null;
-					for (MenuTree menuTree : tempList2) {
+					for (MenuTree menuTree : set2) {
 						param.put("parentId", menuTree.getId());
 						param.put("level", 3);
 						thirdMenuList = menuMapper.selectAllChildrenByParam(param);
 						if(thirdMenuList!=null && thirdMenuList.size()>0) {
-							tempList3.addAll(thirdMenuList);
+							set3.addAll(thirdMenuList);
 						}
 					}
 					
@@ -429,14 +442,14 @@ public class AccountServiceImpl implements IAccountService{
 						MenuTree firstMenuTree = new MenuTree();
 						BeanUtils.copyProperties(parentMenu,firstMenuTree);
 						//第二级
-						List<MenuTree> secondChildrens = new ArrayList<MenuTree>();
+						TreeSet<MenuTree> secondChildrens = new TreeSet<MenuTree>();
 						for (MenuTree secondMenu : secondParents) {
 							if(secondMenu.getParentId().longValue()==parentMenu.getId().longValue()){
 								MenuTree secondTree = new MenuTree();
 								BeanUtils.copyProperties(secondMenu,secondTree);
 								//第三级
-								List<MenuTree> thirdChildrens = new ArrayList<MenuTree>();
-								for (MenuTree thirdMenu : tempList3) {
+								TreeSet<MenuTree> thirdChildrens = new TreeSet<MenuTree>();
+								for (MenuTree thirdMenu : set3) {
 									if(thirdMenu.getParentId().longValue()==secondMenu.getId().longValue()){
 										MenuTree thirdTree = new MenuTree();
 										BeanUtils.copyProperties(thirdMenu,thirdTree);
@@ -462,6 +475,7 @@ public class AccountServiceImpl implements IAccountService{
 							//存储数据到缓存中
 							redis.hset(key,id,JSONObject.toJSONString(menuTree));
 						}
+						redis.setExpire(key, 10*24*3600);//每个账号的菜单缓存10天
 					}
 					
 					//处理菜单展示顺序

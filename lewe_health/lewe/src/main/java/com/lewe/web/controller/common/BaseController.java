@@ -36,12 +36,12 @@ public class BaseController {
 			account.setStatus(1);
 			account.setAccountType((byte)1);
 			
-			/*account.setId(5l);
-			account.setAccount("xiaotu");
-			account.setName("xiaotu");
-			account.setRoleId(6);
-			account.setHospitalId(3l);
-			account.setHospitalGroupId(3);
+			/*account.setId(9l);
+			account.setAccount("小灰灰01");
+			account.setName("xiaohui01");
+			account.setRoleId(11);
+			account.setHospitalId(5l);
+			account.setHospitalGroupId(1);
 			account.setStatus(1);
 			account.setAccountType((byte)3);*/
 		}else {

@@ -1,6 +1,6 @@
 package com.lewe.dao.sys.vo;
 
-import java.util.List;
+import java.util.TreeSet;
 
 
 /**   
@@ -9,7 +9,7 @@ import java.util.List;
  * @date 2018年10月30日
  * @version 1.0   
  */
-public class MenuTree {
+public class MenuTree implements Comparable<MenuTree>{
 	
 	private Integer id;
 	/**
@@ -27,9 +27,9 @@ public class MenuTree {
 	 */
 	private String pathName;
 	/**
-	 * 子类别
+	 * 子类别(用treeSet集合实现顺序排放)
 	 */
-	private List<MenuTree> children;
+	private TreeSet<MenuTree> children;
 	
 	public Integer getId() {
 		return id;
@@ -62,12 +62,12 @@ public class MenuTree {
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
 	}
-	
-	public List<MenuTree> getChildren() {
+
+	public TreeSet<MenuTree> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<MenuTree> children) {
+	public void setChildren(TreeSet<MenuTree> children) {
 		this.children = children;
 	}
 
@@ -88,6 +88,10 @@ public class MenuTree {
     //重写hashcode()方法:
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return (id+name).hashCode();
     }
+    //treeSet集合存放该对象时根据id升序排序
+    public int compareTo(MenuTree o) {
+		return this.id.compareTo(o.getId());
+	}
 }

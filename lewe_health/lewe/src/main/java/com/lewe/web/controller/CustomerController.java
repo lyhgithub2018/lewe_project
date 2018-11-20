@@ -144,7 +144,8 @@ public class CustomerController extends BaseController{
 	        session.setMaxInactiveInterval(20*60*60);
 	    }
 	    //授权成功后重定向到前端页面
-	    return "redirect:http://2w26a28982.imwork.net/lewe/";
+	    //return "redirect:https://aijutong.com/";
+	    return "redirect:https://aijutong.com/";
 	}
 	
 	/**

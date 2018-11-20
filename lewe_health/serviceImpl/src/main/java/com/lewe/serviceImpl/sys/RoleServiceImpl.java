@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,13 +118,13 @@ public class RoleServiceImpl implements IRoleService{
 				MenuTree firstMenuTree = new MenuTree();
 				BeanUtils.copyProperties(parentMenu,firstMenuTree);
 				//第二级
-				List<MenuTree> secondChildrens = new ArrayList<MenuTree>();
+				TreeSet<MenuTree> secondChildrens = new TreeSet<MenuTree>();
 				for (MenuTree secondMenu : secondChildrenList) {
 					if(secondMenu.getParentId().longValue()==parentMenu.getId().longValue()){
 						MenuTree secondTree = new MenuTree();
 						BeanUtils.copyProperties(secondMenu,secondTree);
 						//第三级
-						List<MenuTree> thirdChildrens = new ArrayList<MenuTree>();
+						TreeSet<MenuTree> thirdChildrens = new TreeSet<MenuTree>();
 						for (MenuTree thirdMenu : thirdChildrenList) {
 							if(thirdMenu.getParentId().longValue()==secondMenu.getId().longValue()){
 								MenuTree thirdTree = new MenuTree();

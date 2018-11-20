@@ -2,7 +2,6 @@ package com.lewe.web.controller.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletOutputStream;
@@ -24,7 +23,6 @@ import com.lewe.util.common.ApiResult;
 import com.lewe.util.common.BizCode;
 import com.lewe.util.common.PropertiesUtil;
 import com.lewe.util.common.StringUtils;
-import com.lewe.util.common.io.UrlUtil;
 import com.lewe.web.util.ZipUtil;
 
 @Controller
@@ -87,7 +85,9 @@ public class DownLoadController {
 				if(type==1) {//下载PDF
 					SysFile sysfile = null;
 					if(reportInfo!=null) {
-						sysfile = sysFileMapper.selectByPrimaryKey(Long.valueOf(reportInfo.getReportPdfIds()));
+						if(reportInfo.getReportPdfIds()!=null) {
+							sysfile = sysFileMapper.selectByPrimaryKey(Long.valueOf(reportInfo.getReportPdfIds()));
+						}
 					}
 					if(sysfile !=null) {
 						String url = sysfile.getUrl();
@@ -100,13 +100,29 @@ public class DownLoadController {
 							if(url.contains("http")) {
 								//通过网络文件路径获取输入流
 								//https://aijutong.com/upload/reportFile/ertong01.png
-								InputStream inStream = UrlUtil.urlToIO(url);
+								/*InputStream inStream = UrlUtil.urlToIO(url);
 								int len;
 								byte[] byteArr = new byte[1024];
 								while ((len = inStream.read(byteArr)) > 0) {
 									response.getOutputStream().write(byteArr, 0, len);
 								}
-								inStream.close();
+								inStream.close();*/
+								
+								String domainName = PropertiesUtil.getApiPropertyByKey("domain.name");
+								//前端项目路径
+								String leweWebPath = PropertiesUtil.getApiPropertyByKey("lewe.web.path");
+				                SysFile pdfFile = sysFileMapper.selectByPrimaryKey(Long.valueOf(reportInfo.getReportPdfIds()));
+								url = pdfFile.getUrl();
+								//将文件的网络路径转换成本地路径读取
+								if(url.startsWith(domainName)) {
+									url = url.replaceAll(domainName, leweWebPath);
+									file = new File(url);
+								}
+								if(file.exists()) {
+									outputStream = response.getOutputStream();
+									byte[] byteArray = FileUtils.readFileToByteArray(file);
+									outputStream.write(byteArray);
+								}
 							}else {
 								//通过本地路径文件的读取方式
 								if(file.exists()) {

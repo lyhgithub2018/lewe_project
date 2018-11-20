@@ -1,7 +1,6 @@
 package com.lewe.serviceImpl.report;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +187,7 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 		paramMap.put("queryDate", queryDate);
 		if(StringUtils.isBlank(queryDate)) {
 			//默认查询当天的
-			paramMap.put("queryDate", new Date());
+			paramMap.put("queryDate", DateUtil.getCurDate("yyyy-MM-dd"));
 		}
 		Integer totalCount = usedCountMapper.selectUsedCountByMap(paramMap);
 		if(totalCount==null||totalCount==0) {
@@ -333,7 +332,7 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 		paramMap.put("queryDate", queryDate);
 		if(StringUtils.isBlank(queryDate)) {
 			//默认查询当天的
-			paramMap.put("queryDate", new Date());
+			paramMap.put("queryDate", DateUtil.getCurDate("yyyy-MM-dd"));
 		}
 		List<UsedCountExcel> dataList = new ArrayList<UsedCountExcel>();
 		List<UsedCountInfo> list = usedCountMapper.selectUsedCountListByMap(paramMap);

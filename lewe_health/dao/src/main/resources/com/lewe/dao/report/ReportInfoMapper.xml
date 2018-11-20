@@ -873,6 +873,7 @@
     		and hospital_scan_time = #{hospitalScanTime}
     	</if>
     </where>
+    ORDER BY id DESC
     <if test="startIndex !=null and pageSize !=null">
     	LIMIT #{startIndex},#{pageSize}
     </if>
