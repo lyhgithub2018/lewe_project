@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.Substrate;
 import com.lewe.bean.customer.CustomerAccount;
+import com.lewe.bean.customer.Fans;
 import com.lewe.bean.customer.vo.CustomerFansInfo;
 import com.lewe.bean.hospital.Hospital;
 import com.lewe.bean.hospital.HospitalDoctor;
@@ -27,6 +28,7 @@ import com.lewe.bean.sys.Illness;
 import com.lewe.bean.sys.Symptom;
 import com.lewe.dao.check.SubstrateMapper;
 import com.lewe.dao.customer.CustomerAccountMapper;
+import com.lewe.dao.customer.FansMapper;
 import com.lewe.dao.hospital.HospitalDoctorMapper;
 import com.lewe.dao.hospital.HospitalMapper;
 import com.lewe.dao.hospital.HospitalRoomMapper;
@@ -63,24 +65,25 @@ public class CustomerServiceImpl implements ICustomerService{
 	@Autowired
 	private ReportSymptomMapper reportSymptomMapper;
 	@Transactional
-	public int bindSampleCode(String customerId, String sampleCode, Object apiResult) {
+	public Boolean bindSampleCode(String customerId, String sampleCode, Object apiResult) {
 		ApiResult result = (ApiResult)apiResult;
 		if(StringUtils.isBlank(customerId)) {
 			result.setCode(BizCode.PARAM_EMPTY);
 			result.setMessage("参数customerId为空");
-			return 0;
+			return false;
 		}
 		if(StringUtils.isBlank(sampleCode)) {
 			result.setCode(BizCode.PARAM_EMPTY);
 			result.setMessage("请填写采样报告编号");
-			return 0;
+			return false;
 		}
 		//查询该编号是否已经绑定过
 		ReportInfo report = reportInfoMapper.selectBySampleCode(sampleCode);
 		if(report!=null && report.getReportStatus()==1) {
-			result.setCode(BizCode.DATA_EXIST);
-			result.setMessage("该编号已经被绑定！");
-			return 0;
+			if(report.getSubmitQuestionnaire()<2) {
+				result.setMessage("请完善问卷信息！");
+				return true;
+			}
 		}else {
 			ReportInfo reportInfo = new ReportInfo();
 			reportInfo.setCustomerId(Long.valueOf(customerId));
@@ -96,53 +99,52 @@ public class CustomerServiceImpl implements ICustomerService{
 			}
 			reportInfoMapper.insertSelective(reportInfo);
 		}
-		return 1;
+		return true;
 	}
 	@Transactional
-	public int submitQuestionnaire(String questionnaire1, String questionnaire2, Object apiResult) {
+	public int submitQuestionnaire(String questionnaire1, String questionnaire2,String sampleCode, Object apiResult) {
 		ApiResult result = (ApiResult)apiResult;
-		if(StringUtils.isBlank(questionnaire1)) {
-			result.setCode(BizCode.PARAM_EMPTY);
-			result.setMessage("参数questionnaire1为空");
-			return 0;
-		}
-		//问卷信息1(采样者基本信息)
-		Questionnaire1Bo basicInfo = JSONObject.parseObject(questionnaire1, Questionnaire1Bo.class);
-		if(StringUtils.isBlank(basicInfo.getSampleCode())) {
+		if(StringUtils.isBlank(sampleCode)) {
 			result.setCode(BizCode.PARAM_EMPTY);
 			result.setMessage("参数sampleCode不可为空");
 			return 0;
 		}
-		if(StringUtils.isBlank(basicInfo.getSampleName())) {
-			result.setCode(BizCode.PARAM_EMPTY);
-			result.setMessage("请填写采样者姓名");
-			return 0;
+		Questionnaire1Bo basicInfo = null;
+		if(StringUtils.isNotBlank(questionnaire1)) {
+			//问卷信息1(采样者基本信息)
+			basicInfo = JSONObject.parseObject(questionnaire1, Questionnaire1Bo.class);
+			if(StringUtils.isBlank(basicInfo.getSampleName())) {
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("请填写采样者姓名");
+				return 0;
+			}
+			if(StringUtils.isBlank(basicInfo.getSampleSex())) {
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("请选择采样者性别");
+				return 0;
+			}
+			if(StringUtils.isBlank(basicInfo.getSampleBirthday())) {
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("请选择采样者出生日期");
+				return 0;
+			}
+			if(StringUtils.isBlank(basicInfo.getSamplePhone())) {
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("请填写采样者本人的手机号");
+				return 0;
+			}
 		}
-		if(StringUtils.isBlank(basicInfo.getSampleSex())) {
-			result.setCode(BizCode.PARAM_EMPTY);
-			result.setMessage("请选择采样者性别");
-			return 0;
-		}
-		if(StringUtils.isBlank(basicInfo.getSampleBirthday())) {
-			result.setCode(BizCode.PARAM_EMPTY);
-			result.setMessage("请选择采样者出生日期");
-			return 0;
-		}
-		if(StringUtils.isBlank(basicInfo.getSamplePhone())) {
-			result.setCode(BizCode.PARAM_EMPTY);
-			result.setMessage("请填写采样者本人的手机号");
-			return 0;
-		}
+		
 		//查询该采样编号是否已经绑定过
-		ReportInfo report = reportInfoMapper.selectBySampleCode(basicInfo.getSampleCode());
+		ReportInfo report = reportInfoMapper.selectBySampleCode(sampleCode);
 		if(report==null) {
 			result.setCode(BizCode.DATA_NOT_FOUND);
 			result.setMessage("当前提交的采样者信息没有绑定采样编号,请绑定后再填写问卷信息！");
 			return 0;
 		}else {
 			//绑定过,则更新保存相关字段
-			if(report.getSubmitQuestionnaire()==0) {
-				//生成采样者的报告基本信息字段
+			//生成采样者的报告基本信息字段
+			if(basicInfo!=null) {
 				ReportInfo reportInfo = new ReportInfo();
 				BeanUtils.copyProperties(basicInfo, reportInfo);
 				//通过出生日期计算出年龄
@@ -155,17 +157,18 @@ public class CustomerServiceImpl implements ICustomerService{
 				reportInfo.setId(report.getId());
 				reportInfo.setSubmitTime(new Date());
 				reportInfo.setSubmitQuestionnaire((byte)1);
-				reportInfo.setSampleCode(basicInfo.getSampleCode().trim());
+				reportInfo.setSampleCode(sampleCode.trim());
 				reportInfoMapper.updateByPrimaryKeySelective(reportInfo);
 			}
 			//问卷信息2
-			if(StringUtils.isNotBlank(questionnaire2) && report.getSubmitQuestionnaire()==1) {
+			if(StringUtils.isNotBlank(questionnaire2)) {
 				Questionnaire2Bo questionnaire2Bo = JSONObject.parseObject(questionnaire2, Questionnaire2Bo.class);
 				//症状列表
 				List<ReportSymptom> reportSymptomList = questionnaire2Bo.getReportSymptomList();
 				if(reportSymptomList!=null&&reportSymptomList.size()>0) {
 					for (ReportSymptom reportSymptom : reportSymptomList) {
 						reportSymptom.setReportInfoId(report.getId());
+						reportSymptom.setId(null);
 						reportSymptomMapper.insertSelective(reportSymptom);
 					}
 					ReportInfo update = new ReportInfo();
@@ -268,6 +271,12 @@ public class CustomerServiceImpl implements ICustomerService{
 		CustomerAccount account = customerAccountMapper.selectByPhone(phone);
 		//3.插入新账号
 		if(account==null) {
+			CustomerAccount customer = customerAccountMapper.selectByFansId(fansId);
+			if(customer!=null && !phone.equals(customer.getPhone())) {
+				result.setCode(BizCode.DATA_EXIST);
+				result.setMessage("该微信号已被账号:"+customer.getPhone()+"绑定");
+				return null;
+			}
 			account = new CustomerAccount();
 			account.setPhone(phone);
 			account.setCreateTime(new Date());
@@ -395,11 +404,17 @@ public class CustomerServiceImpl implements ICustomerService{
 			report.put("sampleAge", reportInfo.getSampleAge()+"岁");//采样者年龄
 			report.put("samplePhone", reportInfo.getSamplePhone());//采样者手机号
 			report.put("submitTime", reportInfo.getSubmitTime()==null?null:DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd HH:mm:ss"));//采样提交时间
+			if(reportInfo.getSubmitQuestionnaire()<2) {
+				report.put("status", 0);
+				report.put("statusDesc", "采样操作");
+			}
 			if(reportInfo.getCheckStatus()==0||reportInfo.getReportStatus()<ReportStatus.RESULT_CREATE.getValue()) {
-				report.put("status", "检测中");
+				report.put("status", 1);
+				report.put("statusDesc", "检测中");
 			}
 			if(reportInfo.getReportStatus()==ReportStatus.RESULT_CREATE.getValue()) {
-				report.put("status", "查看报告");
+				report.put("status", 2);
+				report.put("statusDesc", "查看报告");
 			}
 			myReportList.add(report);
 		}
@@ -510,6 +525,64 @@ public class CustomerServiceImpl implements ICustomerService{
 				jsonList.add(checkData);
 			}
 			json.put("checkDataList", jsonList);//检测数据
+		}
+		return json;
+	}
+	public CustomerAccount getCustomerAccountByFansId(Long fansId) {
+		if(fansId!=null) {
+			CustomerAccount customer = customerAccountMapper.selectByFansId(fansId);
+			return customer;
+		}
+		return null;
+	}
+	@SuppressWarnings("unused")
+	public JSONObject getQuestionnaire1Info(Long reportId, String sampleCode,Object apiResult) {
+		ApiResult result = (ApiResult)apiResult;
+		if(reportId==null||StringUtils.isBlank(sampleCode)) {
+			result.setCode(BizCode.PARAM_EMPTY);
+			result.setMessage("缺少参数");
+			return null;
+		}
+		ReportInfo reportInfo = null;
+		if(reportId!=null) {
+			reportInfo = reportInfoMapper.selectByPrimaryKey(reportId);
+		}else {
+			reportInfo = reportInfoMapper.selectBySampleCode(sampleCode);
+		}
+		JSONObject json = new JSONObject();
+		if(reportInfo!=null) {
+			json.put("customerId", reportInfo.getCustomerId());
+			json.put("sampleCode", reportInfo.getSampleCode());
+			json.put("sampleName", reportInfo.getSampleName());
+			json.put("samplePhone", reportInfo.getSamplePhone());
+			json.put("sampleSex", reportInfo.getSampleSex());
+			json.put("sampleBirthday", reportInfo.getSampleBirthday()==null?null:DateUtil.formatDate(reportInfo.getSampleBirthday(), "yyyy-MM-dd"));
+			json.put("sampleHeight", reportInfo.getSampleHeight());
+			json.put("sampleWeight", reportInfo.getSampleWeight());
+		}
+		return json;
+	}
+	@Autowired
+	private FansMapper fansMapper;
+	public JSONObject getFansInfo(Long fansId, Object apiResult) {
+		ApiResult result = (ApiResult)apiResult;
+		if(fansId==null) {
+			result.setCode(BizCode.PARAM_EMPTY);
+			result.setMessage("参数fansId为空");
+			return null;
+		}
+		JSONObject json = new JSONObject();
+		Fans fans = fansMapper.selectByPrimaryKey(fansId);
+		String defualtAvatar = "https://aijutong.com/upload/image/default-avatar.png";
+		if(fans!=null) {
+			CustomerAccount customer = customerAccountMapper.selectByFansId(fansId);
+			json.put("phone", customer==null?null:customer.getPhone());
+			json.put("nickName", fans.getNickName());
+			json.put("headImgUrl", fans.getHeadImgUrl()==null?defualtAvatar:fans.getHeadImgUrl());
+		}else {
+			json.put("phone", null);
+			json.put("nickName", null);
+			json.put("headImgUrl", defualtAvatar);
 		}
 		return json;
 	}

@@ -108,6 +108,10 @@
   	SELECT <include refid="Base_Column_List" /> FROM customer_account
   	WHERE phone = #{phone}
   </select>
+   <select id="selectByFansId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List" /> FROM customer_account
+  	WHERE fans_id = #{fansId}
+  </select>
   
   <select id="selectListByMap" parameterType="java.util.Map" resultType="com.lewe.bean.customer.vo.CustomerFansInfo">
   	SELECT 

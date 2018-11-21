@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.lewe.bean.check.CheckDevice;
 import com.lewe.bean.customer.CustomerAccount;
 import com.lewe.bean.customer.vo.CustomerFansInfo;
 
@@ -32,4 +31,6 @@ public interface CustomerAccountMapper {
 	Integer selectCountByMap(Map<String, Object> map);
 
 	List<CustomerFansInfo> selectListByMap(Map<String, Object> map);
+
+	CustomerAccount selectByFansId(Long fansId);
 }

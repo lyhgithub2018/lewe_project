@@ -4,11 +4,11 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
@@ -17,6 +17,8 @@ import com.lewe.bean.customer.Fans;
 import com.lewe.dao.customer.FansMapper;
 import com.lewe.service.customer.ICustomerService;
 import com.lewe.util.common.ApiResult;
+import com.lewe.util.common.JedisUtil;
+import com.lewe.util.common.MD5;
 import com.lewe.util.common.StringUtils;
 import com.lewe.util.common.weixin.WeiXinUtil;
 import com.lewe.web.controller.common.BaseController;
@@ -72,19 +74,27 @@ public class CustomerController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping("getCodeUrl")
-    public ApiResult getCodeUrl(HttpServletRequest request,String scope,HttpServletResponse response) {
+    public ApiResult getCodeUrl(HttpServletRequest request,String scope,String sessionId,HttpServletResponse response) {
 		JSONObject json = new JSONObject();
 		ApiResult result = new ApiResult();
-		HttpSession session = request.getSession();
-		Object obj = session.getAttribute("weixinFansId");
-		if(obj!=null) {
-			json.put("fansExsitSession", 1);//表示当前微信用户存在session,则无需授权
+		JedisUtil redis = JedisUtil.getInstance();
+    	String key = sessionId;
+    	if(redis.exists(key)) {
+    		json.put("fansExsitSession", 1);//表示当前微信用户存在session,则无需授权
 			json.put("codeUrl", null);
-		}else {
-			String codeUrl = WeiXinUtil.concatUrlForGetCode(scope);
+			String fansId = redis.hget(key, "fansId");
+			if(StringUtils.isNotBlank(fansId)) {
+				Fans fans = fansMapper.selectByPrimaryKey(Long.valueOf(fansId));
+				json.put("weixinFans", fans);
+			}else {
+				json.put("weixinFans", null);
+			}
+    	}else {
+    		String codeUrl = WeiXinUtil.concatUrlForGetCode(scope);
 			json.put("fansExsitSession", 0);//表示当前微信用户不存在session,则需要调起微信公众号网页授权
 			json.put("codeUrl", codeUrl);
-		}
+			json.put("weixinFans", null);
+    	}
 		result.setData(json);
 		return result;
 	}
@@ -100,6 +110,9 @@ public class CustomerController extends BaseController{
 		JSONObject json = WeiXinUtil.getUserInfoAccessToken(code);
 		String openId = json.getString("openid");
 	    String accessToken = json.getString("access_token");
+	    String customerId = "";
+	    String fansId = "";
+	    String sessionId = "";
 	    if(StringUtils.isBlank(openId)){
 	    	 return "授权失败,未获取到openid";
 	    }else {
@@ -137,15 +150,61 @@ public class CustomerController extends BaseController{
 				fansMapper.updateByPrimaryKeySelective(fans);
 			}
 			//存储session信息
-        	HttpSession session = request.getSession();
+        	/*HttpSession session = request.getSession();
 	        //该值存储到session中是为了让系统中都可以获取到用户的fansId
-	        session.setAttribute("weixinFansId", fans.getId());
+	        session.setAttribute("weixinFans", fans);
 	        //设置session有效时间为20小时
-	        session.setMaxInactiveInterval(20*60*60);
+	        session.setMaxInactiveInterval(20*60*60);*/
+	        
+	        //查询该用户是否已注册
+			CustomerAccount customer = customerService.getCustomerAccountByFansId(fans.getId());
+			customerId = customer==null?null:customer.getId().toString();
+			fansId = fans.getId().toString();
+			json.put("fansId", fansId);
+			json.put("customerId", customerId);
+			//自己生成sessionId返回给前端
+            if(StringUtils.isNotBlank(openId)) {
+            	sessionId = MD5.md5(openId+"lewe_fans");
+            	log.info("===============后台服务器生成的sessionId:{}",sessionId);
+            	JedisUtil redis = JedisUtil.getInstance();
+            	String key = sessionId;
+            	redis.hset(sessionId, "fansId", fansId);
+            	redis.hset(sessionId, "customerId", customerId);
+            	//设置缓存有效时间为20小时
+            	redis.setExpire(key, 20*60*60);
+            }
 	    }
 	    //授权成功后重定向到前端页面
+	    //String redirectUrl = "http://192.168.5.76:8092/lewe?fansId="+fansId;
+	    String redirectUrl = "http://192.168.4.198:8080/#/login?fansId="+fansId+"&sessionId="+sessionId;
+	    if(customerId==null) {
+	    	redirectUrl = redirectUrl +"&customerId=null";
+	    }else {
+	    	redirectUrl = redirectUrl +"&customerId="+customerId;
+	    }
 	    //return "redirect:https://aijutong.com/";
-	    return "redirect:https://aijutong.com/";
+	    return "redirect:"+redirectUrl;
+	}
+	
+	/**
+	 * 前端JS通过接口注入权限验证配置,后台返回给前端需要的参数
+	 * @param pageUrl 当前页面的URL
+     * @return 
+     */
+	@RequestMapping("/js/getSignature")
+	@ResponseBody
+    public ApiResult auth(HttpServletRequest request,HttpServletResponse response,@RequestParam("pageUrl") String pageUrl) {
+		ApiResult result = new ApiResult();
+		JSONObject json = null;
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setContentType("text/html;charset=UTF-8");
+		try {
+			json = WeiXinUtil.createSignature(pageUrl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		result.setData(json);
+		return result;
 	}
 	
 	/**
@@ -160,7 +219,7 @@ public class CustomerController extends BaseController{
 		String customerId = request.getParameter("customerId");
 		String sampleCode = request.getParameter("sampleCode");
 		ApiResult result = new ApiResult();
-		customerService.bindSampleCode(customerId,sampleCode,result);
+		result.setData(customerService.bindSampleCode(customerId,sampleCode,result));
 		return result;
 	}
 	/**
@@ -171,9 +230,9 @@ public class CustomerController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping("submitQuestionnaire")
-	public ApiResult submitQuestionnaire(HttpServletRequest request,String questionnaire1,String questionnaire2,HttpServletResponse response) {
+	public ApiResult submitQuestionnaire(HttpServletRequest request,String questionnaire1,String questionnaire2,String sampleCode,HttpServletResponse response) {
 		ApiResult result = new ApiResult();
-		customerService.submitQuestionnaire(questionnaire1,questionnaire2,result);
+		customerService.submitQuestionnaire(questionnaire1,questionnaire2,sampleCode,result);
 		return result;
 	}
 	/**
@@ -200,6 +259,32 @@ public class CustomerController extends BaseController{
 	public ApiResult myReportInfo(HttpServletRequest request,Long reportId,HttpServletResponse response) {
 		ApiResult result = new ApiResult();
 		JSONObject json = customerService.myReportInfo(reportId,result);
+		result.setData(json);
+		return result;
+	}
+	
+	/**
+	 * C端用户--获取问卷信息1(相当于完善信息时的获取)
+	 * @param reportId 报告信息主键id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("getQuestionnaire1Info")
+	public ApiResult getQuestionnaire1Info(HttpServletRequest request,Long reportId,String sampleCode,HttpServletResponse response) {
+		ApiResult result = new ApiResult();
+		JSONObject json = customerService.getQuestionnaire1Info(reportId,sampleCode,result);
+		result.setData(json);
+		return result;
+	}
+	/**
+	 * C端用户--我的页面中 获取微信昵称头像等
+	 * @param fansId
+	 */
+	@ResponseBody
+	@RequestMapping("getFansInfo")
+	public ApiResult getFansInfo(HttpServletRequest request,Long fansId,HttpServletResponse response) {
+		ApiResult result = new ApiResult();
+		JSONObject json = customerService.getFansInfo(fansId,result);
 		result.setData(json);
 		return result;
 	}

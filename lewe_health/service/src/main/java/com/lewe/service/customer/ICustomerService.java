@@ -13,7 +13,7 @@ public interface ICustomerService {
 	 * @param apiResult
 	 * @return
 	 */
-	public int bindSampleCode(String customerId, String sampleCode, Object apiResult);
+	public Boolean bindSampleCode(String customerId, String sampleCode, Object apiResult);
 	/**
 	 * C端客户提交问卷信息
 	 * @param questionnaire1
@@ -21,7 +21,7 @@ public interface ICustomerService {
 	 * @param apiResult
 	 * @return
 	 */
-	public int submitQuestionnaire(String questionnaire1, String questionnaire2, Object apiResult);
+	public int submitQuestionnaire(String questionnaire1, String questionnaire2,String sampleCode, Object apiResult);
 	/**
 	 * 发送短信验证码
 	 * @param phone
@@ -81,5 +81,20 @@ public interface ICustomerService {
 	 * @return
 	 */
 	public JSONObject myReportInfo(Long reportId, Object apiResult);
+	/**
+	 * 通过fansId查询C端客户账号
+	 * @param fansId
+	 * @return
+	 */
+	public CustomerAccount getCustomerAccountByFansId(Long fansId);
+	/**
+	 * C端用户--获取问卷信息1(相当于完善信息时的获取)
+	 * @param reportId
+	 * @param apiResult
+	 * @return
+	 */
+	public JSONObject getQuestionnaire1Info(Long reportId, String sampleCode,Object apiResult);
+	
+	public JSONObject getFansInfo(Long fansId, Object apiResult);
 
 }
