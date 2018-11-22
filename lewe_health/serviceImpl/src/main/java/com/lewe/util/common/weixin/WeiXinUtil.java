@@ -32,9 +32,9 @@ public class WeiXinUtil {
      * scope : snsapi_userinfo 非静默授权,弹出授权页面,可通过openId拿到昵称、性别、所在地等
      * @return 返回前端请求微信服务器返回的code码的URL地址
      */
-	public static String concatUrlForGetCode(String scope){
-    	//String redirectUri = "https://aijutong.com/lewe/customer/authCallback.do";
-    	String redirectUri = "http://2w26a28982.imwork.net/lewe/customer/authCallback.do";
+	public static String concatUrlForGetCode(String scope,int pageType){
+    	String redirectUri = "https://aijutong.com/lewe/customer/authCallback.do?pageType="+pageType;
+    	//String redirectUri = "http://2w26a28982.imwork.net/lewe/customer/authCallback.do?pageType="+pageType;
     	redirectUri = URLEncoder.encode(redirectUri);
     	String apiUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect";
     	//拼接授权验证地址获取code码的URL

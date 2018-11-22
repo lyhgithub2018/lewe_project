@@ -35,6 +35,7 @@ import com.lewe.dao.report.ReportIllnessMapper;
 import com.lewe.dao.report.ReportInfoMapper;
 import com.lewe.dao.report.ReportSymptomMapper;
 import com.lewe.dao.sys.AccountMapper;
+import com.lewe.dao.sys.ShowFieldMapper;
 import com.lewe.service.check.ICheckManageService;
 import com.lewe.service.sys.ISysLogService;
 import com.lewe.serviceImpl.check.bo.AuditInfoBo;
@@ -519,14 +520,11 @@ public class CheckManageServiceImpl implements ICheckManageService{
 			}
 			JSONObject json = getGasCheckResult(checkDataList,isHospital);
 			if(json!=null) {
-				//报告名称
-				//美年端为'全肠道菌群无创吹气检查报告解析',气体为'甲烷氢呼气检查报告解析'
-				String reportName = "全肠道菌群无创吹气检查报告解析";
+				
 				ReportInfo update = new ReportInfo();
 				update.setId(reportInfo.getId());
 				int reportResult = json.getIntValue("reslut");
 				update.setReportResult(reportResult);//报告结果标识 1：轻度 2：中度 3：重度 4：阳性 5：阴性
-				update.setReportName(reportName);
 				//气体数据检测结果描述
 				update.setGasCheckResult("小肠细菌过度生长"+json.getString("reslutDesc"));
 				
@@ -583,6 +581,16 @@ public class CheckManageServiceImpl implements ICheckManageService{
 					json.put("reportNum", "4");//报告张数
 					MeiNianReportUtil.addCheckInfo(param);
 				}
+				//报告名称
+				//美年端为'全肠道菌群无创吹气检查报告解析',其他为'甲烷氢呼气检查报告解析'
+				String reportName = "全肠道菌群无创吹气检查报告解析";
+				if(!hospital.getHospitalName().contains("美年")) {
+					reportName = "甲烷氢呼气检查报告解析";
+				}
+				ReportInfo update = new ReportInfo();
+				update.setId(reportInfo.getId());
+				update.setReportName(reportName);
+				reportInfoMapper.updateByPrimaryKeySelective(update);
 			}
 		}
 		return 1;
@@ -1064,6 +1072,17 @@ public class CheckManageServiceImpl implements ICheckManageService{
 				//json.put("npMark", "阳性");//阴阳性标识
 				json.put("reportNum", "4");//报告张数
 				MeiNianReportUtil.addCheckInfo(json);
+				
+				//报告名称
+				//美年端为'全肠道菌群无创吹气检查报告解析',其他为'甲烷氢呼气检查报告解析'
+				String reportName = "全肠道菌群无创吹气检查报告解析";
+				if(!hospital.getHospitalName().contains("美年")) {
+					reportName = "甲烷氢呼气检查报告解析";
+				}
+				ReportInfo update = new ReportInfo();
+				update.setId(reportInfo.getId());
+				update.setReportName(reportName);
+				reportInfoMapper.updateByPrimaryKeySelective(update);
 			}
 		}
 		return 1;
@@ -1082,7 +1101,7 @@ public class CheckManageServiceImpl implements ICheckManageService{
 			json.put("id", reportInfo.getId());
 			json.put("reportName", reportInfo.getReportName());//报告名称
 			json.put("sysReportCode", reportInfo.getSysReportCode());//系统报告编号
-			json.put("auditAccountId", reportInfo.getAuditAccountId());//审核员
+			json.put("auditAccountId", reportInfo.getAuditAccountId());//审核员id
 			Account auditer = accountMapper.selectByPrimaryKey(reportInfo.getAuditAccountId());
 			json.put("auditerName", auditer==null?null:auditer.getName());//审核员
 			json.put("auditStatus", reportInfo.getAuditStatus());//审核状态
@@ -1230,5 +1249,27 @@ public class CheckManageServiceImpl implements ICheckManageService{
 		}
 		resultJson.put("resultList", resultList);
 		return resultJson;
+	}
+
+	@Autowired
+	private ShowFieldMapper showFieldMapper;
+	public JSONObject getShowFieldList(Long reportId, Account loginAccount, Object result) {
+		if(loginAccount!=null) {//说明是B端账号调用
+			Account account = accountMapper.selectByPrimaryKey(loginAccount.getId());
+			if(account!=null) {
+				String showFieldIds = account.getShowFieldIds();
+				if(StringUtils.isNotBlank(showFieldIds)) {
+					String[] arr = showFieldIds.split("\\,");
+					for (String id : arr) {
+						showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
+					}
+				}
+			}
+		}else {
+			if(reportId!=null) {//说明是C端报告详情中用
+				
+			}
+		}
+		return null;
 	}
 }

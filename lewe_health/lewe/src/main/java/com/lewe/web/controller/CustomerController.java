@@ -74,7 +74,7 @@ public class CustomerController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping("getCodeUrl")
-    public ApiResult getCodeUrl(HttpServletRequest request,String scope,String sessionId,HttpServletResponse response) {
+    public ApiResult getCodeUrl(HttpServletRequest request,String scope,String sessionId,int pageType,HttpServletResponse response) {
 		JSONObject json = new JSONObject();
 		ApiResult result = new ApiResult();
 		JedisUtil redis = JedisUtil.getInstance();
@@ -90,7 +90,7 @@ public class CustomerController extends BaseController{
 				json.put("weixinFans", null);
 			}
     	}else {
-    		String codeUrl = WeiXinUtil.concatUrlForGetCode(scope);
+    		String codeUrl = WeiXinUtil.concatUrlForGetCode(scope,pageType);
 			json.put("fansExsitSession", 0);//表示当前微信用户不存在session,则需要调起微信公众号网页授权
 			json.put("codeUrl", codeUrl);
 			json.put("weixinFans", null);
@@ -104,9 +104,10 @@ public class CustomerController extends BaseController{
 	 * 第二步:微信回调我们这个接口,我们进一步调微信接口获取到用户的信息
 	 * 注:该接口是给微信回调用的
 	 * @param code 用于换取access_token
+	 * @param pageType 授权成功后重定向的页面地址 1：登录注册页 2:我的页面
 	 */
 	@RequestMapping("/authCallback")
-    public String authCallback(HttpServletRequest request,String code,HttpServletResponse response) {
+    public String authCallback(HttpServletRequest request,String code,int pageType,HttpServletResponse response) {
 		JSONObject json = WeiXinUtil.getUserInfoAccessToken(code);
 		String openId = json.getString("openid");
 	    String accessToken = json.getString("access_token");
@@ -175,14 +176,19 @@ public class CustomerController extends BaseController{
             }
 	    }
 	    //授权成功后重定向到前端页面
-	    //String redirectUrl = "http://192.168.5.76:8092/lewe?fansId="+fansId;
-	    String redirectUrl = "http://192.168.4.198:8080/#/login?fansId="+fansId+"&sessionId="+sessionId;
-	    if(customerId==null) {
+	    String redirectUrl = "";
+	    if(pageType==1) {//登录注册页
+	    	redirectUrl = "https://aijutong.com/h5/#/login?fansId="+fansId+"&sessionId="+sessionId;
+		    //String redirectUrl = "http://192.168.4.198:8080/#/login?fansId="+fansId+"&sessionId="+sessionId;
+	    }else if(pageType==2) {//我的页面
+	    	redirectUrl = "https://aijutong.com/h5/#/mine?fansId="+fansId+"&sessionId="+sessionId;
+		    //String redirectUrl = "http://192.168.4.198:8080/#/mine?fansId="+fansId+"&sessionId="+sessionId;
+	    }
+	    if(StringUtils.isBlank(customerId)) {
 	    	redirectUrl = redirectUrl +"&customerId=null";
 	    }else {
 	    	redirectUrl = redirectUrl +"&customerId="+customerId;
 	    }
-	    //return "redirect:https://aijutong.com/";
 	    return "redirect:"+redirectUrl;
 	}
 	
@@ -282,10 +288,11 @@ public class CustomerController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping("getFansInfo")
-	public ApiResult getFansInfo(HttpServletRequest request,Long fansId,HttpServletResponse response) {
+	public ApiResult getFansInfo(HttpServletRequest request,Long fansId,Long customerId,HttpServletResponse response) {
 		ApiResult result = new ApiResult();
-		JSONObject json = customerService.getFansInfo(fansId,result);
+		JSONObject json = customerService.getFansInfo(fansId,customerId,result);
 		result.setData(json);
 		return result;
 	}
+	
 }

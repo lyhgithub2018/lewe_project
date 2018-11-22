@@ -706,6 +706,10 @@
                  #{reportInfoId}
              </foreach>
         </if>
+       	<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
+        <if test="submitQuestionnaireNotQuery0 != null">
+    		and submit_questionnaire !=0
+    	</if>
     </where>
   </select>
  <!--  客户管理-客户信息列表查询 -->
@@ -740,6 +744,10 @@
                  #{reportInfoId}
              </foreach>
         </if>
+        <!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
+        <if test="submitQuestionnaireNotQuery0 != null">
+    		and submit_questionnaire !=0
+    	</if>
     </where>
     ORDER BY id DESC
     <if test="startIndex !=null and pageSize !=null">
@@ -779,6 +787,10 @@
     	<if test="keyword != null and keyword !=''">
 	        and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
 	    </if>
+	    <!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
+        <if test="submitQuestionnaireNotQuery0 != null">
+    		and submit_questionnaire !=0
+    	</if>
     </where>
   </select>
   <!-- 检测管理-检测样品列表查询-->
@@ -813,6 +825,10 @@
     	<if test="keyword != null and keyword !=''">
 	        and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
 	    </if>
+	    <!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
+        <if test="submitQuestionnaireNotQuery0 != null">
+    		and submit_questionnaire !=0
+    	</if>
     </where>
     ORDER BY id DESC
     <if test="startIndex !=null and pageSize !=null">

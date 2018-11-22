@@ -144,4 +144,11 @@ public interface ICheckManageService {
 	 * @return 0:否  1:是
 	 */
 	public JSONObject checkSubstrateIsUsed(Integer itemId, Account account, Object result);
+
+	/**
+	 * 获取检测页面或审核页面或报告页面中需要展示的字段
+	 * @param reportId 报告信息主键id(C端报告详情中传该参数)
+	 * @return
+	 */
+	public JSONObject getShowFieldList(Long reportId, Account loginAccount, Object result);
 }

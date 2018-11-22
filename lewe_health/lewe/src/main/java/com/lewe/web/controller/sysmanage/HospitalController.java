@@ -318,112 +318,9 @@ public class HospitalController extends BaseController{
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isDel", 0);//仅查询没删除的数据
 		ApiResult result = new ApiResult();
-		Account loginAccount = getSessionAccount(request,result);
 		List<JSONObject> list = new ArrayList<JSONObject>();
-		if(loginAccount!=null) {
-			if("1".equals(type)) {//渠道下拉列表
-				List<Channel> channelList = channelMapper.selectByMap(map);
-				for (Channel channel : channelList) {
-					JSONObject json = new JSONObject();
-					json.put("id", channel.getId());
-					json.put("name", channel.getName());
-					list.add(json);
-				}
-			}else if("2".equals(type)) {//门店机构下拉列表
-				List<Hospital> hospitalList = hospitalMapper.selectListByMap(map);
-				for (Hospital hospital : hospitalList) {
-					JSONObject json = new JSONObject();
-					json.put("id", hospital.getId());
-					json.put("name", hospital.getHospitalName());
-					list.add(json);
-				}
-			}else if("3".equals(type)) {//科室下拉列表
-				if(loginAccount!=null && loginAccount.getAccountType()!=AccountType.SUPERADMIN.getValue()) {
-					map.put("hospitalId", loginAccount.getHospitalId());
-				}
-				List<HospitalRoom> roomList = hospitalRoomMapper.selectListByMap(map);
-				for (HospitalRoom hospitalRoom : roomList) {
-					JSONObject json = new JSONObject();
-					json.put("id", hospitalRoom.getId());
-					json.put("name", hospitalRoom.getRoomName());
-					list.add(json);
-				}
-			}else if("4".equals(type)) {//医生下拉列表
-				if(loginAccount!=null && loginAccount.getAccountType()!=AccountType.SUPERADMIN.getValue()) {
-					map.put("hospitalId", loginAccount.getHospitalId());
-				}
-				List<HospitalDoctor> doctorList = hospitalDoctorMapper.selectListByMap(map);
-				for (HospitalDoctor hospitalDoctor : doctorList) {
-					JSONObject json = new JSONObject();
-					json.put("id", hospitalDoctor.getId());
-					json.put("name", hospitalDoctor.getDoctorName());
-					list.add(json);
-				}
-			}else if("5".equals(type)) {//检测项目下拉列表
-				List<CheckItem> checkItemList = checkItemMapper.selectListByMap(map);
-				for (CheckItem checkItem : checkItemList) {
-					JSONObject json = new JSONObject();
-					json.put("id", checkItem.getId());
-					json.put("name", checkItem.getName());
-					list.add(json);
-				}
-			}else if("6".equals(type)) {//底物下拉列表
-				List<Substrate> substrateList = substrateMapper.selectList();
-				for (Substrate substrate : substrateList) {
-					JSONObject json = new JSONObject();
-					json.put("id", substrate.getId());
-					json.put("name", substrate.getName());
-					list.add(json);
-				}
-			}else if("7".equals(type)){//疾病下拉列表
-				List<Illness> illnessList = illnessMapper.selectListByMap(map);
-				for (Illness illness : illnessList) {
-					JSONObject json = new JSONObject();
-					json.put("id", illness.getId());
-					json.put("name", illness.getName());
-					list.add(json);
-				}
-			}else if("9".equals(type)){//门店组下拉列表
-				List<HospitalGroup> hospitalGroups = hospitalGroupMapper.selectListByMap(map);
-				for (HospitalGroup group : hospitalGroups) {
-					JSONObject json = new JSONObject();
-					json.put("id", group.getId());
-					json.put("name", group.getName());
-					list.add(json);
-				}
-			}else if("10".equals(type)){//角色下拉列表
-				List<Role> RoleList = roleMapper.selectListByMap(map);
-				for (Role role : RoleList) {
-					JSONObject json = new JSONObject();
-					json.put("id", role.getId());
-					json.put("name", role.getName());
-					list.add(json);
-				}
-			}else if("11".equals(type)){//设备下拉列表
-				List<CheckDevice> deviceList = checkDeviceMapper.selectListByMap(map);
-				for (CheckDevice checkDevice : deviceList) {
-					JSONObject json = new JSONObject();
-					json.put("id", checkDevice.getId());
-					json.put("name", checkDevice.getName());
-					list.add(json);
-				}
-			}
-			else if("12".equals(type)){//检测员下拉列表
-				if(loginAccount!=null && loginAccount.getAccountType()!=AccountType.SUPERADMIN.getValue()) {
-					map.put("hospitalId", loginAccount.getHospitalId());
-				}
-				List<Account> accountList = accountMapper.selectListByMap(map);
-				for (Account account : accountList) {
-					JSONObject json = new JSONObject();
-					json.put("id", account.getId());
-					json.put("name", account.getName());
-					list.add(json);
-				}
-			}
-			result.setData(list);
-		}
-		//症状列表(C端 问卷信息2页面使用,无需判断登录状态)
 		if("8".equals(type)) {
+			//症状列表(C端 问卷信息2页面使用,无需判断登录状态)
 			List<Symptom> symptomList = symptomMapper.selectListByMap(map);
 			for (Symptom symptom : symptomList) {
 				JSONObject json = new JSONObject();
@@ -431,7 +328,115 @@ public class HospitalController extends BaseController{
 				json.put("name", symptom.getName());
 				list.add(json);
 			}
+		}else {
+			Account loginAccount = getSessionAccount(request,result);
+			if(loginAccount!=null) {
+				if("1".equals(type)) {//渠道下拉列表
+					List<Channel> channelList = channelMapper.selectByMap(map);
+					for (Channel channel : channelList) {
+						JSONObject json = new JSONObject();
+						json.put("id", channel.getId());
+						json.put("name", channel.getName());
+						list.add(json);
+					}
+				}else if("2".equals(type)) {//门店机构下拉列表
+					List<Hospital> hospitalList = hospitalMapper.selectListByMap(map);
+					for (Hospital hospital : hospitalList) {
+						JSONObject json = new JSONObject();
+						json.put("id", hospital.getId());
+						json.put("name", hospital.getHospitalName());
+						list.add(json);
+					}
+				}else if("3".equals(type)) {//科室下拉列表
+					if(loginAccount!=null && loginAccount.getAccountType()!=AccountType.SUPERADMIN.getValue()) {
+						map.put("hospitalId", loginAccount.getHospitalId());
+					}
+					List<HospitalRoom> roomList = hospitalRoomMapper.selectListByMap(map);
+					for (HospitalRoom hospitalRoom : roomList) {
+						JSONObject json = new JSONObject();
+						json.put("id", hospitalRoom.getId());
+						json.put("name", hospitalRoom.getRoomName());
+						list.add(json);
+					}
+				}else if("4".equals(type)) {//医生下拉列表
+					if(loginAccount!=null && loginAccount.getAccountType()!=AccountType.SUPERADMIN.getValue()) {
+						map.put("hospitalId", loginAccount.getHospitalId());
+					}
+					List<HospitalDoctor> doctorList = hospitalDoctorMapper.selectListByMap(map);
+					for (HospitalDoctor hospitalDoctor : doctorList) {
+						JSONObject json = new JSONObject();
+						json.put("id", hospitalDoctor.getId());
+						json.put("name", hospitalDoctor.getDoctorName());
+						list.add(json);
+					}
+				}else if("5".equals(type)) {//检测项目下拉列表
+					List<CheckItem> checkItemList = checkItemMapper.selectListByMap(map);
+					for (CheckItem checkItem : checkItemList) {
+						JSONObject json = new JSONObject();
+						json.put("id", checkItem.getId());
+						json.put("name", checkItem.getName());
+						list.add(json);
+					}
+				}else if("6".equals(type)) {//底物下拉列表
+					List<Substrate> substrateList = substrateMapper.selectList();
+					for (Substrate substrate : substrateList) {
+						JSONObject json = new JSONObject();
+						json.put("id", substrate.getId());
+						json.put("name", substrate.getName());
+						list.add(json);
+					}
+				}else if("7".equals(type)){//疾病下拉列表
+					List<Illness> illnessList = illnessMapper.selectListByMap(map);
+					for (Illness illness : illnessList) {
+						JSONObject json = new JSONObject();
+						json.put("id", illness.getId());
+						json.put("name", illness.getName());
+						list.add(json);
+					}
+				}else if("9".equals(type)){//门店组下拉列表
+					List<HospitalGroup> hospitalGroups = hospitalGroupMapper.selectListByMap(map);
+					for (HospitalGroup group : hospitalGroups) {
+						JSONObject json = new JSONObject();
+						json.put("id", group.getId());
+						json.put("name", group.getName());
+						list.add(json);
+					}
+				}else if("10".equals(type)){//角色下拉列表
+					List<Role> RoleList = roleMapper.selectListByMap(map);
+					for (Role role : RoleList) {
+						JSONObject json = new JSONObject();
+						json.put("id", role.getId());
+						json.put("name", role.getName());
+						list.add(json);
+					}
+				}else if("11".equals(type)){//设备下拉列表
+					List<CheckDevice> deviceList = checkDeviceMapper.selectListByMap(map);
+					for (CheckDevice checkDevice : deviceList) {
+						JSONObject json = new JSONObject();
+						json.put("id", checkDevice.getId());
+						json.put("name", checkDevice.getName());
+						list.add(json);
+					}
+				}
+				else if("12".equals(type)){//检测员下拉列表
+					if(loginAccount!=null && loginAccount.getAccountType()!=AccountType.SUPERADMIN.getValue()) {
+						map.put("hospitalId", loginAccount.getHospitalId());
+					}
+					List<Account> accountList = accountMapper.selectListByMap(map);
+					for (Account account : accountList) {
+						JSONObject json = new JSONObject();
+						json.put("id", account.getId());
+						if(account.getStatus()==2) {
+							json.put("name", account.getName()+"(账号被冻结)");
+						}else {
+							json.put("name", account.getName());
+						}
+						list.add(json);
+					}
+				}
+			}
 		}
+		result.setData(list);
 		return result;
 	}
 }

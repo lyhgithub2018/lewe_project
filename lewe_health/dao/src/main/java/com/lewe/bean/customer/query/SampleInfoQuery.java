@@ -19,6 +19,10 @@ public class SampleInfoQuery {
 	private Integer pageSize;
 	private Integer startIndex;
 	private Integer hospitalGroupId;//门店组id
+	/**
+	 * 该参数的作用是不查询submitQuestionnaire字段值为0的数据
+	 */
+	private String submitQuestionnaireNotQuery0 = "yes";
 	public String getKeyword() {
 		return keyword;
 	}
@@ -90,6 +94,12 @@ public class SampleInfoQuery {
 	}
 	public void setAuditStatus(Byte auditStatus) {
 		this.auditStatus = auditStatus;
+	}
+	public String getSubmitQuestionnaireNotQuery0() {
+		return submitQuestionnaireNotQuery0;
+	}
+	public void setSubmitQuestionnaireNotQuery0(String submitQuestionnaireNotQuery0) {
+		this.submitQuestionnaireNotQuery0 = submitQuestionnaireNotQuery0;
 	}
 	
 }

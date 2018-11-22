@@ -77,16 +77,15 @@ public class AccountServiceImpl implements IAccountService{
 			result.setMessage("登录失败,密码错误！");
 			return null;
 		}
+		if(sysAccount.getStatus()==2) {
+			result.setCode(BizCode.LOGIN_FAIL);
+			result.setMessage("您的账号已被冻结,暂无法使用！");
+			return null;
+		}
 		result.setCode(BizCode.LOGIN_SUCCESS);
 		sysAccount.setPassword(null);
 		result.setData(sysAccount);
 		result.setMessage(BizCode.getCodeMsg(BizCode.LOGIN_SUCCESS));
-		/*JedisUtil redis = JedisUtil.getInstance();
-		//将账号密码存储到缓存中(后台账号列表显示原始密码时用到)
-		String key = "lewe_account:"+sysAccount.getId();
-		String md5Password = MD5.md5WithKey(password, PropertiesUtil.getApiPropertyByKey("password.md5.key"));
-		redis.hset(key, "password", password);
-		redis.hset(key, "md5Password", md5Password);*/
 		return sysAccount;
 	}
 	public JSONObject getAccountAndHospitalInfo(Account account, Object apiResult) {

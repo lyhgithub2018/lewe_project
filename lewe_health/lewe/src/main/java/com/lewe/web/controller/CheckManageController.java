@@ -242,4 +242,19 @@ public class CheckManageController extends BaseController{
 		}
 		return result;
 	}
+	
+	/**
+	 * 获取检测页面或审核页面或报告页面中需要展示的字段
+	 * @param reportId 报告信息主键id(C端报告详情中传该参数)
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("getShowFieldList")
+	public ApiResult getShowFieldList(HttpServletRequest request,Long reportId,HttpServletResponse response) {
+		ApiResult result = new ApiResult();
+		Account loginAccount = getSessionAccount(request,result);
+		JSONObject json = checkManageService.getShowFieldList(reportId,loginAccount,result);
+		result.setData(json);
+		return result;
+	}
 }

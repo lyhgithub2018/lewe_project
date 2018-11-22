@@ -26,6 +26,10 @@ public class CustomerInfoQuery {
 	/**
 	 * 通过疾病或疾病程度查询到报告id,最终是为了查询报告列表(客户信息列表)
 	 */
+	/**
+	 * 该参数的作用是不查询submitQuestionnaire字段值为0的数据
+	 */
+	private String submitQuestionnaireNotQuery0 = "yes";
 	private List<Long> reportInfoIdList;
 	
 	public String getKeyword() {
@@ -111,6 +115,12 @@ public class CustomerInfoQuery {
 	}
 	public void setReportInfoIdList(List<Long> reportInfoIdList) {
 		this.reportInfoIdList = reportInfoIdList;
+	}
+	public String getSubmitQuestionnaireNotQuery0() {
+		return submitQuestionnaireNotQuery0;
+	}
+	public void setSubmitQuestionnaireNotQuery0(String submitQuestionnaireNotQuery0) {
+		this.submitQuestionnaireNotQuery0 = submitQuestionnaireNotQuery0;
 	}
 	
 }

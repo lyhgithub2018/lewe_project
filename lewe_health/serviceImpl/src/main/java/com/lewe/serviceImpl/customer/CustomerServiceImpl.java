@@ -79,10 +79,18 @@ public class CustomerServiceImpl implements ICustomerService{
 		}
 		//查询该编号是否已经绑定过
 		ReportInfo report = reportInfoMapper.selectBySampleCode(sampleCode);
-		if(report!=null && report.getReportStatus()==1) {
-			if(report.getSubmitQuestionnaire()<2) {
+		if(report!=null) {
+			if(report.getReportStatus()==1 && report.getSubmitQuestionnaire()<2) {
 				result.setMessage("请完善问卷信息！");
 				return true;
+			}else if(report.getReportStatus()<ReportStatus.RESULT_CREATE.getValue() && report.getSubmitQuestionnaire()==2){
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("该编号已绑定,报告正在检测中！");
+				return false;
+			}else if(report.getReportStatus()==ReportStatus.RESULT_CREATE.getValue()){
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("该编号已绑定,报告已生成！请到我的报告中查看");
+				return false;
 			}
 		}else {
 			ReportInfo reportInfo = new ReportInfo();
@@ -238,6 +246,11 @@ public class CustomerServiceImpl implements ICustomerService{
 	@Transactional
 	public CustomerAccount registOrLogin(String phone, String smsCode,Long fansId, Object apiResult) {
 		ApiResult result = (ApiResult)apiResult;
+		/*if(fansId==null) {
+			result.setCode(BizCode.PARAM_EMPTY);
+			result.setMessage("缺少参数");
+			return null;
+		}*/
 		if(StringUtils.isBlank(phone)) {
 			result.setCode(BizCode.PARAM_EMPTY);
 			result.setMessage("请输入手机号");
@@ -283,6 +296,14 @@ public class CustomerServiceImpl implements ICustomerService{
 			account.setFansId(fansId);
 			account.setStatus((byte)1);
 			customerAccountMapper.insertSelective(account);
+			result.setMessage("注册成功！");
+		}else {
+			if(account.getStatus()==2) {
+				result.setCode(BizCode.LOGIN_FAIL);
+				result.setMessage("您的账号已被冻结,暂无法使用！");
+				return null;
+			}
+			result.setMessage("登录成功！");
 		}
 		return account;
 	}
@@ -404,19 +425,19 @@ public class CustomerServiceImpl implements ICustomerService{
 			report.put("sampleAge", reportInfo.getSampleAge()+"岁");//采样者年龄
 			report.put("samplePhone", reportInfo.getSamplePhone());//采样者手机号
 			report.put("submitTime", reportInfo.getSubmitTime()==null?null:DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd HH:mm:ss"));//采样提交时间
-			if(reportInfo.getSubmitQuestionnaire()<2) {
+			if(reportInfo.getReportStatus()<ReportStatus.HOSPITAL_SCAN.getValue()&&reportInfo.getSubmitQuestionnaire()<2) {
 				report.put("status", 0);
 				report.put("statusDesc", "采样操作");
-			}
-			if(reportInfo.getCheckStatus()==0||reportInfo.getReportStatus()<ReportStatus.RESULT_CREATE.getValue()) {
+			}else if(reportInfo.getReportStatus()<ReportStatus.RESULT_CREATE.getValue()&&reportInfo.getCheckStatus()==0) {
 				report.put("status", 1);
 				report.put("statusDesc", "检测中");
-			}
-			if(reportInfo.getReportStatus()==ReportStatus.RESULT_CREATE.getValue()) {
+			}else if(reportInfo.getReportStatus()==ReportStatus.RESULT_CREATE.getValue()) {
 				report.put("status", 2);
 				report.put("statusDesc", "查看报告");
 			}
-			myReportList.add(report);
+			if(reportInfo.getSubmitQuestionnaire()!=0) {
+				myReportList.add(report);
+			}
 		}
 		json.put("myReportList", myReportList);
 		return json;
@@ -500,7 +521,7 @@ public class CustomerServiceImpl implements ICustomerService{
 			json.put("gastroscopeEnteroscopyCheck", reportInfo.getGastroscopeEnteroscopyCheck());//胃镜/肠镜检测 0:未检测 1:胃镜 2:肠镜
 			json.put("geCheckResult", reportInfo.getGeCheckResult());//胃镜/肠镜检测结果
 			json.put("foodMedicineAllergy", reportInfo.getFoodMedicineAllergy());//食物/药物过敏 0:否 1:是
-			json.put("allergyFood", reportInfo.getAllergyFood());//过敏物品名称
+			json.put("allergyFood", reportInfo.getAllergyFood());// 	
 			//服用底物和剂量
 			Substrate substrate = substrateMapper.selectByPrimaryKey(reportInfo.getCheckSubstrateId());
 			json.put("substrateName", substrate==null?null:substrate.getName());//底物名
@@ -535,10 +556,9 @@ public class CustomerServiceImpl implements ICustomerService{
 		}
 		return null;
 	}
-	@SuppressWarnings("unused")
 	public JSONObject getQuestionnaire1Info(Long reportId, String sampleCode,Object apiResult) {
 		ApiResult result = (ApiResult)apiResult;
-		if(reportId==null||StringUtils.isBlank(sampleCode)) {
+		if(reportId==null && StringUtils.isBlank(sampleCode)) {
 			result.setCode(BizCode.PARAM_EMPTY);
 			result.setMessage("缺少参数");
 			return null;
@@ -564,21 +584,47 @@ public class CustomerServiceImpl implements ICustomerService{
 	}
 	@Autowired
 	private FansMapper fansMapper;
-	public JSONObject getFansInfo(Long fansId, Object apiResult) {
+	public JSONObject getFansInfo(Long fansId,Long customerId, Object apiResult) {
 		ApiResult result = (ApiResult)apiResult;
 		if(fansId==null) {
 			result.setCode(BizCode.PARAM_EMPTY);
 			result.setMessage("参数fansId为空");
 			return null;
 		}
-		JSONObject json = new JSONObject();
+		JedisUtil redis = JedisUtil.getInstance();
+		String key = "lewe_myFansInfo:"+fansId;
+		JSONObject json = null;
+		String str = redis.get(key);
+		if(StringUtils.isNotBlank(str)) {
+			json = JSONObject.parseObject(str);
+		}
+		if(json!=null) {
+			return json;
+		}else {
+			json = new JSONObject();
+		}
 		Fans fans = fansMapper.selectByPrimaryKey(fansId);
 		String defualtAvatar = "https://aijutong.com/upload/image/default-avatar.png";
 		if(fans!=null) {
 			CustomerAccount customer = customerAccountMapper.selectByFansId(fansId);
-			json.put("phone", customer==null?null:customer.getPhone());
+			CustomerAccount customerAccount = customerAccountMapper.selectByPrimaryKey(customerId);
+			String phone = customer==null?null:customer.getPhone();
+			if(StringUtils.isBlank(phone) && customerAccount!=null) {
+				phone = customerAccount.getPhone();
+			}
+			json.put("phone", phone);
 			json.put("nickName", fans.getNickName());
 			json.put("headImgUrl", fans.getHeadImgUrl()==null?defualtAvatar:fans.getHeadImgUrl());
+			redis.set(key, json.toJSONString());
+			redis.setExpire(key, 3*24*3600);//缓存3天
+			
+			//此逻辑是为了处理用户先拒绝公众号授权之后 从C端'我的'页面重新授权后,将fansId与其账号进行关联。
+			if(customer==null && customerAccount!=null) {
+				CustomerAccount update = new CustomerAccount();
+				update.setId(customerAccount.getId());
+				update.setFansId(fansId);
+				customerAccountMapper.updateByPrimaryKey(update);
+			}
 		}else {
 			json.put("phone", null);
 			json.put("nickName", null);

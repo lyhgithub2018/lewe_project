@@ -95,6 +95,6 @@ public interface ICustomerService {
 	 */
 	public JSONObject getQuestionnaire1Info(Long reportId, String sampleCode,Object apiResult);
 	
-	public JSONObject getFansInfo(Long fansId, Object apiResult);
+	public JSONObject getFansInfo(Long fansId,Long customerId, Object apiResult);
 
 }
