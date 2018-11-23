@@ -185,11 +185,6 @@ public class CustomerManageServiceImpl implements ICustomerManageService{
 				result.setMessage("请填写采样者年龄");
 				return 0;
 			}
-			if(StringUtils.isBlank(customerInfoBo.getSampleHeight())) {
-				result.setCode(BizCode.PARAM_EMPTY);
-				result.setMessage("请填写采样者身高");
-				return 0;
-			}
 			//用采样者手机号生成C端客户账号
 			CustomerAccount customerAccount = customerAccountMapper.selectByPhone(customerInfoBo.getSamplePhone());
 			if(customerAccount==null) {
@@ -218,6 +213,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService{
 				reportInfo.setCustomerId(customerAccount.getId());
 				reportInfo.setCustomerPhone(customerInfoBo.getSamplePhone());
 				reportInfo.setId(null);
+				reportInfo.setSubmitQuestionnaire((byte)2);
 				reportInfoMapper.insertSelective(reportInfo);
 				//保存采样症状数据
 				List<ReportSymptom> reportSymptomList = customerInfoBo.getReportSymptomList();

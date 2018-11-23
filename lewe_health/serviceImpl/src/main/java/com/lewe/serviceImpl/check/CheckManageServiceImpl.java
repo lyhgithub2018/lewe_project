@@ -542,6 +542,8 @@ public class CheckManageServiceImpl implements ICheckManageService{
 						reportResultDescription = "儿童中度：肠道菌群长年严重失衡容易形成消化系统溃疡，损害心脏、肾脏等，影响孩子生长发育。";
 					}else if(reportResult==3) {
 						reportResultDescription = "儿童重度：肠道菌群长年严重失衡容易形成消化系统溃疡、肠道息肉等，损害心脏、肾脏等，影响孩子生长发育。";
+					}else if(reportResult==4) {//如果结果为阳性,则文案取'轻度'的文案
+						reportResultDescription = "儿童轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，使肠粘膜通透性增加，有害物质进入血液循环，对身体造成伤害。";
 					}
 				}else {//大于18岁时的文案(成人版)
 					if(reportResult==5) {
@@ -552,6 +554,8 @@ public class CheckManageServiceImpl implements ICheckManageService{
 						reportResultDescription = "成人中度：肠道菌群长年严重失衡容易形成消化系统溃疡，损害心脏、肾脏等，引发皮肤暗黄，口臭，便秘等";
 					}else if(reportResult==3) {
 						reportResultDescription = "成人中度：肠道菌群长年严重失衡容易形成消化系统溃疡，损害心脏、肾脏等，引发皮肤暗黄，口臭，便秘等";
+					}else if(reportResult==4) {//如果结果为阳性,则文案取'轻度'的文案
+						reportResultDescription = "成人轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，使肠粘膜通透性增加，有害物质进入血液循环，对身体造成伤害。";
 					}
 				}
 				update.setReportResultDescription(reportResultDescription);
