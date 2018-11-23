@@ -24,6 +24,7 @@ import com.lewe.bean.report.ReportIllness;
 import com.lewe.bean.report.ReportInfo;
 import com.lewe.bean.report.ReportSymptom;
 import com.lewe.bean.sys.Account;
+import com.lewe.bean.sys.ShowField;
 import com.lewe.dao.check.CheckDeviceMapper;
 import com.lewe.dao.check.CheckItemMapper;
 import com.lewe.dao.check.CheckItemSubstrateMapper;
@@ -51,6 +52,7 @@ import com.lewe.util.common.aliyun.SMSUtil;
 import com.lewe.util.common.constants.AccountType;
 import com.lewe.util.common.constants.ReportStatus;
 import com.lewe.util.common.mei.nian.MeiNianReportUtil;
+
 
 @Service("checkManageService")
 public class CheckManageServiceImpl implements ICheckManageService{
@@ -1254,6 +1256,7 @@ public class CheckManageServiceImpl implements ICheckManageService{
 	@Autowired
 	private ShowFieldMapper showFieldMapper;
 	public JSONObject getShowFieldList(Long reportId, Account loginAccount, Object result) {
+		List<JSONObject> list = new ArrayList<JSONObject>();
 		if(loginAccount!=null) {//说明是B端账号调用
 			Account account = accountMapper.selectByPrimaryKey(loginAccount.getId());
 			if(account!=null) {
@@ -1261,15 +1264,62 @@ public class CheckManageServiceImpl implements ICheckManageService{
 				if(StringUtils.isNotBlank(showFieldIds)) {
 					String[] arr = showFieldIds.split("\\,");
 					for (String id : arr) {
-						showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
+						ShowField showField = showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
+						if(showField!=null) {
+							JSONObject json = new JSONObject();
+							json.put("id", showField.getId());
+							json.put("name", showField.getName());
+							list.add(json);
+						}
 					}
 				}
 			}
 		}else {
 			if(reportId!=null) {//说明是C端报告详情中用
-				
+				ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportId);
+				if(reportInfo!=null) {
+					//先看有没有审核员,有则查询审核员账号下能看到的字段
+					if(reportInfo.getAuditAccountId()!=null) {
+						Account auditer = accountMapper.selectByPrimaryKey(reportInfo.getAuditAccountId());
+						if(auditer!=null) {
+							String showFieldIds = auditer.getShowFieldIds();
+							if(StringUtils.isNotBlank(showFieldIds)) {
+								String[] arr = showFieldIds.split("\\,");
+								for (String id : arr) {
+									ShowField showField = showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
+									if(showField!=null) {
+										JSONObject json = new JSONObject();
+										json.put("id", showField.getId());
+										json.put("name", showField.getName());
+										list.add(json);
+									}
+								}
+							}
+						}
+					//若没有审核员,则查询检测员账号下能看到的字段
+					}else {
+						Account checker = accountMapper.selectByPrimaryKey(reportInfo.getCheckAccountId());
+						if(checker!=null) {
+							String showFieldIds = checker.getShowFieldIds();
+							if(StringUtils.isNotBlank(showFieldIds)) {
+								String[] arr = showFieldIds.split("\\,");
+								for (String id : arr) {
+									ShowField showField = showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
+									if(showField!=null) {
+										JSONObject json = new JSONObject();
+										json.put("id", showField.getId());
+										json.put("name", showField.getName());
+										list.add(json);
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
-		return null;
+		JSONObject json = new JSONObject();
+		json.put("showFieldList", list);
+		return json;
 	}
 }

@@ -98,12 +98,27 @@ public class CustomerServiceImpl implements ICustomerService{
 			reportInfo.setSampleCode(sampleCode);
 			//报告状态 1：用户绑定 2：门店扫码 3：邮寄单号 4：乐为扫码 5：结果生成
 			reportInfo.setReportStatus(ReportStatus.USER_BIND.getValue());
-			//通过采样者编号提取出门店编号,从数据库查询门店id和渠道id
-			String hospitalCode =sampleCode.substring(0, 4);
+			//通过采样者编号(检测编号)提取出门店编号,从数据库查询门店id和渠道id
+			String hospitalCode =sampleCode.substring(0, 2);
 			Hospital hospital = hospitalMapper.selectByHospitalCode(hospitalCode);
 			if(hospital!=null) {
 				reportInfo.setHospitalId(hospital.getId());
 				reportInfo.setChannelId(hospital.getChannelId());
+			}else {
+				//由于门店编号长度可能不固定,所以总共尝试3次,分别截取前两位,三位,四位编号,直到正确找到门店编号
+				hospitalCode =sampleCode.substring(0, 3);
+				hospital = hospitalMapper.selectByHospitalCode(hospitalCode);
+				if(hospital!=null) {
+					reportInfo.setHospitalId(hospital.getId());
+					reportInfo.setChannelId(hospital.getChannelId());
+				}else {
+					hospitalCode =sampleCode.substring(0, 4);
+					hospital = hospitalMapper.selectByHospitalCode(hospitalCode);
+					if(hospital!=null) {
+						reportInfo.setHospitalId(hospital.getId());
+						reportInfo.setChannelId(hospital.getChannelId());
+					}
+				}
 			}
 			reportInfoMapper.insertSelective(reportInfo);
 		}
