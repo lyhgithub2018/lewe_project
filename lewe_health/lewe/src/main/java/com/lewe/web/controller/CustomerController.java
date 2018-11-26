@@ -19,6 +19,7 @@ import com.lewe.service.customer.ICustomerService;
 import com.lewe.util.common.ApiResult;
 import com.lewe.util.common.JedisUtil;
 import com.lewe.util.common.MD5;
+import com.lewe.util.common.PropertiesUtil;
 import com.lewe.util.common.StringUtils;
 import com.lewe.util.common.weixin.WeiXinUtil;
 import com.lewe.web.controller.common.BaseController;
@@ -171,17 +172,18 @@ public class CustomerController extends BaseController{
             	String key = sessionId;
             	redis.hset(sessionId, "fansId", fansId);
             	redis.hset(sessionId, "customerId", customerId);
-            	//设置缓存有效时间为20小时
-            	redis.setExpire(key, 20*60*60);
+            	//设置缓存有效时间为48小时
+            	redis.setExpire(key, 48*60*60);
             }
 	    }
 	    //授权成功后重定向到前端页面
 	    String redirectUrl = "";
+	    String domain = PropertiesUtil.getApiPropertyByKey("domain.name");
 	    if(pageType==1) {//登录注册页
-	    	redirectUrl = "https://aijutong.com/h5/#/login?fansId="+fansId+"&sessionId="+sessionId;
+	    	redirectUrl = domain+"h5/#/login?fansId="+fansId+"&sessionId="+sessionId;
 		    //String redirectUrl = "http://192.168.4.198:8080/#/login?fansId="+fansId+"&sessionId="+sessionId;
 	    }else if(pageType==2) {//我的页面
-	    	redirectUrl = "https://aijutong.com/h5/#/mine?fansId="+fansId+"&sessionId="+sessionId;
+	    	redirectUrl = domain+"h5/#/mine?fansId="+fansId+"&sessionId="+sessionId;
 		    //String redirectUrl = "http://192.168.4.198:8080/#/mine?fansId="+fansId+"&sessionId="+sessionId;
 	    }
 	    if(StringUtils.isBlank(customerId)) {

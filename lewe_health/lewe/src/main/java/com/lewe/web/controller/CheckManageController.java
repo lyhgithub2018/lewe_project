@@ -252,8 +252,13 @@ public class CheckManageController extends BaseController{
 	@RequestMapping("getShowFieldList")
 	public ApiResult getShowFieldList(HttpServletRequest request,Long reportId,HttpServletResponse response) {
 		ApiResult result = new ApiResult();
-		Account loginAccount = getSessionAccount(request,result);
-		JSONObject json = checkManageService.getShowFieldList(reportId,loginAccount,result);
+		JSONObject json = null;
+		if(reportId!=null) {
+			json = checkManageService.getShowFieldList(reportId,null,result);
+		}else {
+			Account loginAccount = getSessionAccount(request,result);
+			json = checkManageService.getShowFieldList(reportId,loginAccount,result);
+		}
 		result.setData(json);
 		return result;
 	}

@@ -295,11 +295,11 @@ public class CustomerManageServiceImpl implements ICustomerManageService{
 			String key = "lewe_scanSampleCode:"+scanCode;
 			JedisUtil redis = JedisUtil.getInstance();
 			//加入该逻辑判断是为了防止扫描之后,没有进行提交,又再次扫描
-			if(redis.exists(key)) {
+			/*if(redis.exists(key)) {
 				result.setCode(BizCode.DATA_EXIST);
 				result.setMessage("编号【"+scanCode+"】已经扫描过");
 				return 1;//已扫描过
-			}//=========
+			}*///=========
 			Byte reportStatus = reportInfo.getReportStatus();
 			if(reportStatus!=null && reportStatus >= ReportStatus.HOSPITAL_SCAN.getValue()) {
 				result.setCode(BizCode.DATA_EXIST);
@@ -365,14 +365,25 @@ public class CustomerManageServiceImpl implements ICustomerManageService{
 	public JSONObject expressInfoList(String keyword, Integer channelId, Integer pageNo,Integer pageSize, Account loginAccount, Object apiResult) {
 		JSONObject json = new JSONObject();
 		Map<String,Object> map = new HashMap<String,Object>();
+		List<Long> hospitalIdList = new ArrayList<Long>();
 		if(StringUtils.isNotBlank(keyword)) {
 			keyword = keyword.replaceAll("\\s*", "");
 			map.put("keyword", "%"+keyword+"%");
+			//map.put("hospitalName", keyword);
+			//若关键词不为空,则按照机构名查询一下(产品需求快递信息列表的搜索关键字需要查询快递单号和机构名称)
+			List<Hospital> hospitalList = hospitalMapper.selectListByMap(map);
+			for (Hospital hospital : hospitalList) {
+				hospitalIdList.add(hospital.getId());
+			}
+			if(hospitalIdList.size()>0) {
+				map.remove("keyword");
+			}
 		}
 		if(channelId!=null) {
 			map.put("channelId", channelId);
 		}
 		map.put("isDel", 0);
+		map.put("hospitalIdList", hospitalIdList);
 		Integer totalCount = expressInfoMapper.selectCountByMap(map);
 		if(totalCount==null||totalCount==0) {
 			json.put("page", null);
@@ -408,12 +419,19 @@ public class CustomerManageServiceImpl implements ICustomerManageService{
 			if(StringUtils.isNotBlank(reportInfoids)) {
 				String[] arr = reportInfoids.split("\\,");
 				if(arr!=null&&reportInfoids.length()>0) {
+					int n = 1;
 					for (String id : arr) {
 						ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(Long.valueOf(id));
 						if(reportInfo!=null) {
-							customerCodes.append(reportInfo.getSampleCode()).append(",");
-							customerPhones.append(reportInfo.getSamplePhone()).append(",");
+							if(n!=1 && n!=arr.length) {
+								customerCodes.append(reportInfo.getSampleCode()).append(",");
+								customerPhones.append(reportInfo.getSamplePhone()).append(",");
+							}else {
+								customerCodes.append(reportInfo.getSampleCode());
+								customerPhones.append(reportInfo.getSamplePhone());
+							}
 						}
+						n++;
 					}
 				}
 			}

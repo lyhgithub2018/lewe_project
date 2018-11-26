@@ -167,6 +167,12 @@
     	<if test="keyword != null and keyword !=''">
 	        and CONCAT(express_name,express_code) LIKE #{keyword}
 	    </if>
+	    <if test="hospitalIdList !=null and hospitalIdList.size !=0">
+            and hospital_id in
+             <foreach collection="hospitalIdList" item="hospitalId" index="index" open="(" close=")" separator=",">
+                 #{hospitalId}
+             </foreach>
+        </if>
     </where>
   </select>
   <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
@@ -185,6 +191,12 @@
     	<if test="keyword != null and keyword !=''">
 	        and CONCAT(express_name,express_code) LIKE #{keyword}
 	    </if>
+	    <if test="hospitalIdList !=null and hospitalIdList.size !=0">
+            and hospital_id in
+             <foreach collection="hospitalIdList" item="hospitalId" index="index" open="(" close=")" separator=",">
+                 #{hospitalId}
+             </foreach>
+        </if>
     </where>
     ORDER BY id DESC
     <if test="startIndex !=null and pageSize !=null">
