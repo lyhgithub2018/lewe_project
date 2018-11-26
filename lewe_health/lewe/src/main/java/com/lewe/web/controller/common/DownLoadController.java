@@ -94,7 +94,7 @@ public class DownLoadController {
 						response.reset();
 						ServletOutputStream outputStream = null;
 						try {
-							String downFileName = new String((reportInfo.getSampleName()+"的检测报告PDF.zip").getBytes("gbk"), "iso8859-1");
+							String downFileName = new String((reportInfo.getSampleName()+"的检测报告PDF文件.pdf").getBytes("gbk"), "iso8859-1");
 						    response.setHeader("Content-Disposition","attachment; filename="+downFileName);
 							File file = new File(url);
 							if(url.contains("http")) {

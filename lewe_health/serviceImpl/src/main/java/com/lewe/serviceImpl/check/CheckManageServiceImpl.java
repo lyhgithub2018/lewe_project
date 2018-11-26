@@ -307,6 +307,7 @@ public class CheckManageServiceImpl implements ICheckManageService{
 			json.put("sampleSex", reportInfo.getSampleSex());//采样者性别
 			json.put("sampleAge", reportInfo.getSampleAge());//采样者年龄
 			json.put("sampleHeight", reportInfo.getSampleHeight());//采样者身高
+			json.put("sampleWeight", reportInfo.getSampleWeight());//采样者体重
 			json.put("submitTime", reportInfo.getSubmitTime()==null?null:DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));//采样日期
 			json.put("checkTime", reportInfo.getCheckTime()==null?null:DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));//检测日期
 			//检测项目及底物
@@ -1135,6 +1136,7 @@ public class CheckManageServiceImpl implements ICheckManageService{
 			json.put("sampleSex", reportInfo.getSampleSex());//采样者性别
 			json.put("sampleAge", reportInfo.getSampleAge());//采样者年龄
 			json.put("sampleHeight", reportInfo.getSampleHeight());//采样者身高
+			json.put("sampleWeight", reportInfo.getSampleWeight());//采样者体重
 			json.put("submitTime", reportInfo.getSubmitTime()==null?null:DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));//采样日期
 			json.put("checkTime", reportInfo.getCheckTime()==null?null:DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));//检测日期
 			//检测项目及底物
