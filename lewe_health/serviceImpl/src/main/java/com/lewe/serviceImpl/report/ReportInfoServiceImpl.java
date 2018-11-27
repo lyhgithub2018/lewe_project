@@ -53,9 +53,9 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 		JSONObject json = new JSONObject();
 		Map<String, Object> paramMap = null;
 		if(StringUtils.isNotBlank(reportInfoQuery)) {
-			JSONObject parseObject = JSONObject.parseObject(reportInfoQuery);
-			String str = parseObject.getString("reportInfoQuery");
-			paramMap = jsonToMap(str);
+			//JSONObject parseObject = JSONObject.parseObject(reportInfoQuery);
+			//String str = parseObject.getString("reportInfoQuery");
+			paramMap = jsonToMap(reportInfoQuery);
 		}else {
 			paramMap = new HashMap<String, Object>();
 		}
@@ -169,9 +169,9 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 		JSONObject json = new JSONObject();
 		Map<String, Object> paramMap = null;
 		if(StringUtils.isNotBlank(usedCountQuery)) {
-			JSONObject parseObject = JSONObject.parseObject(usedCountQuery);
-			String str = parseObject.getString("usedCountQuery");
-			paramMap = jsonToMap(str);
+			//JSONObject parseObject = JSONObject.parseObject(usedCountQuery);
+			//String str = parseObject.getString("usedCountQuery");
+			paramMap = jsonToMap(usedCountQuery);
 		}else {
 			paramMap = new HashMap<String, Object>();
 		}
@@ -242,9 +242,10 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 	public HSSFWorkbook exportReportCountList(String reportInfoQuery, Account loginAccount, Object apiResult) {
 		Map<String, Object> paramMap = null;
 		if(StringUtils.isNotBlank(reportInfoQuery)) {
-			JSONObject parseObject = JSONObject.parseObject(reportInfoQuery);
-			String str = parseObject.getString("reportInfoQuery");
-			paramMap = jsonToMap(str);
+			//JSONObject parseObject = JSONObject.parseObject(reportInfoQuery);
+			//String str = parseObject.getString("reportInfoQuery");
+			//paramMap = jsonToMap(parseObject.toJSONString());
+			paramMap = jsonToMap(reportInfoQuery);
 		}else {
 			paramMap = new HashMap<String, Object>();
 		}
@@ -314,9 +315,9 @@ public class ReportInfoServiceImpl implements IReportInfoService{
 	public HSSFWorkbook exportUsedCountList(String usedCountQuery, Account loginAccount, Object apiResult) {
 		Map<String, Object> paramMap = null;
 		if(StringUtils.isNotBlank(usedCountQuery)) {
-			JSONObject parseObject = JSONObject.parseObject(usedCountQuery);
-			String str = parseObject.getString("usedCountQuery");
-			paramMap = jsonToMap(str);
+			//JSONObject parseObject = JSONObject.parseObject(usedCountQuery);
+			//String str = parseObject.getString("usedCountQuery");
+			paramMap = jsonToMap(usedCountQuery);
 		}else {
 			paramMap = new HashMap<String, Object>();
 		}

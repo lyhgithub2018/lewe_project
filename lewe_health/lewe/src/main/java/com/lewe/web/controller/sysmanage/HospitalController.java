@@ -415,6 +415,7 @@ public class HospitalController extends BaseController{
 						JSONObject json = new JSONObject();
 						json.put("id", checkDevice.getId());
 						json.put("name", checkDevice.getName());
+						json.put("code", checkDevice.getCode());
 						list.add(json);
 					}
 				}
