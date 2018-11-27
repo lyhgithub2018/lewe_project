@@ -340,6 +340,12 @@ public class CustomerServiceImpl implements ICustomerService{
 		map.put("startIndex", page.getStartIndex());
 		map.put("pageSize", page.getPageSize());
 		List<CustomerFansInfo> list = customerAccountMapper.selectListByMap(map);
+		String defualtAvatar = "https://aijutong.com/upload/image/default-avatar.png";
+		for (CustomerFansInfo customerFansInfo : list) {
+			if(StringUtils.isBlank(customerFansInfo.getHeadImgUrl())) {
+				customerFansInfo.setHeadImgUrl(defualtAvatar);
+			}
+		}
 		json.put("page", page);
 		json.put("userManageList", list);
 		return json;

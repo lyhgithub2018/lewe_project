@@ -423,7 +423,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService{
 					for (String id : arr) {
 						ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(Long.valueOf(id));
 						if(reportInfo!=null) {
-							if(n!=1 && n!=arr.length) {
+							if((n==1 && arr.length>1 ) || n<arr.length) {
 								customerCodes.append(reportInfo.getSampleCode()).append(",");
 								customerPhones.append(reportInfo.getSamplePhone()).append(",");
 							}else {
