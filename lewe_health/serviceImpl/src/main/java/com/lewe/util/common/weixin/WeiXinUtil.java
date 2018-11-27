@@ -33,7 +33,8 @@ public class WeiXinUtil {
      * @return 返回前端请求微信服务器返回的code码的URL地址
      */
 	public static String concatUrlForGetCode(String scope,int pageType){
-    	String redirectUri = "https://aijutong.com/lewe/customer/authCallback.do?pageType="+pageType;
+		String domainName = PropertiesUtil.getApiPropertyByKey("domain.name");
+    	String redirectUri = domainName+"lewe/customer/authCallback.do?pageType="+pageType;
     	//String redirectUri = "http://2w26a28982.imwork.net/lewe/customer/authCallback.do?pageType="+pageType;
     	redirectUri = URLEncoder.encode(redirectUri);
     	String apiUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect";
