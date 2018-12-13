@@ -13,7 +13,7 @@ public interface ICustomerService {
 	 * @param apiResult
 	 * @return
 	 */
-	public Boolean bindSampleCode(String customerId, String sampleCode, Object apiResult);
+	public Boolean bindSampleCode(String customerId, String sampleCode, Object apiResult, Integer hospitalGroupId);
 	/**
 	 * C端客户提交问卷信息
 	 * @param questionnaire1

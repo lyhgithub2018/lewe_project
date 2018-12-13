@@ -23,6 +23,7 @@ public class CustomerInfoQuery {
 	private Integer pageSize;
 	private Integer startIndex;
 	private Integer hospitalGroupId;//门店组id
+	
 	/**
 	 * 通过疾病或疾病程度查询到报告id,最终是为了查询报告列表(客户信息列表)
 	 */
@@ -31,6 +32,7 @@ public class CustomerInfoQuery {
 	 */
 	private String submitQuestionnaireNotQuery0 = "yes";
 	private List<Long> reportInfoIdList;
+	private List<Long> hospitalIdList;
 	
 	public String getKeyword() {
 		return keyword;
@@ -121,6 +123,12 @@ public class CustomerInfoQuery {
 	}
 	public void setSubmitQuestionnaireNotQuery0(String submitQuestionnaireNotQuery0) {
 		this.submitQuestionnaireNotQuery0 = submitQuestionnaireNotQuery0;
+	}
+	public List<Long> getHospitalIdList() {
+		return hospitalIdList;
+	}
+	public void setHospitalIdList(List<Long> hospitalIdList) {
+		this.hospitalIdList = hospitalIdList;
 	}
 	
 }

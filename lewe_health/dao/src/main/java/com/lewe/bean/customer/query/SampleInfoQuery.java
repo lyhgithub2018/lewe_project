@@ -1,5 +1,6 @@
 package com.lewe.bean.customer.query;
 
+import java.util.List;
 
 /**
  * 检测样品信息列表 和 审核信息列表查询对象
@@ -23,6 +24,9 @@ public class SampleInfoQuery {
 	 * 该参数的作用是不查询submitQuestionnaire字段值为0的数据
 	 */
 	private String submitQuestionnaireNotQuery0 = "yes";
+	
+	private List<Long> hospitalIdList;
+	
 	public String getKeyword() {
 		return keyword;
 	}
@@ -100,6 +104,12 @@ public class SampleInfoQuery {
 	}
 	public void setSubmitQuestionnaireNotQuery0(String submitQuestionnaireNotQuery0) {
 		this.submitQuestionnaireNotQuery0 = submitQuestionnaireNotQuery0;
+	}
+	public List<Long> getHospitalIdList() {
+		return hospitalIdList;
+	}
+	public void setHospitalIdList(List<Long> hospitalIdList) {
+		this.hospitalIdList = hospitalIdList;
 	}
 	
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.customer.CustomerAccount;
 import com.lewe.bean.customer.Fans;
+import com.lewe.bean.sys.Account;
 import com.lewe.dao.customer.FansMapper;
 import com.lewe.service.customer.ICustomerService;
 import com.lewe.util.common.ApiResult;
@@ -227,7 +228,15 @@ public class CustomerController extends BaseController{
 		String customerId = request.getParameter("customerId");
 		String sampleCode = request.getParameter("sampleCode");
 		ApiResult result = new ApiResult();
-		result.setData(customerService.bindSampleCode(customerId,sampleCode,result));
+//		
+//		Account account = getSessionAccount(request,result);
+//		
+		Integer hospitalGroupId = null;
+//		if(account!=null) {
+//			hospitalGroupId = account.getHospitalGroupId();
+//		}
+//		
+		result.setData(customerService.bindSampleCode(customerId,sampleCode,result,hospitalGroupId));
 		return result;
 	}
 	/**

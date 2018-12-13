@@ -123,7 +123,7 @@ public class SMSUtil {
     public static void main(String[] args) {
         try {
 			//sendLoginSMS("18530998725", "508661");
-			sendReportNoticeSMS("18530998725", "小辉");
+			sendReportNoticeSMS("15088725396", "小辉");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
