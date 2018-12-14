@@ -42,6 +42,7 @@ import com.lewe.dao.report.ReportSymptomMapper;
 import com.lewe.dao.sys.AccountMapper;
 import com.lewe.dao.sys.ShowFieldMapper;
 import com.lewe.service.check.ICheckManageService;
+import com.lewe.service.customer.ICustomerManageService;
 import com.lewe.service.sys.ISysLogService;
 import com.lewe.serviceImpl.check.bo.AuditInfoBo;
 import com.lewe.serviceImpl.check.bo.CheckInfoBo;
@@ -82,6 +83,9 @@ public class CheckManageServiceImpl implements ICheckManageService {
 	private SubstrateMapper substrateMapper;
 	@Autowired
 	private CheckItemSubstrateMapper checkItemSubstrateMapper;
+
+	@Autowired
+	private ICustomerManageService customerManageService;
 
 	@Autowired
 	private HospitalGroupMapper hospitalGroupMapper;
@@ -220,38 +224,18 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			query = new SampleInfoQuery();
 		}
 
-		// 如果不是主账号，需要考虑机构的权限问题 机构组》机构》个人
-		if (loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
+		List<Long> hosIdList = customerManageService.getUserHostList(loginAccount);
 
-			// 如果机构组不为空，需要读取机构组下面的机构
-			if (loginAccount.getHospitalGroupId() != null) {
-
-				// 读取机构组的信息
-				HospitalGroup hospitalGroup = hospitalGroupMapper.selectByPrimaryKey(loginAccount.getHospitalGroupId());
-
-				// 解析机构组信息
-				if (hospitalGroup != null && hospitalGroup.getHospitalIds() != null
-						&& !StringUtils.isBlank(hospitalGroup.getHospitalIds())) {
-
-					String[] hospitalList = hospitalGroup.getHospitalIds().split(",");
-					List<Long> hosIdList = new ArrayList<Long>();
-					for (int hospitalIndex = 0; hospitalIndex < hospitalList.length; hospitalIndex++) {
-						hosIdList.add(Long.parseLong(hospitalList[hospitalIndex]));
-					}
-
-					// 加上自己的机构权限
-					if (loginAccount.getHospitalId() != null) {
-						hosIdList.add(loginAccount.getHospitalId());
-					}
-
-					// 设置查询条件
-					query.setHospitalIdList(hosIdList);
-				}
-			} else if (query.getHospitalId() == null && loginAccount.getHospitalId() != null) {
-				query.setHospitalId(loginAccount.getHospitalId());
-			} else if (query.getHospitalId() != null) {
-				query.setHospitalId(query.getHospitalId());
-			}
+		//这里做权限判定
+		if(hosIdList == null){
+			//主账号
+		} else if(hosIdList.size() == 0){
+			//无权限
+			hosIdList.add(0L); 
+			query.setHospitalIdList(hosIdList);
+		} else {
+			//非主账号，有权限
+			query.setHospitalIdList(hosIdList);
 		}
 
 		String keyword = query.getKeyword();
