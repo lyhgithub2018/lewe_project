@@ -453,6 +453,8 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		map.put("startIndex", page.getStartIndex());
 		map.put("pageSize", page.getPageSize());
 		List<ExpressInfo> list = expressInfoMapper.selectListByMap(map);
+		logger.error(map.toString());
+
 		List<JSONObject> jsonList = new ArrayList<JSONObject>();
 		for (ExpressInfo express : list) {
 			JSONObject expressInfo = new JSONObject();
