@@ -665,11 +665,13 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				checkData1 = checkData;
 			}
 		}
-		// 分别取出第1,2袋的氢气,甲烷,浓度数据
+
+		// 分别取出第1,2袋的氢气,甲烷,浓度数据;这次肯定不是 669 了
 		Integer H2Con0 = checkData0.getH2Concentration() == null ? 0 : checkData0.getH2Concentration().intValue();
 		Integer CH4Con0 = checkData0.getCh4Concentration() == null ? 0 : checkData0.getCh4Concentration().intValue();
 		Integer H2Con1 = checkData1.getH2Concentration() == null ? 0 : checkData1.getH2Concentration().intValue();
 		Integer CH4Con1 = checkData1.getCh4Concentration() == null ? 0 : checkData1.getCh4Concentration().intValue();
+		
 		int H2max = 0;// 氢气浓度最大值
 		int CH4max = 0;// 甲烷浓度最大值
 		int CO2max = 0;// 二氧化碳浓度最大值
