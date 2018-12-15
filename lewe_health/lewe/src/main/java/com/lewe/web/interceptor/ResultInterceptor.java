@@ -14,7 +14,6 @@ public class ResultInterceptor implements MethodInterceptor {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ResultInterceptor.class); 
     
-    @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
          Object result = invocation.proceed(); 
          String methodName = invocation.getMethod().getName();

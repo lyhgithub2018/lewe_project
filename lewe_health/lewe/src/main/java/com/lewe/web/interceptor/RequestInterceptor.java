@@ -39,7 +39,6 @@ public class RequestInterceptor implements HandlerInterceptor {
      * @param response
      * @param handler
      */
-    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         long startTime = System.currentTimeMillis();
         request.setAttribute("startTime", startTime);
@@ -74,7 +73,6 @@ public class RequestInterceptor implements HandlerInterceptor {
      * @param handler
      * @param modelAndView
      */
-    @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         long startTime = (Long) request.getAttribute("startTime");
         long endTime = System.currentTimeMillis();
@@ -98,7 +96,6 @@ public class RequestInterceptor implements HandlerInterceptor {
      * @param ex
      * @throws Exception
      */
-    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
     	
     }

@@ -666,23 +666,23 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			}
 		}
 		// 分别取出第1,2袋的氢气,甲烷,浓度数据
-		Integer H2Con0 = checkData0.getH2Concentration() == null ? 0 : checkData0.getH2Concentration();
-		Integer CH4Con0 = checkData0.getCh4Concentration() == null ? 0 : checkData0.getCh4Concentration();
-		Integer H2Con1 = checkData1.getH2Concentration() == null ? 0 : checkData1.getH2Concentration();
-		Integer CH4Con1 = checkData1.getCh4Concentration() == null ? 0 : checkData1.getCh4Concentration();
+		Integer H2Con0 = checkData0.getH2Concentration() == null ? 0 : checkData0.getH2Concentration().intValue();
+		Integer CH4Con0 = checkData0.getCh4Concentration() == null ? 0 : checkData0.getCh4Concentration().intValue();
+		Integer H2Con1 = checkData1.getH2Concentration() == null ? 0 : checkData1.getH2Concentration().intValue();
+		Integer CH4Con1 = checkData1.getCh4Concentration() == null ? 0 : checkData1.getCh4Concentration().intValue();
 		int H2max = 0;// 氢气浓度最大值
 		int CH4max = 0;// 甲烷浓度最大值
 		int CO2max = 0;// 二氧化碳浓度最大值
 		for (ReportCheckData checkData : checkDataList) {
-			Integer H2Con = checkData.getH2Concentration() == null ? 0 : checkData.getH2Concentration();
+			Integer H2Con = checkData.getH2Concentration() == null ? 0 : checkData.getH2Concentration().intValue();
 			if (H2Con > H2max) {
 				H2max = H2Con;
 			}
-			Integer CH4Con = checkData.getCh4Concentration() == null ? 0 : checkData.getCh4Concentration();
+			Integer CH4Con = checkData.getCh4Concentration() == null ? 0 : checkData.getCh4Concentration().intValue();
 			if (CH4Con > CH4max) {
 				CH4max = CH4Con;
 			}
-			Integer CO2Con = checkData.getCo2Concentration() == null ? 0 : checkData.getCo2Concentration();
+			Integer CO2Con = checkData.getCo2Concentration() == null ? 0 : checkData.getCo2Concentration().intValue();
 			if (CO2Con > CO2max) {
 				CO2max = CO2Con;
 			}
