@@ -1,6 +1,7 @@
 package com.lewe.bean.report;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ReportCheckData implements Serializable {
@@ -14,11 +15,11 @@ public class ReportCheckData implements Serializable {
 
     private Integer checkTime;
 
-    private Integer h2Concentration;
+    private BigDecimal h2Concentration;
 
-    private Integer ch4Concentration;
+    private BigDecimal ch4Concentration;
 
-    private Integer co2Concentration;
+    private BigDecimal co2Concentration;
 
     private Date createTime;
 
@@ -66,27 +67,27 @@ public class ReportCheckData implements Serializable {
         this.checkTime = checkTime;
     }
 
-    public Integer getH2Concentration() {
+    public BigDecimal getH2Concentration() {
         return h2Concentration;
     }
 
-    public void setH2Concentration(Integer h2Concentration) {
+    public void setH2Concentration(BigDecimal h2Concentration) {
         this.h2Concentration = h2Concentration;
     }
 
-    public Integer getCh4Concentration() {
+    public BigDecimal getCh4Concentration() {
         return ch4Concentration;
     }
 
-    public void setCh4Concentration(Integer ch4Concentration) {
+    public void setCh4Concentration(BigDecimal ch4Concentration) {
         this.ch4Concentration = ch4Concentration;
     }
 
-    public Integer getCo2Concentration() {
+    public BigDecimal getCo2Concentration() {
         return co2Concentration;
     }
 
-    public void setCo2Concentration(Integer co2Concentration) {
+    public void setCo2Concentration(BigDecimal co2Concentration) {
         this.co2Concentration = co2Concentration;
     }
 
