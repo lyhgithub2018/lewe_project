@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import freemarker.template.utility.StringUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.customer.CustomerAccount;
@@ -83,12 +85,12 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 
 		List<Long> hosIdList = this.getUserHostList(loginAccount);
 
-		//这里做权限判定
-		if(hosIdList == null){
-			//主账号
-		} else if(hosIdList.size() == 0){
-			//无权限
-			hosIdList.add(0L); 
+		// 这里做权限判定
+		if (hosIdList == null) {
+			// 主账号
+		} else if (hosIdList.size() == 0) {
+			// 无权限
+			hosIdList.add(0L);
 			query.setHospitalIdList(hosIdList);
 		} else {
 			query.setHospitalIdList(hosIdList);
@@ -328,7 +330,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		if (reportInfo != null) {
 			String key = "lewe_scanSampleCode:" + scanCode;
 			JedisUtil redis = JedisUtil.getInstance();
-			 
+
 			Byte reportStatus = reportInfo.getReportStatus();
 			if (reportStatus != null && reportStatus >= ReportStatus.HOSPITAL_SCAN.getValue()) {
 				result.setCode(BizCode.DATA_EXIST);
@@ -393,7 +395,8 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		return json;
 	}
 
-	public JSONObject expressInfoList(String keyword, Integer channelId, Integer pageNo, Integer pageSize, Account loginAccount, Object apiResult) {
+	public JSONObject expressInfoList(String keyword, Integer channelId, Integer pageNo, Integer pageSize,
+			Account loginAccount, Object apiResult) {
 		JSONObject json = new JSONObject();
 		Map<String, Object> map = new HashMap<String, Object>();
 
@@ -402,60 +405,94 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		}
 
 		List<Long> hospitalIds = this.getUserHostList(loginAccount);
-		List<Long> hospitalIdList = new ArrayList<Long>();
+		List<Long> hospitalIdList = null;
 
 		if (StringUtils.isNotBlank(keyword)) {
+			hospitalIdList = new ArrayList<Long>();
 			keyword = keyword.replaceAll("\\s*", "");
 			map.put("keyword", "%" + keyword + "%");
-			
+
 			// 若关键词不为空,则按照机构名查询一下(产品需求快递信息列表的搜索关键字需要查询快递单号和机构名称)
 			List<Hospital> hospitalList = hospitalMapper.selectListByMap(map);
 			for (Hospital hospital : hospitalList) {
-				hospitalIdList.add(hospital.getId());			
+				hospitalIdList.add(hospital.getId());
 			}
 			map.remove("keyword");
-			if(hospitalIdList.size() == 0){
+			if (hospitalIdList.size() == 0) {
 				hospitalIdList.add(0L);
 			}
 		}
-		
-		//这里做权限判定
-		if(hospitalIds == null){
+
+		// 这里做权限判定
+		if (hospitalIds == null) {
 			hospitalIds = hospitalIdList;
-		} else if(hospitalIds.size() == 0){
-			hospitalIds.add(0L); //无权限
-		} else {
-			//权限交叉计算
+		} else if (hospitalIds.size() == 0) {
+			hospitalIds.add(0L); // 无权限
+		} else if (hospitalIdList != null) {
+			// 权限交叉计算
 			List<Long> tmpList = new ArrayList<Long>();
 			for (Long hospitalId : hospitalIds) {
-				if(hospitalIdList.contains(hospitalId)){
+				if (hospitalIdList.contains(hospitalId)) {
 					tmpList.add(hospitalId);
 				}
 			}
-			if(tmpList.size() == 0){
+			if (tmpList.size() == 0) {
 				tmpList.add(0L);
 			}
-
 			hospitalIds = tmpList;
 		}
 
 		map.put("isDel", 0);
 		map.put("hospitalIdList", hospitalIds);
-		
+
 		Integer totalCount = expressInfoMapper.selectCountByMap(map);
 		if (totalCount == null || totalCount == 0) {
 			json.put("page", null);
 			json.put("expressInfoList", null);
 			return json;
 		}
-		
+
 		Page page = new Page(pageNo, pageSize, totalCount);
 		map.put("startIndex", page.getStartIndex());
 		map.put("pageSize", page.getPageSize());
 		List<ExpressInfo> list = expressInfoMapper.selectListByMap(map);
-		logger.error(map.toString());
+
+		// 收集报表id
+		List<Long> reportIdList = new ArrayList<Long>();
+		for (ExpressInfo express : list) {
+			if (StringUtils.isBlank(express.getReportInfoids())) {
+				continue;
+			}
+
+			String[] arr = express.getReportInfoids().split("\\,");
+			if (arr == null || arr.length == 0) {
+				continue;
+			}
+			for (String id : arr) {
+				if (StringUtils.isBlank(id)) {
+					continue;
+				}
+				reportIdList.add(Long.parseLong(id));
+			}
+		}
+
+		// 打包
+		Map<Long, ReportInfo> reportMap = new HashMap<Long, ReportInfo>();
+		if (reportIdList.size() > 0) {
+			Map<String, Object> reportInfQueryMap = new HashMap<String, Object>();
+			reportInfQueryMap.put("hospitalIdList", reportInfQueryMap);
+			List<ReportInfo> reportListTmp = reportInfoMapper.selectListByMap(reportInfQueryMap);
+
+			for (ReportInfo varReportInfo : reportListTmp) {
+				reportMap.put(varReportInfo.getId(), varReportInfo);
+			}
+		}
 
 		List<JSONObject> jsonList = new ArrayList<JSONObject>();
+		Map<Integer, Channel> channelMap = new HashMap<Integer, Channel>();
+		Map<Long, Hospital> hospitalMap = new HashMap<Long, Hospital>();
+		Map<Long, Account> accountMap = new HashMap<Long, Account>();
+
 		for (ExpressInfo express : list) {
 			JSONObject expressInfo = new JSONObject();
 			expressInfo.put("id", express.getId());
@@ -463,14 +500,31 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 			expressInfo.put("expressCode", express.getExpressCode());// 快递单号
 			expressInfo.put("expressTime", DateUtil.formatDate(express.getExpressTime(), "yyyy-MM-dd HH:mm:ss"));// 邮寄时间
 			expressInfo.put("createTime", DateUtil.formatDate(express.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));// 创建时间
+
 			// 查询渠道，机构，操作人名称
-			Channel channel = channelMapper.selectByPrimaryKey(express.getChannelId());
+			if (!channelMap.containsKey(express.getChannelId())) {
+				Channel channel = channelMapper.selectByPrimaryKey(express.getChannelId());
+				channelMap.put(express.getChannelId(), channel);
+			}
+			Channel channel = channelMap.get(express.getChannelId());
 			expressInfo.put("channelId", express.getChannelId());
 			expressInfo.put("channelName", channel == null ? "" : channel.getName());
-			Hospital hospital = hospitalMapper.selectByPrimaryKey(express.getHospitalId());
+
+			// 查询渠道，机构，操作人名称
+			if (!hospitalMap.containsKey(express.getHospitalId())) {
+				Hospital hospital = hospitalMapper.selectByPrimaryKey(express.getHospitalId());
+				hospitalMap.put(express.getHospitalId(), hospital);
+			}
+			Hospital hospital = hospitalMap.get(express.getHospitalId());
 			expressInfo.put("hospitalId", express.getHospitalId());
 			expressInfo.put("hospitalName", hospital == null ? "" : hospital.getHospitalName());
-			Account account = accountMapper.selectByPrimaryKey(express.getOperatorId());
+
+			// 查询渠道，机构，操作人名称
+			if (!accountMap.containsKey(express.getOperatorId())) {
+				Account account = accountMapper.selectByPrimaryKey(express.getOperatorId());
+				accountMap.put(express.getOperatorId(), account);
+			}
+			Account account = accountMap.get(express.getOperatorId());
 			expressInfo.put("operatorName", account == null ? "" : account.getName());// 操作人
 
 			// 查询当前快递所包含的客户信息
@@ -482,8 +536,12 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 				if (arr != null && reportInfoids.length() > 0) {
 					int n = 1;
 					for (String id : arr) {
-						ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(Long.valueOf(id));
-						if (reportInfo != null) {
+						if (StringUtils.isBlank(id)) {
+							continue;
+						}
+						if (reportMap.containsKey(Long.parseLong(id))) {
+							ReportInfo reportInfo = reportMap.get(Long.parseLong(id));
+
 							if ((n == 1 && arr.length > 1) || n < arr.length) {
 								customerCodes.append(reportInfo.getSampleCode()).append(",");
 								customerPhones.append(reportInfo.getSamplePhone()).append(",");
@@ -496,6 +554,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 					}
 				}
 			}
+
 			expressInfo.put("customerCodes", customerCodes.toString());// 客户编号(采样者编号)
 			expressInfo.put("customerPhones", customerPhones.toString());// 客户手机号(采样者本人手机号)
 			jsonList.add(expressInfo);
@@ -507,35 +566,36 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 
 	/**
 	 * 获取某个人的机构权限
+	 * 
 	 * @param loginAccount
-	 * @return 如果是主账号，返回 null
-	 * 如果是没有权限 返回空
+	 * @return 如果是主账号，返回 null 如果是没有权限 返回空
 	 */
-	public List<Long> getUserHostList(Account loginAccount){
+	public List<Long> getUserHostList(Account loginAccount) {
 
 		if (loginAccount.getAccountType() == AccountType.SUPERADMIN.getValue()) {
 			return null;
 		}
 
-		//如果不是主账号，需要考虑机构的权限问题  机构组》机构》个人
+		// 如果不是主账号，需要考虑机构的权限问题 机构组》机构》个人
 		List<Long> hospitalIdList = new ArrayList<Long>();
-		 
-		//如果机构组不为空，需要读取机构组下面的机构
+
+		// 如果机构组不为空，需要读取机构组下面的机构
 		if (loginAccount.getHospitalGroupId() != null) {
-			//读取机构组的信息
+			// 读取机构组的信息
 			HospitalGroup hospitalGroup = hospitalGroupMapper.selectByPrimaryKey(loginAccount.getHospitalGroupId());
-			
-			//解析机构组信息
-			if (hospitalGroup != null && hospitalGroup.getHospitalIds() != null && !StringUtils.isBlank(hospitalGroup.getHospitalIds())) {
-				String[] hospitalList = hospitalGroup.getHospitalIds().split(",");				
+
+			// 解析机构组信息
+			if (hospitalGroup != null && hospitalGroup.getHospitalIds() != null
+					&& !StringUtils.isBlank(hospitalGroup.getHospitalIds())) {
+				String[] hospitalList = hospitalGroup.getHospitalIds().split(",");
 				for (int hospitalIndex = 0; hospitalIndex < hospitalList.length; hospitalIndex++) {
 					hospitalIdList.add(Long.parseLong(hospitalList[hospitalIndex]));
-				}	
+				}
 			}
 		}
 
-		//加上自己的机构权限
-		if(loginAccount.getHospitalId() != null) {
+		// 加上自己的机构权限
+		if (loginAccount.getHospitalId() != null) {
 			hospitalIdList.add(loginAccount.getHospitalId());
 		}
 
