@@ -435,6 +435,11 @@ public class CustomerServiceImpl implements ICustomerService {
 		customerAccountMapper.updateByPrimaryKeySelective(update);
 		String content = "";
 		CustomerAccount customerAccount = customerAccountMapper.selectByPrimaryKey(id);
+
+		if(customerAccount.getPhone() == null){
+			customerAccount.setPhone("无");
+		}
+		
 		if (status == 1) {
 			content = "解冻了一个账号,手机号:" + customerAccount.getPhone();
 		} else if (status == 2) {

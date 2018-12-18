@@ -158,6 +158,14 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			JSONObject jsonObject = JSONObject.parseObject(json);
 			Map<String, Object> valueMap = new HashMap<String, Object>();
 			valueMap.putAll(jsonObject);
+
+			//去掉空的
+			for (String key : valueMap.keySet()) { 
+				if(StringUtils.isBlank(valueMap.get(key))){
+					valueMap.remove(key);
+				}
+			}
+			
 			return valueMap;
 		} else {
 			return new HashMap<String, Object>();
@@ -173,19 +181,13 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		JSONObject json = new JSONObject();
 		Map<String, Object> paramMap = null;
 		if (StringUtils.isNotBlank(usedCountQuery)) {
-			// JSONObject parseObject = JSONObject.parseObject(usedCountQuery);
-			// String str = parseObject.getString("usedCountQuery");
 			paramMap = jsonToMap(usedCountQuery);
 		} else {
 			paramMap = new HashMap<String, Object>();
 		}
+
 		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
 			paramMap.put("hospitalId", loginAccount.getHospitalId());
-			// 若当前账号归属于某个门店组,则按门店组id查询
-			/*
-			 * if(loginAccount.getHospitalGroupId()!=null) { paramMap.put("hospitalGroupId",
-			 * loginAccount.getHospitalGroupId()); }
-			 */
 		}
 		// 查询日期
 		Object queryDate = paramMap.get("queryDate");
