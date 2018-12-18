@@ -6,6 +6,7 @@ import java.util.Map;
 import com.lewe.bean.check.CheckItem;
 
 public interface CheckItemMapper {
+    
     int deleteByPrimaryKey(Integer id);
 
     int insert(CheckItem record);

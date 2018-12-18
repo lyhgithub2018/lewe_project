@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import freemarker.template.utility.StringUtil;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.customer.CustomerAccount;
@@ -381,8 +379,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 				info.put("id", reportInfo.getId());
 				info.put("sampleCode", reportInfo.getSampleCode());
 				info.put("sampleName", reportInfo.getSampleName());
-				json.put("submitTime", reportInfo.getSubmitTime() == null ? null
-						: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));
+				json.put("submitTime", reportInfo.getSubmitTime() == null ? null : DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));
 				jsonList.add(info);
 			}
 		}

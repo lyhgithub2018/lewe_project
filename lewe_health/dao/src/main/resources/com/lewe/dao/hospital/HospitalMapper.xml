@@ -272,13 +272,22 @@
     	<if test="hospitalCode != null">
     		and hospital_code = #{hospitalCode}
     	</if>
+
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
 	        and CONCAT(hospital_name,hospital_code) LIKE #{keyword}
 	    </if>
 	    <if test="isDel != null">
         	and is_del = #{isDel}
-      	</if>
+      </if>
+
+      <if test="idList !=null and idList.size !=0">
+          and id in
+            <foreach collection="idList" item="idInner" index="index" open="(" close=")" separator=",">
+                #{idInner}
+            </foreach>
+      </if>
+
     </where>
     ORDER BY id DESC
     <if test="startIndex!=null and pageSize!=null">

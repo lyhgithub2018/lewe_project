@@ -145,19 +145,23 @@ public class UploadFileController extends BaseController {
 			File localFile = new File(destPath);
 			// 图片上传到服务器
 			reportFile.transferTo(localFile);
+
 			// 上传成功之后将文件信息保存到数据库中
 			SysFile sysFile = new SysFile();
 			sysFile.setName(originalFilename);
 			sysFile.setSize(reportFile.getSize());
 			sysFile.setType(fileType);
+
 			// 文件访问路径
 			sysFile.setUrl(PropertiesUtil.getApiPropertyByKey("upload.reportFile.url") + fileName);
 			sysFile.setCreateTime(new Date());
 			sysFileMapper.insertSelective(sysFile);
+
 			ReportInfo update = new ReportInfo();
 			update.setId(reportInfoId);
 			String pdfId = "";
 			String picIds = "";
+			
 			if(type==1) {
 				pdfId = sysFile.getId()+"";
 				update.setReportPdfIds(pdfId);//报告PDF文件id

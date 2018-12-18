@@ -154,6 +154,13 @@
     	<if test="isDel != null">
 	        and is_del = #{isDel}
 	    </if>
+
+      <if test="idList !=null and idList.size !=0">
+          and id in
+            <foreach collection="idList" item="idInner" index="index" open="(" close=")" separator=",">
+                #{idInner}
+            </foreach>
+      </if>
     </where>
   </select>
 </mapper>
