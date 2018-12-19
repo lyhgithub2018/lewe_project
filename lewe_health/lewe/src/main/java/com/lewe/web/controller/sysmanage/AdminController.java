@@ -101,6 +101,7 @@ public class AdminController extends BaseController {
 	public ApiResult getLoginAccountMenu(HttpServletRequest request, HttpServletResponse response) {
 		ApiResult result = new ApiResult();
 		Account account = getSessionAccount(request, result);
+		
 		if (account != null) {
 			JSONObject json = accountService.getLoginAccountMenu(account, result);
 			result.setData(json);
