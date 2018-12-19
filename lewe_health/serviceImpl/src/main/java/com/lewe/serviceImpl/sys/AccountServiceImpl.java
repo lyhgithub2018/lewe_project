@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.json.JSON;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.CheckItem;
@@ -62,6 +66,8 @@ public class AccountServiceImpl implements IAccountService {
 	private CheckItemMapper checkItemMapper;
 	@Autowired
 	private HospitalLinkmanMapper hospitalLinkmanMapper;
+
+	public static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
 	public Account accountLogin(String account, String password, Object apiResult) {
 		ApiResult result = (ApiResult) apiResult;
@@ -342,12 +348,14 @@ public class AccountServiceImpl implements IAccountService {
 	public JSONObject getLoginAccountMenu(Account account, Object apiResult) {
 		JSONObject json = new JSONObject();
 		List<MenuTree> menuList = new ArrayList<MenuTree>();
+
 		JedisUtil redis = JedisUtil.getInstance();
 		String key = "lewe_loginAccountMenuTree:" + account.getId();
 
 		if (account != null && account.getAccountType() == AccountType.SUPERADMIN.getValue()) {
 			// 超级管理员的菜单直接取系统全部菜单
 			JSONObject sysMenu = roleService.getSysMenuTree();
+			logger.error("JSONObject 356 getLoginAccountMenu(Account account, Object apiResult)" + sysMenu.toJSONString());
 			json.put("menuList", sysMenu.getJSONArray("menuTree"));
 
 		} else {
@@ -386,12 +394,17 @@ public class AccountServiceImpl implements IAccountService {
 					menuList.add(sysManager);
 				}
 				json.put("menuList", menuList);
+				logger.error("JSONObject 395 getLoginAccountMenu(Account account, Object apiResult)" + menuList.toString());
 				return json;
 			}
+
 			// 缓存中无,查询数据库
 			Role role = roleMapper.selectByPrimaryKey(account.getRoleId());
 			if (role != null) {
 				String menuIds = role.getMenuIds();
+				logger.error("JSONObject 405 getLoginAccountMenu(Account account, Object apiResult)" + menuIds);
+				
+
 				if (StringUtils.isNotBlank(menuIds)) {
 					String[] arr = menuIds.split("\\,");
 					// 1.先筛选出相同级别的菜单(用treeSet集合实现顺序排放)
@@ -520,6 +533,9 @@ public class AccountServiceImpl implements IAccountService {
 						menuListSort.add(sysManager);
 					}
 					json.put("menuList", menuListSort);
+
+					logger.error("JSONObject 537 getLoginAccountMenu(Account account, Object apiResult)" + json.toJSONString());
+
 				}
 			}
 		}

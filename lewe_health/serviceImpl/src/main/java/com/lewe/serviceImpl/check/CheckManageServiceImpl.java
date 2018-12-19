@@ -673,6 +673,13 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		int CH4max = 0;// 甲烷浓度最大值
 		int CO2max = 0;// 二氧化碳浓度最大值
 		for (ReportCheckData checkData : checkDataList) {
+
+			if (checkData.getCheckPoint() == 0) {
+				continue;
+			} else if (checkData.getCheckPoint() == 1) {
+				continue;
+			}
+
 			Integer H2Con = checkData.getH2Concentration() == null ? 0 : checkData.getH2Concentration().intValue();
 			if (H2Con > H2max) {
 				H2max = H2Con;
@@ -686,6 +693,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				CO2max = CO2Con;
 			}
 		}
+		
 		int CH4Sub = CH4max - CH4Con1;// CH4浓度差值
 		int H2Sub = H2max - H2Con1;// H2浓度差值
 		int CH4_H2Sub = (CH4max + H2max) - (CH4Con1 + H2Con1);
