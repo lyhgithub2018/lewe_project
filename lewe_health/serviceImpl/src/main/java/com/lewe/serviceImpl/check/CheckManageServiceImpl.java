@@ -87,9 +87,6 @@ public class CheckManageServiceImpl implements ICheckManageService {
 	@Autowired
 	private ICustomerManageService customerManageService;
 
-	@Autowired
-	private HospitalGroupMapper hospitalGroupMapper;
-
 	public static final Logger logger = LoggerFactory.getLogger(CheckManageServiceImpl.class);
 
 	@Transactional
@@ -917,13 +914,21 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		} else {
 			query = new SampleInfoQuery();
 		}
-		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-			query.setHospitalId(loginAccount.getHospitalId());
-			// 若当前账号归属于某个门店组,则按门店组id查询
-			if (loginAccount.getHospitalGroupId() != null) {
-				query.setHospitalGroupId(loginAccount.getHospitalGroupId());
-			}
-		}
+		
+		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+
+		//这里做权限判定
+		if(hospitalIds == null){
+			//主账号
+		} else if(hospitalIds.size() == 0){
+			//无权限
+			hospitalIds.add(0L); 
+			query.setHospitalIdList(hospitalIds);
+		} else {
+			//非主账号，有权限
+			query.setHospitalIdList(hospitalIds);
+		} 
+
 		// 审核列表只展示检测过的数据
 		query.setCheckStatus((byte) 1);
 		String keyword = query.getKeyword();
@@ -939,6 +944,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		if (StringUtils.isBlank(query.getEndDate())) {
 			query.setEndDate(null);
 		}
+
 		Integer totalCount = reportInfoMapper.selectCountBySampleInfoQuery(query);
 		if (totalCount == null || totalCount == 0) {
 			json.put("page", null);
@@ -948,6 +954,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		Page page = new Page(query.getPageNo(), query.getPageSize(), totalCount);
 		query.setStartIndex(page.getStartIndex());
 		List<ReportInfo> list = reportInfoMapper.selectListBySampleInfoQuery(query);
+		
 		List<JSONObject> auditInfoList = new ArrayList<JSONObject>();
 		for (ReportInfo reportInfo : list) {
 			JSONObject auditInfo = new JSONObject();

@@ -23,6 +23,7 @@ public class BaseController {
 	 */
 	public Account getSessionAccount(HttpServletRequest request,ApiResult result) {
 		Account account = null;
+		
 		//本地开发阶段前端调用接口(给个固定账号免登陆)
 		String sysType = System.getProperties().getProperty("os.name");
 		if (sysType.toLowerCase().startsWith("win")) {
@@ -35,15 +36,6 @@ public class BaseController {
 			account.setHospitalGroupId(1);
 			account.setStatus(1);
 			account.setAccountType((byte)1);
-			
-			/*account.setId(9l);
-			account.setAccount("小灰灰01");
-			account.setName("xiaohui01");
-			account.setRoleId(11);
-			account.setHospitalId(5l);
-			account.setHospitalGroupId(1);
-			account.setStatus(1);
-			account.setAccountType((byte)3);*/
 		}else {
 			//真实运行环境下
 			HttpSession session = request.getSession();

@@ -436,10 +436,10 @@ public class CustomerServiceImpl implements ICustomerService {
 		String content = "";
 		CustomerAccount customerAccount = customerAccountMapper.selectByPrimaryKey(id);
 
-		if(customerAccount.getPhone() == null){
+		if (customerAccount.getPhone() == null) {
 			customerAccount.setPhone("无");
 		}
-		
+
 		if (status == 1) {
 			content = "解冻了一个账号,手机号:" + customerAccount.getPhone();
 		} else if (status == 2) {
@@ -486,7 +486,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			report.put("samplePhone", reportInfo.getSamplePhone());// 采样者手机号
 			report.put("submitTime", reportInfo.getSubmitTime() == null ? null
 					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd HH:mm:ss"));// 采样提交时间
-			
+
 			// && reportInfo.getSubmitQuestionnaire() < 2
 			if (reportInfo.getReportStatus() < ReportStatus.HOSPITAL_SCAN.getValue()) {
 				report.put("status", 0);
