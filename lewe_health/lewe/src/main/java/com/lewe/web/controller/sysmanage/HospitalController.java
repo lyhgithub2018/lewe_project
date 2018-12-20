@@ -8,12 +8,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.CheckDevice;
 import com.lewe.bean.check.CheckItem;
@@ -62,6 +65,8 @@ public class HospitalController extends BaseController {
 
 	@Autowired
 	private ICustomerManageService customerManageService;
+
+	public static final Logger logger = LoggerFactory.getLogger(HospitalController.class);
 
 	/**
 	 * 新增或修改 门店/机构
@@ -376,15 +381,17 @@ public class HospitalController extends BaseController {
 				} else if ("2".equals(type)) {// 门店机构下拉列表
 					Map<String, Object> mapHospital = new HashMap<String, Object>();
 					mapHospital.put("isDel", 0);// 仅查询没删除的数据
+
 					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
 					if(hospitalIds != null && hospitalIds.size() == 0){
 						hospitalIds.add(0L);
 					}
-					
+
 					if(hospitalIds != null ){
 						mapHospital.put("idList",hospitalIds);
 					}
-
+					logger.error(JSON.toJSONString(mapHospital));
+					
 					List<Hospital> hospitalList = hospitalMapper.selectListByMap(mapHospital);
 					for (Hospital hospital : hospitalList) {
 						JSONObject json = new JSONObject();
