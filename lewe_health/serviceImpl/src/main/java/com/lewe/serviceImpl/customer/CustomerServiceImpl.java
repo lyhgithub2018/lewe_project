@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.Substrate;
 import com.lewe.bean.customer.CustomerAccount;
@@ -133,7 +134,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			if (hospital != null) {
 				reportInfo.setHospitalId(hospital.getId());
 				reportInfo.setChannelId(hospital.getChannelId());
-				logger.error(hospital.toString());
+				logger.error(JSON.toJSONString(hospital));
 			}
 
 			// 若当前账号归属于某个门店组,则按门店组id查询

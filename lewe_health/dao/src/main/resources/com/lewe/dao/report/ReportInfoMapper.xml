@@ -902,6 +902,7 @@
 			<if test="hospitalGroupId != null">
 				and hospital_group_id = #{hospitalGroupId}
 			</if>
+			
 			<if test="sex != null">
 				and sample_sex = #{sex}
 			</if>

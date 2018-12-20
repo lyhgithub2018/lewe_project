@@ -570,6 +570,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 	public List<Long> getUserHostList(Account loginAccount) {
 
 		if (loginAccount.getAccountType() == AccountType.SUPERADMIN.getValue()) {
+			logger.error(JSON.toJSONString(loginAccount));
 			return null;
 		}
 
@@ -592,7 +593,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		}
 
 		// 加上自己的机构权限
-		if (loginAccount.getHospitalId() != null) {
+		if (StringUtils.isNotBlank(loginAccount.getHospitalId())) {
 			hospitalIdList.add(loginAccount.getHospitalId());
 		}
 

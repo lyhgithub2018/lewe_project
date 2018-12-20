@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.CheckDevice;
 import com.lewe.bean.check.CheckItem;
@@ -248,6 +249,8 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		if (StringUtils.isBlank(query.getEndDate())) {
 			query.setEndDate(null);
 		}
+		logger.error(JSON.toJSONString(query));
+
 		Integer totalCount = reportInfoMapper.selectCountBySampleInfoQuery(query);
 		if (totalCount == null || totalCount == 0) {
 			json.put("page", null);
@@ -693,7 +696,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				CO2max = CO2Con;
 			}
 		}
-		
+
 		int CH4Sub = CH4max - CH4Con1;// CH4浓度差值
 		int H2Sub = H2max - H2Con1;// H2浓度差值
 		int CH4_H2Sub = (CH4max + H2max) - (CH4Con1 + H2Con1);
@@ -952,7 +955,8 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		if (StringUtils.isBlank(query.getEndDate())) {
 			query.setEndDate(null);
 		}
-
+		logger.error(JSON.toJSONString(query));
+		
 		Integer totalCount = reportInfoMapper.selectCountBySampleInfoQuery(query);
 		if (totalCount == null || totalCount == 0) {
 			json.put("page", null);
