@@ -169,8 +169,8 @@
 	    </if>
 	    <if test="hospitalIdList !=null and hospitalIdList.size !=0">
             and hospital_id in
-             <foreach collection="hospitalIdList" item="hospitalId" index="index" open="(" close=")" separator=",">
-                 #{hospitalId}
+             <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+                 #{hospitalIdInner}
              </foreach>
         </if>
     </where>

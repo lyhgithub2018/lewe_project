@@ -777,9 +777,9 @@
 			</if>
 			<if test="hospitalIdList !=null and hospitalIdList.size !=0">
 				and hospital_id in
-				<foreach collection="hospitalIdList" item="hospitalId"
+				<foreach collection="hospitalIdList" item="hospitalIdInner"
 					index="index" open="(" close=")" separator=",">
-					#{hospitalId}
+					#{hospitalIdInner}
 				</foreach>
 			</if>
 
@@ -834,9 +834,9 @@
 			
 			<if test="hospitalIdList !=null and hospitalIdList.size !=0">
 				and hospital_id in
-				<foreach collection="hospitalIdList" item="hospitalId"
+				<foreach collection="hospitalIdList" item="hospitalIdInner"
 					index="index" open="(" close=")" separator=",">
-					#{hospitalId}
+					#{hospitalIdInner}
 				</foreach>
 			</if>
 
@@ -893,16 +893,16 @@
 			
 			<if test="hospitalIdList !=null and hospitalIdList.size !=0">
 				and hospital_id in
-				<foreach collection="hospitalIdList" item="hospitalId"
+				<foreach collection="hospitalIdList" item="hospitalIdInner"
 					index="index" open="(" close=")" separator=",">
-					#{hospitalId}
+					#{hospitalIdInner}
 				</foreach>
 			</if>
 
 			<if test="hospitalGroupId != null">
 				and hospital_group_id = #{hospitalGroupId}
 			</if>
-			
+
 			<if test="sex != null">
 				and sample_sex = #{sex}
 			</if>
