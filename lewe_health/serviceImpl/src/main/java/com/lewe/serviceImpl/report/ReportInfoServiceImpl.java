@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ import com.lewe.dao.report.UsedCountMapper;
 import com.lewe.dao.sys.AccountMapper;
 import com.lewe.dao.sys.ChannelMapper;
 import com.lewe.dao.sys.SysFileMapper;
+import com.lewe.service.customer.ICustomerManageService;
 import com.lewe.service.report.IReportInfoService;
 import com.lewe.serviceImpl.report.bo.ReportCountExcel;
 import com.lewe.serviceImpl.report.bo.UsedCountExcel;
@@ -49,6 +52,11 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	@Autowired
 	private SysFileMapper sysFileMapper;
 
+	@Autowired
+	private ICustomerManageService customerManageService;
+
+	public static final Logger logger = LoggerFactory.getLogger(ReportInfoServiceImpl.class);
+
 	public JSONObject reportCountList(String reportInfoQuery, Account loginAccount, Object apiResult) {
 		JSONObject json = new JSONObject();
 		Map<String, Object> paramMap = null;
@@ -60,14 +68,21 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			paramMap = new HashMap<String, Object>();
 		}
 		paramMap.put("reportStatus", ReportStatus.RESULT_CREATE.getValue());
-		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-			paramMap.put("hospitalId", loginAccount.getHospitalId());
-			// 若当前账号归属于某个门店组,则按门店组id查询
-			/*
-			 * if(loginAccount.getHospitalGroupId()!=null) { paramMap.put("hospitalGroupId",
-			 * loginAccount.getHospitalGroupId()); }
-			 */
+
+		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+		
+		//这里做权限判定
+		if(hospitalIds == null){
+			//主账号
+		} else if(hospitalIds.size() == 0){
+			//无权限
+			hospitalIds.add(0L); 
+			paramMap.put("hospitalIdList",hospitalIds);
+		} else {
+			//非主账号，有权限
+			paramMap.put("hospitalIdList",hospitalIds);
 		}
+ 
 		String keyword = "";
 		Object obj = paramMap.get("keyword");
 		if (StringUtils.isNotBlank(obj)) {
@@ -156,16 +171,17 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	private Map<String, Object> jsonToMap(String json) {
 		if (StringUtils.isNotBlank(json)) {
 			JSONObject jsonObject = JSONObject.parseObject(json);
-			Map<String, Object> valueMap = new HashMap<String, Object>();
-			valueMap.putAll(jsonObject);
 
-			//去掉空的
-			for (String key : valueMap.keySet()) { 
-				if(StringUtils.isBlank(valueMap.get(key))){
-					valueMap.remove(key);
+			Map<String, Object> valueMap = new HashMap<String, Object>();
+
+			// 去掉空的
+			for (String key : jsonObject.keySet()) {
+				if (jsonObject.get(key) == null || StringUtils.isBlank(jsonObject.get(key).toString())) {
+					continue;
 				}
+				valueMap.put(key, jsonObject.get(key));
 			}
-			
+
 			return valueMap;
 		} else {
 			return new HashMap<String, Object>();
