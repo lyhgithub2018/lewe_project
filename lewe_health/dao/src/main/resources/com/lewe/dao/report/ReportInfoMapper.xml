@@ -775,17 +775,13 @@
 			<if test="hospitalId != null">
 				and hospital_id = #{hospitalId}
 			</if>
-			<if test="hospitalIdList !=null and hospitalIdList.size !=0">
+			<if test="hospitalIdList != null">
 				and hospital_id in
-				<foreach collection="hospitalIdList" item="hospitalIdInner"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
 					#{hospitalIdInner}
 				</foreach>
 			</if>
-
-			<if test="hospitalGroupId != null">
-				and hospital_group_id = #{hospitalGroupId}
-			</if>
+ 
 			<if test="sex != null">
 				and sample_sex = #{sex}
 			</if>
@@ -806,10 +802,9 @@
 				and CONCAT(customer_phone,sample_code,sample_name,sample_phone) LIKE
 				#{keyword}
 			</if>
-			<if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+			<if test="reportInfoIdList != null">
 				and id in
-				<foreach collection="reportInfoIdList" item="reportInfoId"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
 					#{reportInfoId}
 				</foreach>
 			</if>
@@ -832,10 +827,9 @@
 				and hospital_id = #{hospitalId}
 			</if>
 			
-			<if test="hospitalIdList !=null and hospitalIdList.size !=0">
+			<if test="hospitalIdList != null">
 				and hospital_id in
-				<foreach collection="hospitalIdList" item="hospitalIdInner"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
 					#{hospitalIdInner}
 				</foreach>
 			</if>
@@ -863,10 +857,9 @@
 				and CONCAT(customer_phone,sample_code,sample_name,sample_phone) LIKE
 				#{keyword}
 			</if>
-			<if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+			<if test="reportInfoIdList != null">
 				and id in
-				<foreach collection="reportInfoIdList" item="reportInfoId"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
 					#{reportInfoId}
 				</foreach>
 			</if>
@@ -891,10 +884,9 @@
 				and hospital_id = #{hospitalId}
 			</if>
 			
-			<if test="hospitalIdList !=null and hospitalIdList.size !=0">
+			<if test="hospitalIdList != null">
 				and hospital_id in
-				<foreach collection="hospitalIdList" item="hospitalIdInner"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
 					#{hospitalIdInner}
 				</foreach>
 			</if>
@@ -1024,10 +1016,9 @@
 			<if test="keyword != null and keyword !=''">
 				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
 			</if>
-			<if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+			<if test="reportInfoIdList != null">
 				and id in
-				<foreach collection="reportInfoIdList" item="reportInfoId"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
 					#{reportInfoId}
 				</foreach>
 			</if>
@@ -1084,10 +1075,9 @@
 			<if test="keyword != null and keyword !=''">
 				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
 			</if>
-			<if test="reportInfoIdList !=null and reportInfoIdList.size !=0">
+			<if test="reportInfoIdList != null">
 				and id in
-				<foreach collection="reportInfoIdList" item="reportInfoId"
-					index="index" open="(" close=")" separator=",">
+				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
 					#{reportInfoId}
 				</foreach>
 			</if>

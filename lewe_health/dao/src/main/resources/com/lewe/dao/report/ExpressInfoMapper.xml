@@ -167,11 +167,11 @@
     	<if test="keyword != null and keyword !=''">
 	        and CONCAT(express_name,express_code) LIKE #{keyword}
 	    </if>
-	    <if test="hospitalIdList !=null and hospitalIdList.size !=0">
+	    <if test="hospitalIdList != null">
             and hospital_id in
-             <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
-                 #{hospitalIdInner}
-             </foreach>
+            <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+                #{hospitalIdInner}
+            </foreach>
         </if>
     </where>
   </select>
@@ -192,11 +192,11 @@
 	        and CONCAT(express_name,express_code) LIKE #{keyword}
 	    </if>
 
-	    <if test="hospitalIdList !=null and hospitalIdList.size !=0">
+	    <if test="hospitalIdList != null">
             and hospital_id in
-             <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
-                 #{hospitalIdInner}
-             </foreach>
+            <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+                #{hospitalIdInner}
+            </foreach>
         </if>
     </where>
     ORDER BY id DESC
