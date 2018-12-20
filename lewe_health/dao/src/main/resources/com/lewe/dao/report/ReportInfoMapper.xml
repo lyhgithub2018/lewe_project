@@ -937,6 +937,14 @@
 			<if test="hospitalGroupId != null">
 				and hospital_group_id = #{hospitalGroupId}
 			</if>
+
+			<if test="hospitalIdList != null">
+				and hospital_id in
+				<foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+					#{hospitalIdInner}
+				</foreach>
+			</if>
+
 			<if test="sex != null">
 				and sample_sex = #{sex}
 			</if>
@@ -985,6 +993,15 @@
 			<if test="hospitalId != null">
 				and hospital_id = #{hospitalId}
 			</if>
+
+
+			<if test="hospitalIdList != null">
+				and hospital_id in
+				<foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+					#{hospitalIdInner}
+				</foreach>
+			</if>
+
 			<if test="hospitalGroupId != null">
 				and hospital_group_id = #{hospitalGroupId}
 			</if>
@@ -1044,6 +1061,13 @@
 			<if test="hospitalId != null">
 				and hospital_id = #{hospitalId}
 			</if>
+			<if test="hospitalIdList != null">
+				and hospital_id in
+				<foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+					#{hospitalIdInner}
+				</foreach>
+			</if>
+			
 			<if test="hospitalGroupId != null">
 				and hospital_group_id = #{hospitalGroupId}
 			</if>
