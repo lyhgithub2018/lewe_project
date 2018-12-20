@@ -21,6 +21,7 @@ import com.lewe.service.sys.IAccountService;
 import com.lewe.service.sys.IillnessService;
 import com.lewe.util.common.ApiResult;
 import com.lewe.util.common.BizCode;
+import com.lewe.util.common.JedisUtil;
 import com.lewe.util.common.StringUtils;
 import com.lewe.web.controller.common.BaseController;
 
@@ -71,9 +72,20 @@ public class AdminController extends BaseController {
 	@ResponseBody
 	@RequestMapping("logout")
 	public ApiResult logout(HttpServletRequest request, HttpServletResponse response) {
+		ApiResult result = new ApiResult();
+		Account account = getSessionAccount(request, result);
+		JedisUtil redis = JedisUtil.getInstance();
+
+		String key = "lewe_loginAccountMenuTree:" + account.getId();
+		redis.del(key);
+		key = "lewe_loginAccountMenuTree:" + account.getId();
+		redis.del(key);
+		key = "lewe_account:" + account.getId();
+		redis.del(key);
+
 		HttpSession session = request.getSession();
 		session.removeAttribute(SYSACCOUNT);
-		ApiResult result = new ApiResult();
+		result = new ApiResult();
 		result.setMessage("退出登录成功");
 		return result;
 	}
@@ -101,7 +113,7 @@ public class AdminController extends BaseController {
 	public ApiResult getLoginAccountMenu(HttpServletRequest request, HttpServletResponse response) {
 		ApiResult result = new ApiResult();
 		Account account = getSessionAccount(request, result);
-		
+
 		if (account != null) {
 			JSONObject json = accountService.getLoginAccountMenu(account, result);
 			result.setData(json);
