@@ -596,6 +596,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		if (StringUtils.isNotBlank(loginAccount.getHospitalId())) {
 			hospitalIdList.add(loginAccount.getHospitalId());
 		}
+		logger.error(JSON.toJSONString(hospitalIdList));
 
 		return hospitalIdList;
 	}

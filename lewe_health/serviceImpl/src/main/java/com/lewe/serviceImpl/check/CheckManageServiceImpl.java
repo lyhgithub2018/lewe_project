@@ -910,6 +910,8 @@ public class CheckManageServiceImpl implements ICheckManageService {
 	}
 
 	public JSONObject checkAuditList(String sampleInfoQuery, Account loginAccount, Object apiResult) {
+		logger.error(JSON.toJSONString(loginAccount));
+		
 		// ReportNeedAduit 报告是否需要审核 0:否 1:是
 		// 先判断当前机构的检测信息是否需要审核,若不需要,则直接返回空
 		JSONObject json = new JSONObject();
@@ -927,6 +929,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		}
 		
 		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+	
 
 		//这里做权限判定
 		if(hospitalIds == null){
@@ -939,6 +942,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			//非主账号，有权限
 			query.setHospitalIdList(hospitalIds);
 		} 
+		logger.error(JSON.toJSONString(hospitalIds));
 
 		// 审核列表只展示检测过的数据
 		query.setCheckStatus((byte) 1);
@@ -956,7 +960,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			query.setEndDate(null);
 		}
 		logger.error(JSON.toJSONString(query));
-		
+
 		Integer totalCount = reportInfoMapper.selectCountBySampleInfoQuery(query);
 		if (totalCount == null || totalCount == 0) {
 			json.put("page", null);
