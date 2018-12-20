@@ -374,7 +374,18 @@ public class HospitalController extends BaseController {
 						list.add(json);
 					}
 				} else if ("2".equals(type)) {// 门店机构下拉列表
-					List<Hospital> hospitalList = hospitalMapper.selectListByMap(map);
+					Map<String, Object> mapHospital = new HashMap<String, Object>();
+					mapHospital.put("isDel", 0);// 仅查询没删除的数据
+					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+					if(hospitalIds != null && hospitalIds.size() == 0){
+						hospitalIds.add(0L);
+					}
+					
+					if(hospitalIds != null ){
+						mapHospital.put("idList",hospitalIds);
+					}
+
+					List<Hospital> hospitalList = hospitalMapper.selectListByMap(mapHospital);
 					for (Hospital hospital : hospitalList) {
 						JSONObject json = new JSONObject();
 						json.put("id", hospital.getId());
