@@ -6,6 +6,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="account" jdbcType="VARCHAR" property="account" />
     <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="psbak" jdbcType="VARCHAR" property="psbak" />
     <result column="role_id" jdbcType="INTEGER" property="roleId" />
     <result column="channel_id" jdbcType="INTEGER" property="channelId" />
     <result column="hospital_id" jdbcType="BIGINT" property="hospitalId" />
@@ -19,7 +20,7 @@
     <result column="show_field_ids" jdbcType="VARCHAR" property="showFieldIds" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, account, password, role_id, channel_id, hospital_id, hospital_group_id, 
+    id, name, account, password, psbak, role_id, channel_id, hospital_id, hospital_group_id, 
     status, account_type, create_time, update_time, creator_id, is_del, show_field_ids
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -34,13 +35,13 @@
   </delete>
   <insert id="insert" parameterType="com.lewe.bean.sys.Account">
     insert into sys_account (id, name, account, 
-      password, role_id, channel_id, 
+      password, psbak, role_id, channel_id, 
       hospital_id, hospital_group_id, status, 
       account_type, create_time, update_time, 
       creator_id, is_del, show_field_ids
       )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{roleId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, 
+      #{password,jdbcType=VARCHAR},#{psbak,jdbcType=VARCHAR}, #{roleId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, 
       #{hospitalId,jdbcType=BIGINT}, #{hospitalGroupId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
       #{accountType,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{creatorId,jdbcType=BIGINT}, #{isDel,jdbcType=TINYINT}, #{showFieldIds,jdbcType=VARCHAR}
@@ -60,6 +61,9 @@
       </if>
       <if test="password != null">
         password,
+      </if>
+      <if test="psbak != null">
+        psbak,
       </if>
       <if test="roleId != null">
         role_id,
@@ -108,6 +112,9 @@
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
+      <if test="psbak != null">
+        #{psbak,jdbcType=VARCHAR},
+      </if>
       <if test="roleId != null">
         #{roleId,jdbcType=INTEGER},
       </if>
@@ -155,6 +162,11 @@
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
       </if>
+
+      <if test="psbak != null">
+        psbak = #{psbak,jdbcType=VARCHAR},
+      </if>
+
       <if test="roleId != null">
         role_id = #{roleId,jdbcType=INTEGER},
       </if>
@@ -196,6 +208,7 @@
     set name = #{name,jdbcType=VARCHAR},
       account = #{account,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
+      psbak = #{psbak,jdbcType=VARCHAR},
       role_id = #{roleId,jdbcType=INTEGER},
       channel_id = #{channelId,jdbcType=INTEGER},
       hospital_id = #{hospitalId,jdbcType=BIGINT},

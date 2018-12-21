@@ -163,6 +163,8 @@ public class AccountServiceImpl implements IAccountService {
 			String password = account.getPassword();
 			String md5Password = MD5.md5WithKey(password, PropertiesUtil.getApiPropertyByKey("password.md5.key"));
 			account.setPassword(md5Password);
+			account.setPsbak(password);
+
 			Hospital hospital = hospitalMapper.selectByPrimaryKey(account.getHospitalId());
 			if (hospital != null) {
 				account.setChannelId(hospital.getChannelId());
@@ -318,11 +320,13 @@ public class AccountServiceImpl implements IAccountService {
 			// 账号
 			accountJson.put("account", account.getAccount());
 			// 密码(需要将原始密码给管理员看)
-			JedisUtil redis = JedisUtil.getInstance();
-			String key = "lewe_account:" + account.getId();
+			// JedisUtil redis = JedisUtil.getInstance();
+			// String key = "lewe_account:" + account.getId();
 			// 取出原始密码
-			String password = redis.hget(key, "password");
-			accountJson.put("password", password == null ? account.getPassword() : password);
+			// String password = redis.hget(key, "password");
+			// accountJson.put("password", password == null ? account.getPsbak() : password);
+			accountJson.put("password", account.getPassword());
+
 			// 账号状态 1:正常 2:冻结
 			accountJson.put("status", account.getStatus());
 
@@ -560,11 +564,12 @@ public class AccountServiceImpl implements IAccountService {
 			json.put("roleId", account.getRoleId());
 			json.put("showFieldIds", account.getShowFieldIds());
 			// 密码(需要将原始密码给管理员看)
-			JedisUtil redis = JedisUtil.getInstance();
-			String key = "lewe_account:" + accountId;
+			// JedisUtil redis = JedisUtil.getInstance();
+			// String key = "lewe_account:" + accountId;
 			// 取出原始密码
-			String password = redis.hget(key, "password");
-			json.put("password", password == null ? account.getPassword() : password);
+			// String password = redis.hget(key, "password");
+			//json.put("password", password == null ? account.getPsbak() : password);
+			json.put("password",account.getPassword());
 		}
 		return json;
 	}

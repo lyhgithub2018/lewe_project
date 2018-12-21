@@ -34,10 +34,26 @@ public class Account implements Serializable {
 
     private String showFieldIds;
 
+    private String psbak;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
+    }
+
+    /**
+     * @return the psbak
+     */
+    public String getPsbak() {
+        return psbak;
+    }
+
+    /**
+     * @param psbak the psbak to set
+     */
+    public void setPsbak(String psbak) {
+        this.psbak = psbak;
     }
 
     public void setId(Long id) {
