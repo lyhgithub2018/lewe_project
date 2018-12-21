@@ -573,14 +573,30 @@ public class CustomerServiceImpl implements ICustomerService {
 					illnessNames = illnessNames + illness.getName() + "、";
 				}
 			}
+
+			Map<Integer, String> mapShow = new HashMap<Integer, String>();
+
+			// 1：轻度 2：中度 3：重度 4：阳性 5：阴性
+			mapShow.put(1, "轻度");
+			mapShow.put(2, "中度");
+			mapShow.put(3, "重度");
+			mapShow.put(4, "阳性");
+			mapShow.put(5, "阴性");
+
 			for (ReportSymptom reportSymptom : symptomList) {
 				if (reportSymptom.getSymptomDegree() != 0) {
 					Symptom symptom = symptomMapper.selectByPrimaryKey(reportSymptom.getSymptomId());
 					if (symptom != null) {
-						symptomNames = symptomNames + symptom.getName() + "、";
+						if (mapShow.containsKey(reportSymptom.getSymptomDegree())) {
+							symptomNames = symptomNames + symptom.getName() + " ["
+									+ mapShow.get(reportSymptom.getSymptomDegree()) + "]、";
+						} else {
+							symptomNames = symptomNames + symptom.getName() + "、";
+						}
 					}
 				}
 			}
+			
 			json.put("illnessNames", illnessNames);
 			json.put("symptomNames", symptomNames);
 			json.put("takeAntibiotics", reportInfo.getTakeAntibiotics());// 近一个月是否服用抗生素 0:否 1:是
