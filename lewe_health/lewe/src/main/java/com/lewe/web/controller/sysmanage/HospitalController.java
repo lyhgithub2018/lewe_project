@@ -400,9 +400,18 @@ public class HospitalController extends BaseController {
 						list.add(json);
 					}
 				} else if ("3".equals(type)) {// 科室下拉列表
-					if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-						map.put("hospitalId", loginAccount.getHospitalId());
+					
+					String hospitalId = request.getParameter("hospitalId");
+					if(!StringUtils.isBlank(hospitalId)){
+						map.put("hospitalId", Long.parseLong(hospitalId));
 					}
+
+					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+					if(hospitalIds != null && hospitalIds.size() == 0){
+						hospitalIds.add(0L);
+					}
+					map.put("hospitalIdList", hospitalIds);
+
 					List<HospitalRoom> roomList = hospitalRoomMapper.selectListByMap(map);
 					for (HospitalRoom hospitalRoom : roomList) {
 						JSONObject json = new JSONObject();
@@ -411,9 +420,17 @@ public class HospitalController extends BaseController {
 						list.add(json);
 					}
 				} else if ("4".equals(type)) {// 医生下拉列表
-					if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-						map.put("hospitalId", loginAccount.getHospitalId());
+					String hospitalId = request.getParameter("hospitalId");
+					if(!StringUtils.isBlank(hospitalId)){
+						map.put("hospitalId", Long.parseLong(hospitalId));
 					}
+
+					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+					if(hospitalIds != null && hospitalIds.size() == 0){
+						hospitalIds.add(0L);
+					}
+					map.put("hospitalIdList", hospitalIds);
+					
 					List<HospitalDoctor> doctorList = hospitalDoctorMapper.selectListByMap(map);
 					for (HospitalDoctor hospitalDoctor : doctorList) {
 						JSONObject json = new JSONObject();

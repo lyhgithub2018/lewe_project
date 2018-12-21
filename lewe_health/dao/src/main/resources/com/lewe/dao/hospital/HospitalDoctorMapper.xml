@@ -182,6 +182,14 @@
       	<if test="hospitalId != null">
         	and hospital_id = #{hospitalId}
       	</if>
+        
+        <if test="hospitalIdList != null">
+          and hospital_id in
+          <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+            #{hospitalIdInner}
+          </foreach>
+        </if>
+
       	<if test="hospitalRoomId != null">
         	and hospital_room_id = #{hospitalRoomId}
       	</if>

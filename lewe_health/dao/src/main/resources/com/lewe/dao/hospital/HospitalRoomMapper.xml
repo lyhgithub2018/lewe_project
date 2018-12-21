@@ -165,6 +165,14 @@
       	<if test="hospitalId != null">
         	and hospital_id = #{hospitalId}
       	</if>
+
+        <if test="hospitalIdList != null">
+          and hospital_id in
+          <foreach collection="hospitalIdList" item="hospitalIdInner" index="index" open="(" close=")" separator=",">
+            #{hospitalIdInner}
+          </foreach>
+        </if>
+
       	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
 	        and CONCAT(room_name,room_code) LIKE #{keyword}

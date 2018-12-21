@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.customer.CustomerAccount;
 import com.lewe.bean.customer.Fans;
-import com.lewe.bean.sys.Account;
 import com.lewe.dao.customer.FansMapper;
 import com.lewe.service.customer.ICustomerService;
 import com.lewe.util.common.ApiResult;
