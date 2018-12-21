@@ -222,8 +222,22 @@ public class CustomerController extends BaseController {
 			@RequestParam("pageUrl") String pageUrl) {
 		ApiResult result = new ApiResult();
 		JSONObject json = null;
-		response.setHeader("Access-Control-Allow-Origin", "*");
+		// response.setHeader("Access-Control-Allow-Origin", "*");
+		// response.setContentType("text/html;charset=UTF-8");
+
+		String origin = request.getHeader("Origin");
+        if(StringUtils.isBlank(origin)){
+            origin = "*";
+        }
+        origin.replaceAll("http://", "");
+        origin.replaceAll("https://", "");
+        
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Methods","GET,POST");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,xm-api-type,App-Key,Access-Token,wechat-id,Cookie,token,Content-Type,Sign");
+		response.setHeader("Access-Control-Allow-Credentials","true");
 		response.setContentType("text/html;charset=UTF-8");
+		
 		try {
 			json = WeiXinUtil.createSignature(pageUrl);
 		} catch (Exception e) {

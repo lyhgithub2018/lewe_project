@@ -97,10 +97,24 @@ public class UploadFileController extends BaseController {
 	@ResponseBody
 	@RequestMapping("uploadReport")
 	public ApiResult uploadReport(HttpServletRequest request,String base64str,Integer type,Long reportInfoId, HttpServletResponse response) {
-		response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-        response.setHeader("Access-Control-Allow-Credentials", "true"); //支持cookie跨域
-        response.setContentType("application/json;charset=UTF-8");
+		// response.setHeader("Access-Control-Allow-Origin", "*");
+        // response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        // response.setHeader("Access-Control-Allow-Credentials", "true"); //支持cookie跨域
+		// response.setContentType("application/json;charset=UTF-8");
+		
+		String origin = request.getHeader("Origin");
+        if(StringUtils.isBlank(origin)){
+            origin = "*";
+        }
+        origin.replaceAll("http://", "");
+        origin.replaceAll("https://", "");
+
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Methods","GET,POST");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,xm-api-type,App-Key,Access-Token,wechat-id,Cookie,token,Content-Type,Sign");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+		response.setContentType("application/json;charset=UTF-8");
+		
 		ApiResult result = new ApiResult();
 		try {
 			if(base64str==null) {

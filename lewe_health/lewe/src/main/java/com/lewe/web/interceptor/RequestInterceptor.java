@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lewe.util.common.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.NamedThreadLocal;
@@ -55,12 +57,25 @@ public class RequestInterceptor implements HandlerInterceptor {
             }
             LOGGER.info(sb.toString());
         }
+
         //String servletPath = request.getServletPath();
         //if(servletPath.startsWith("/")) return true;
       	//response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-      	response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-        response.setHeader("Access-Control-Allow-Credentials", "true"); //支持cookie跨域
+      	// response.setHeader("Access-Control-Allow-Origin", "*");
+        // response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        // response.setHeader("Access-Control-Allow-Credentials", "true"); //支持cookie跨域
+
+        String origin = request.getHeader("Origin");
+        if(StringUtils.isBlank(origin)){
+            origin = "*";
+        }
+        origin.replaceAll("http://", "");
+        origin.replaceAll("https://", "");
+
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Methods","GET,POST");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,xm-api-type,App-Key,Access-Token,wechat-id,Cookie,token,Content-Type,Sign");
+        response.setHeader("Access-Control-Allow-Credentials","true");
         response.setContentType("application/json;charset=UTF-8");
         return true;
     }
@@ -82,10 +97,25 @@ public class RequestInterceptor implements HandlerInterceptor {
             sb.append("========请求处理完成,消耗时间:").append(executeTime).append("ms").append("========");
             LOGGER.info(sb.toString());
         }
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-        response.setHeader("Access-Control-Allow-Credentials", "true"); //支持cookie跨域
-        response.setContentType("application/json;charset=UTF-8");
+        // response.setHeader("Access-Control-Allow-Origin", "*");
+        // response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        // response.setHeader("Access-Control-Allow-Credentials", "true"); //支持cookie跨域
+        // response.setContentType("application/json;charset=UTF-8");
+
+
+        String origin = request.getHeader("Origin");
+        if(StringUtils.isBlank(origin)){
+            origin = "*";
+        }
+        origin.replaceAll("http://", "");
+        origin.replaceAll("https://", "");
+        
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Methods","GET,POST");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,xm-api-type,App-Key,Access-Token,wechat-id,Cookie,token,Content-Type,Sign");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setContentType("text/html;charset=UTF-8");
+
     }
  
     /**
