@@ -1205,6 +1205,9 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
 
 			json.put("hospitalName", hospital == null ? null : hospital.getHospitalName());// 机构名称
+			json.put("hospitalId", hospital == null ? null : hospital.getId());// 机构名称
+			json.put("logoUrl", hospital == null ? null : hospital.getLogoUrl());// 机构名称
+
 			json.put("hospitalRoomId", reportInfo.getHospitalRoomId());// 送检科室id
 			json.put("hospitalDoctorId", reportInfo.getHospitalDoctorId());// 送检医生id
 			json.put("checkDeviceId", reportInfo.getCheckDeviceId());// 检测设备id
