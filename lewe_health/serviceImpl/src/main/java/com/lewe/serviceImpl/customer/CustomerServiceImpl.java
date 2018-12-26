@@ -473,6 +473,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		paramMap.put("customerId", customerId);
 		List<JSONObject> myReportList = new ArrayList<JSONObject>();
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
+
 		for (ReportInfo reportInfo : list) {
 			JSONObject report = new JSONObject();
 			report.put("id", reportInfo.getId());
@@ -485,18 +486,16 @@ public class CustomerServiceImpl implements ICustomerService {
 			}
 			report.put("sampleAge", reportInfo.getSampleAge() + "岁");// 采样者年龄
 			report.put("samplePhone", reportInfo.getSamplePhone());// 采样者手机号
-			report.put("submitTime", reportInfo.getSubmitTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd HH:mm:ss"));// 采样提交时间
+			report.put("submitTime", reportInfo.getSubmitTime() == null ? null : DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd HH:mm:ss"));// 采样提交时间
 
 			// && reportInfo.getSubmitQuestionnaire() < 2
 			if (reportInfo.getReportStatus() < ReportStatus.HOSPITAL_SCAN.getValue()) {
 				report.put("status", 0);
 				report.put("statusDesc", "");
-			} else if (reportInfo.getReportStatus() < ReportStatus.RESULT_CREATE.getValue()
-					&& reportInfo.getCheckStatus() == 0) {
+			} else if (reportInfo.getReportStatus() < ReportStatus.RESULT_CREATE.getValue() && reportInfo.getCheckStatus() == 0) {
 				report.put("status", 1);
 				report.put("statusDesc", "检测中");
-			} else if (reportInfo.getReportStatus() == ReportStatus.RESULT_CREATE.getValue()) {
+			} else {
 				report.put("status", 2);
 				report.put("statusDesc", "查看报告");
 			}
