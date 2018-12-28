@@ -492,7 +492,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			if (reportInfo.getReportStatus() < ReportStatus.HOSPITAL_SCAN.getValue()) {
 				report.put("status", 0);
 				report.put("statusDesc", "");
-			} else if (reportInfo.getReportStatus() < ReportStatus.RESULT_CREATE.getValue() && reportInfo.getCheckStatus() == 0) {
+			} else if (reportInfo.getCheckStatus() == 0) {
 				report.put("status", 1);
 				report.put("statusDesc", "检测中");
 			} else {
