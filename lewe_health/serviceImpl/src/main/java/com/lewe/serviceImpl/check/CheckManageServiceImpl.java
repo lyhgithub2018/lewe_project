@@ -714,7 +714,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		logger.error("CH4Con0="+CH4Con0+";H2Con0="+H2Con0+";"+"CH4Con1="+CH4Con1+";H2Con1="+H2Con1+";");
 		logger.error("H2max="+H2max+";CH4max="+CH4max+";"+"CH4Sub="+CH4Sub+";H2Sub="+H2Sub+";CH4_H2Sub="+CH4_H2Sub);
 
-		if (CH4Con0 <= 12 && H2Con0 > 20) {
+		if (CH4Con0 <= 12 && H2Con0 > 20) {	
 			if (H2Con1 > 40) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
@@ -768,10 +768,10 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				if (CH4max > 52 || H2max > 80) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if (CH4max <= 52 || H2max <= 80) {
+				} else if ((CH4max > 32 && CH4max <= 52) || (H2max > 40 && H2max <= 80)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4max > 12 && CH4max < 32) || (H2max > 20 && H2max <= 40)) {
+				} else if ((CH4max > 12 && CH4max <= 32) || (H2max > 20 && H2max <= 40)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4max <= 12 && H2max <= 20) {
@@ -800,7 +800,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				reslut = 3;
 				reslutDesc = "重度阳性";
 				logger.error("CH4Con0 > 12 && H2Con0 > 20 H2Con1 > 40 || CH4Con1 > 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
-			} else if ((H2Con1 > 12 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32)) {
+			} else if ((H2Con1 > 20 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32)) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
 				logger.error("CH4Con0 > 12 && H2Con0 > 20 (H2Con1 > 12 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32) reslut="+ reslut  + " reslutDesc="+reslutDesc);
@@ -855,7 +855,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				logger.error("isHospital == 1 reslut == 1 || reslut == 2 || reslut == 3 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 		}
-		
+
 		JSONObject json = new JSONObject();
 		json.put("reslut", reslut);
 		json.put("reslutDesc", reslutDesc);
