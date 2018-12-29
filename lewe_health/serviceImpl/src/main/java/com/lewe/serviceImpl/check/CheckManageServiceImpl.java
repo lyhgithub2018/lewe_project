@@ -575,30 +575,31 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				String reportResultDescription = "";
 				if (sampleAge < 18) {// 小于18岁时的文案(儿童版)
 					if (reportResult == 5) {
-						reportResultDescription = "儿童阴性：健康的肠道菌群有助于孩子的消化吸收、排毒通便、生长发育、加强免疫力等";
+						reportResultDescription = "儿童阴性：健康的肠道菌群有助于孩子的消化吸收、排毒通便、生长发育以及免疫力。";
 					} else if (reportResult == 1) {
-						reportResultDescription = "儿童轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，使肠粘膜通透性增加，有害物质进入血液循环，对身体造成伤害。";
+						reportResultDescription = "儿童轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，肠粘膜通透性增加，有毒物质进入血液循环，对多系统、多器官造成伤害。";
 					} else if (reportResult == 2) {
-						reportResultDescription = "儿童中度：肠道菌群长年严重失衡容易形成消化系统溃疡，损害心脏、肾脏等，影响孩子生长发育。";
+						reportResultDescription = "儿童中度：肠道菌群长期严重失衡，易形成消化系统溃疡，甚至损害心脏、肾脏等，影响孩子生长发育。";
 					} else if (reportResult == 3) {
-						reportResultDescription = "儿童重度：肠道菌群长年严重失衡容易形成消化系统溃疡、肠道息肉等，损害心脏、肾脏等，影响孩子生长发育。";
+						reportResultDescription = "儿童重度：肠道菌群长期严重失衡，易形成消化系统溃疡、息肉，甚至损害心脏、肾脏等，影响孩子生长发育、免疫机能、睡眠情绪、学习能力等。";
 					} else if (reportResult == 4) {// 如果结果为阳性,则文案取'轻度'的文案
-						reportResultDescription = "儿童轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，使肠粘膜通透性增加，有害物质进入血液循环，对身体造成伤害。";
+						reportResultDescription = "儿童轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，肠粘膜通透性增加，有毒物质进入血液循环，对多系统、多器官造成伤害。";
 					}
 				} else {// 大于18岁时的文案(成人版)
 					if (reportResult == 5) {
-						reportResultDescription = "成人阴性：健康的肠道菌群有助于我们的消化吸收、排毒通便、增强免疫力等";
+						reportResultDescription = "成人阴性：健康的肠道菌群有助于我们的消化吸收、排毒通便以及增强免疫力。";
 					} else if (reportResult == 1) {
-						reportResultDescription = "成人轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，使肠粘膜通透性增加，有害物质进入血液循环，对身体造成伤害。";
+						reportResultDescription = "成人轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，肠粘膜通透性增加，有毒物质进入血液循环，对多系统、多器官造成伤害。";
 					} else if (reportResult == 2) {
-						reportResultDescription = "成人中度：肠道菌群长年严重失衡容易形成消化系统溃疡，损害心脏、肾脏等，引发皮肤暗黄，口臭，便秘等";
+						reportResultDescription = "成人中度：肠道菌群长期严重失衡，易形成消化系统溃疡，甚至损害心脏、肾脏等，同时常伴有皮肤暗黄、口臭、腹泻、便秘等。";
 					} else if (reportResult == 3) {
-						reportResultDescription = "成人中度：肠道菌群长年严重失衡容易形成消化系统溃疡，损害心脏、肾脏等，引发皮肤暗黄，口臭，便秘等";
+						reportResultDescription = "成人重度：肠道菌群长期严重失衡，易形成消化系统溃疡、息肉，甚至损害心脏、肾脏等，最终可能导致癌症。";
 					} else if (reportResult == 4) {// 如果结果为阳性,则文案取'轻度'的文案
-						reportResultDescription = "成人轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，使肠粘膜通透性增加，有害物质进入血液循环，对身体造成伤害。";
+						reportResultDescription = "成人轻度：有害菌过多会产生吲哚、胺类、氨、硫化氢等有毒物质，肠粘膜通透性增加，有毒物质进入血液循环，对多系统、多器官造成伤害。";
 					}
 				}
 				update.setReportResultDescription(reportResultDescription);
+				
 				// 数据分析文案
 				String reportDataAnalysis = "在0min数值超出正常数值引起的原因有平时的吸烟，喝酒，口腔卫生习惯等引起，在30min时消化在胃部，数值呈上升趋势，胃部可能存在hp，建议去做hp检测，在60-90min消化进入小肠段数值继续呈上升趋势，证明小肠段有细菌存在，发生肠道菌群失衡，您的数值已达到重度请仔细阅读我们的干预建议，及时到医院就诊。";
 				update.setReportDataAnalysis(reportDataAnalysis);
