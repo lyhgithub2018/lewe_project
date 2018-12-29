@@ -225,7 +225,7 @@ public class HospitalServiceImpl implements IHospitalService{
 		List<HospitalLinkman> linkManList = hospitalBo.getLinkManList();
 		if(linkManList==null||linkManList.size()==0) {
 			result.setCode(BizCode.PARAM_EMPTY);
-			result.setMessage("请添加机构联系人和联系方式");
+			result.setMessage("请添加机构联系人和手机号");
 			return 0;
 		}else {
 			for (HospitalLinkman linkMan : linkManList) {

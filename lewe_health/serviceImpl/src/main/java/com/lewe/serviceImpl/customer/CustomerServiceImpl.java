@@ -554,7 +554,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			json.put("sampleHeight", reportInfo.getSampleHeight());// 采样者身高
 			json.put("sampleWeight", reportInfo.getSampleWeight());// 采样者体重
 			json.put("submitTime", reportInfo.getSubmitTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样日期
+					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样时间
 			json.put("analysisTime", reportInfo.getCheckTime() == null ? null
 					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 分析样本时间
 
@@ -664,8 +664,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			json.put("sampleName", reportInfo.getSampleName());
 			json.put("samplePhone", reportInfo.getSamplePhone());
 			json.put("sampleSex", reportInfo.getSampleSex());
-			json.put("sampleBirthday", reportInfo.getSampleBirthday() == null ? null
-					: DateUtil.formatDate(reportInfo.getSampleBirthday(), "yyyy-MM-dd"));
+			json.put("sampleBirthday", reportInfo.getSampleBirthday() == null ? null : DateUtil.formatDate(reportInfo.getSampleBirthday(), "yyyy-MM-dd"));
 			json.put("sampleHeight", reportInfo.getSampleHeight());
 			json.put("sampleWeight", reportInfo.getSampleWeight());
 		}

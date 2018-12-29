@@ -34,7 +34,6 @@ import com.lewe.dao.check.CheckItemMapper;
 import com.lewe.dao.check.CheckItemSubstrateMapper;
 import com.lewe.dao.check.GasBagDefaultMapper;
 import com.lewe.dao.check.SubstrateMapper;
-import com.lewe.dao.hospital.HospitalGroupMapper;
 import com.lewe.dao.hospital.HospitalMapper;
 import com.lewe.dao.report.ReportCheckDataMapper;
 import com.lewe.dao.report.ReportIllnessMapper;
@@ -55,7 +54,6 @@ import com.lewe.util.common.JedisUtil;
 import com.lewe.util.common.Page;
 import com.lewe.util.common.StringUtils;
 import com.lewe.util.common.aliyun.SMSUtil;
-import com.lewe.util.common.constants.AccountType;
 import com.lewe.util.common.constants.ReportStatus;
 import com.lewe.util.common.mei.nian.MeiNianReportUtil;
 
@@ -224,15 +222,15 @@ public class CheckManageServiceImpl implements ICheckManageService {
 
 		List<Long> hosIdList = customerManageService.getUserHostList(loginAccount);
 
-		//这里做权限判定
-		if(hosIdList == null){
-			//主账号
-		} else if(hosIdList.size() == 0){
-			//无权限
-			hosIdList.add(0L); 
+		// 这里做权限判定
+		if (hosIdList == null) {
+			// 主账号
+		} else if (hosIdList.size() == 0) {
+			// 无权限
+			hosIdList.add(0L);
 			query.setHospitalIdList(hosIdList);
 		} else {
-			//非主账号，有权限
+			// 非主账号，有权限
 			query.setHospitalIdList(hosIdList);
 		}
 
@@ -279,7 +277,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			sampleInfo.put("submitTime", reportInfo.getSubmitTime() == null ? null
 					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样提交时间
 			sampleInfo.put("checkTime", reportInfo.getCheckTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测日期
+					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测时间
 			sampleInfo.put("hospitalScanTime", reportInfo.getHospitalScanTime() == null ? null
 					: DateUtil.formatDate(reportInfo.getHospitalScanTime(), "yyyy-MM-dd"));// 门店扫描日期
 			sampleInfo.put("checkStatus", reportInfo.getCheckStatus());// 检测状态 0：待检测 1：已检测
@@ -335,9 +333,9 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			json.put("sampleHeight", reportInfo.getSampleHeight());// 采样者身高
 			json.put("sampleWeight", reportInfo.getSampleWeight());// 采样者体重
 			json.put("submitTime", reportInfo.getSubmitTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样日期
+					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样时间
 			json.put("checkTime", reportInfo.getCheckTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测日期
+					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测时间
 			// 检测项目及底物
 			json.put("checkItemId", reportInfo.getCheckItemId());// 检测项目id
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());
@@ -412,15 +410,15 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				return 0;
 			}
 			if (checkInfoBo.getHospitalRoomId() == null) {
-//				result.setCode(BizCode.PARAM_EMPTY);
-//				result.setMessage("请选择送检科室");
-//				return 0;
+				// result.setCode(BizCode.PARAM_EMPTY);
+				// result.setMessage("请选择送检科室");
+				// return 0;
 				checkInfoBo.setHospitalRoomId(Long.parseLong("0"));
 			}
 			if (checkInfoBo.getHospitalDoctorId() == null) {
-//				result.setCode(BizCode.PARAM_EMPTY);
-//				result.setMessage("请选择送检医生");
-//				return 0;
+				// result.setCode(BizCode.PARAM_EMPTY);
+				// result.setMessage("请选择送检医生");
+				// return 0;
 				checkInfoBo.setHospitalDoctorId(Long.parseLong("0"));
 			}
 			if (checkInfoBo.getCheckDeviceId() == null) {
@@ -630,8 +628,8 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					MeiNianReportUtil.addCheckInfo(param);
 				}
 				// 报告名称
-				// 美年端为'全肠道菌群无创吹气检查报告解析',其他为'甲烷氢呼气检查报告解析'
-				String reportName = "全肠道菌群无创吹气检查报告解析";
+				// 美年端为'全肠道菌群无创吹气检查报告',其他为'甲烷氢呼气检查报告解析'
+				String reportName = "全肠道菌群无创吹气检查报告";
 				if (!hospital.getHospitalName().contains("美年")) {
 					reportName = "甲烷氢呼气检查报告解析";
 				}
@@ -669,9 +667,10 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		// 分别取出第1,2袋的氢气,甲烷,浓度数据;这次肯定不是 669 了
 		Integer H2Con0 = checkData0.getH2Concentration() == null ? 0 : checkData0.getH2Concentration().intValue();
 		Integer CH4Con0 = checkData0.getCh4Concentration() == null ? 0 : checkData0.getCh4Concentration().intValue();
+
 		Integer H2Con1 = checkData1.getH2Concentration() == null ? 0 : checkData1.getH2Concentration().intValue();
 		Integer CH4Con1 = checkData1.getCh4Concentration() == null ? 0 : checkData1.getCh4Concentration().intValue();
-		
+
 		int H2max = 0;// 氢气浓度最大值
 		int CH4max = 0;// 甲烷浓度最大值
 		int CO2max = 0;// 二氧化碳浓度最大值
@@ -697,16 +696,33 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			}
 		}
 
-		int CH4Sub = CH4max - CH4Con1;// CH4浓度差值
+		int CH4Sub = CH4max - CH4Con1;// CH4浓度差值 -1
+		if (CH4Sub < 0) {
+			CH4Sub = 0;
+		}
+
 		int H2Sub = H2max - H2Con1;// H2浓度差值
-		int CH4_H2Sub = (CH4max + H2max) - (CH4Con1 + H2Con1);
+		if (H2Sub < 0) {
+			H2Sub = 0;
+		}
+
+		int CH4_H2Sub = (CH4max + H2max) - (CH4Con1 + H2Con1); // 22
+		if (CH4_H2Sub < 0) {
+			CH4_H2Sub = 0;
+		}
+
+		logger.error("CH4Con0="+CH4Con0+";H2Con0="+H2Con0+";"+"CH4Con1="+CH4Con1+";H2Con1="+H2Con1+";");
+		logger.error("H2max="+H2max+";CH4max="+CH4max+";"+"CH4Sub="+CH4Sub+";H2Sub="+H2Sub+";CH4_H2Sub="+CH4_H2Sub);
+
 		if (CH4Con0 <= 12 && H2Con0 > 20) {
 			if (H2Con1 > 40) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 H2Con1 > 40 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (H2Con1 > 20 && H2Con1 <= 40) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 H2Con1 > 20 && H2Con1 <= 40 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (CH4Con1 > 12 && H2Con1 <= 20) {
 				if (H2max > 80 || CH4max > 52) {
 					reslut = 3;
@@ -721,30 +737,32 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 CH4Con1 > 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (CH4Con1 <= 12 && H2Con1 <= 20) {
 				if (CH4Sub > 52 || H2Sub > 80 || CH4_H2Sub > 55) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80)
-						|| (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
+				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80) || (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40)
-						|| (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
+				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40) || (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4Sub <= 12 && H2Sub <= 20 && CH4_H2Sub <= 15) {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 		} else if (CH4Con0 > 12 && H2Con0 <= 20) {
 			if (CH4Con1 > 32) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 > 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (CH4Con1 > 12 && CH4Con1 <= 32) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 > 12 && CH4Con1 <= 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 			if (CH4Con1 <= 12 && H2Con1 > 20) {
 				if (CH4max > 52 || H2max > 80) {
@@ -760,76 +778,84 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 <= 12 && H2Con1 > 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (CH4Con1 <= 12 && H2Con1 <= 20) {
 				if (CH4Sub > 52 || H2Sub > 80 || CH4_H2Sub > 55) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80)
-						|| (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
+				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80) || (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40)
-						|| (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
+				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40) || (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4Sub <= 12 && H2Sub <= 20 && CH4_H2Sub <= 15) {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 		} else if (CH4Con0 > 12 && H2Con0 > 20) {
 			if (H2Con1 > 40 || CH4Con1 > 32) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
+				logger.error("CH4Con0 > 12 && H2Con0 > 20 H2Con1 > 40 || CH4Con1 > 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if ((H2Con1 > 12 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32)) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
+				logger.error("CH4Con0 > 12 && H2Con0 > 20 (H2Con1 > 12 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32) reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (CH4Con1 <= 12 && H2Con1 <= 20) {
 				if (CH4Sub > 52 || H2Sub > 80 || CH4_H2Sub > 55) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80)
-						|| (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
+				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80) || (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40)
-						|| (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
+				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40) || (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4Sub <= 12 && H2Sub <= 20 && CH4_H2Sub <= 15) {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
+				logger.error("CH4Con0 > 12 && H2Con0 > 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 		} else if (CH4Con0 <= 12 && H2Con0 <= 20) {
 			int CH4Sub0 = CH4max - CH4Con0;
 			int H2Sub0 = H2max - H2Con0;
 			int CH4_H2Sub0 = (CH4max + H2max) - (CH4Con0 + H2Con0);
+			logger.error("CH4Sub0="+CH4Sub0+";H2Sub0="+H2Sub0+";"+"CH4_H2Sub0="+CH4_H2Sub0+";");
 			if (CH4Sub0 > 52 || H2Sub0 > 80 || CH4_H2Sub0 > 55) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
-			} else if ((CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80)
-					|| (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55)) {
+				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 CH4Sub0 > 52 || H2Sub0 > 80 || CH4_H2Sub0 > 55 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+			} else if ((CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80) || (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55)) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
-			} else if ((CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40)
-					|| (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35)) {
+				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 (CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80) || (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55) reslut="+ reslut  + " reslutDesc="+reslutDesc);
+			} else if ((CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40) || (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35)) {
 				reslut = 1;
 				reslutDesc = "轻度阳性";
+				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 (CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40) || (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35) reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			} else if (CH4Sub0 <= 12 && H2Sub0 <= 20 && CH4_H2Sub0 <= 15) {
 				reslut = 5;
 				reslutDesc = "阴性";
+				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 CH4Sub0 <= 12 && H2Sub0 <= 20 && CH4_H2Sub0 <= 15 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 		} else {
 			reslut = 5;
 			reslutDesc = "阴性";
+			logger.error("else reslut="+ reslut  + " reslutDesc="+reslutDesc);
 		}
+
 		if (isHospital == 1) {// 如果是医院,诊断结果不区分轻重度只有阳性阴性
 			if (reslut == 1 || reslut == 2 || reslut == 3) {
 				reslut = 4;
 				reslutDesc = "阳性";
+				logger.error("isHospital == 1 reslut == 1 || reslut == 2 || reslut == 3 reslut="+ reslut  + " reslutDesc="+reslutDesc);
 			}
 		}
+		
 		JSONObject json = new JSONObject();
 		json.put("reslut", reslut);
 		json.put("reslutDesc", reslutDesc);
@@ -911,7 +937,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 
 	public JSONObject checkAuditList(String sampleInfoQuery, Account loginAccount, Object apiResult) {
 		logger.error(JSON.toJSONString(loginAccount));
-		
+
 		// ReportNeedAduit 报告是否需要审核 0:否 1:是
 		// 先判断当前机构的检测信息是否需要审核,若不需要,则直接返回空
 		JSONObject json = new JSONObject();
@@ -927,21 +953,20 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		} else {
 			query = new SampleInfoQuery();
 		}
-		
-		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
-	
 
-		//这里做权限判定
-		if(hospitalIds == null){
-			//主账号
-		} else if(hospitalIds.size() == 0){
-			//无权限
-			hospitalIds.add(0L); 
+		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+
+		// 这里做权限判定
+		if (hospitalIds == null) {
+			// 主账号
+		} else if (hospitalIds.size() == 0) {
+			// 无权限
+			hospitalIds.add(0L);
 			query.setHospitalIdList(hospitalIds);
 		} else {
-			//非主账号，有权限
+			// 非主账号，有权限
 			query.setHospitalIdList(hospitalIds);
-		} 
+		}
 		logger.error(JSON.toJSONString(hospitalIds));
 
 		// 审核列表只展示检测过的数据
@@ -970,7 +995,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 		Page page = new Page(query.getPageNo(), query.getPageSize(), totalCount);
 		query.setStartIndex(page.getStartIndex());
 		List<ReportInfo> list = reportInfoMapper.selectListBySampleInfoQuery(query);
-		
+
 		List<JSONObject> auditInfoList = new ArrayList<JSONObject>();
 		for (ReportInfo reportInfo : list) {
 			JSONObject auditInfo = new JSONObject();
@@ -990,7 +1015,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			auditInfo.put("submitTime", reportInfo.getSubmitTime() == null ? null
 					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样提交时间
 			auditInfo.put("checkTime", reportInfo.getCheckTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测日期
+					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测时间
 			Account checker = accountMapper.selectByPrimaryKey(reportInfo.getCheckAccountId());
 			auditInfo.put("checkerName", checker == null ? null : checker.getName());// 检测员
 			Account auditer = accountMapper.selectByPrimaryKey(reportInfo.getAuditAccountId());
@@ -1161,8 +1186,8 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				MeiNianReportUtil.addCheckInfo(json);
 
 				// 报告名称
-				// 美年端为'全肠道菌群无创吹气检查报告解析',其他为'甲烷氢呼气检查报告解析'
-				String reportName = "全肠道菌群无创吹气检查报告解析";
+				// 美年端为'全肠道菌群无创吹气检查报告',其他为'甲烷氢呼气检查报告解析'
+				String reportName = "全肠道菌群无创吹气检查报告";
 				if (!hospital.getHospitalName().contains("美年")) {
 					reportName = "甲烷氢呼气检查报告解析";
 				}
@@ -1222,9 +1247,9 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			json.put("sampleHeight", reportInfo.getSampleHeight());// 采样者身高
 			json.put("sampleWeight", reportInfo.getSampleWeight());// 采样者体重
 			json.put("submitTime", reportInfo.getSubmitTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样日期
+					: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样时间
 			json.put("checkTime", reportInfo.getCheckTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测日期
+					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测时间
 			// 检测项目及底物
 			json.put("checkItemId", reportInfo.getCheckItemId());// 检测项目id
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());

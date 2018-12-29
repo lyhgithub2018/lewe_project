@@ -168,7 +168,7 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 			customerInfo.put("hospitalScanTime", reportInfo.getHospitalScanTime() == null ? null
 					: DateUtil.formatDate(reportInfo.getHospitalScanTime(), "yyyy-MM-dd HH:mm:ss"));// 门店扫码日期
 			customerInfo.put("checkTime", reportInfo.getCheckTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd HH:mm:ss"));// 检测日期
+					: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd HH:mm:ss"));// 检测时间
 			customerInfo.put("reportStatus", reportInfo.getReportStatus());// 报告状态
 			customerInfo.put("reportStatusName", ReportStatus.getDescByStatus(reportInfo.getReportStatus()));// 状态描述
 			customerInfoList.add(customerInfo);
