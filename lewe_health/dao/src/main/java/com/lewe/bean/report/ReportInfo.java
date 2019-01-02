@@ -116,7 +116,7 @@ public class ReportInfo implements Serializable {
     private Date expressTime;
 
     /**
-     * 检测员检测日期
+     * 检测员检测时间
      */
     private Date checkTime;
 
