@@ -573,7 +573,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				// 检后分析文案处理(依据甲方提供的文案)
 				Integer sampleAge = reportInfo.getSampleAge();
 				String reportResultDescription = "";
-				if (sampleAge < 18) {// 小于18岁时的文案(儿童版)
+				if (sampleAge <= 18) {// 小于18岁时的文案(儿童版)
 					if (reportResult == 5) {
 						reportResultDescription = "健康的肠道菌群有助于孩子的消化吸收、排毒通便、生长发育以及免疫力。";
 					} else if (reportResult == 1) {
