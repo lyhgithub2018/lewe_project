@@ -567,8 +567,14 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				update.setId(reportInfo.getId());
 				int reportResult = json.getIntValue("reslut");
 				update.setReportResult(reportResult);// 报告结果标识 1：轻度 2：中度 3：重度 4：阳性 5：阴性
+				
 				// 气体数据检测结果描述
-				update.setGasCheckResult("小肠细菌过度生长" + json.getString("reslutDesc"));
+				if(reportResult == 5){
+					update.setGasCheckResult("菌群平衡，小肠细菌过度生长" + json.getString("reslutDesc"));
+				}else {
+					update.setGasCheckResult("菌群失衡，小肠细菌过度生长" + json.getString("reslutDesc"));
+				}
+				
 
 				// 检后分析文案处理(依据甲方提供的文案)
 				Integer sampleAge = reportInfo.getSampleAge();
