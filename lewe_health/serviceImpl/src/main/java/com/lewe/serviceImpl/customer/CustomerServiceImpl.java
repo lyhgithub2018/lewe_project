@@ -157,6 +157,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		}
 		Questionnaire1Bo basicInfo = null;
 		if (StringUtils.isNotBlank(questionnaire1)) {
+
 			// 问卷信息1(采样者基本信息)
 			basicInfo = JSONObject.parseObject(questionnaire1, Questionnaire1Bo.class);
 			if (StringUtils.isBlank(basicInfo.getSampleName())) {
@@ -187,46 +188,72 @@ public class CustomerServiceImpl implements ICustomerService {
 			result.setCode(BizCode.DATA_NOT_FOUND);
 			result.setMessage("当前提交的采样者信息没有绑定采样编号,请绑定后再填写问卷信息！");
 			return 0;
-		} else {
-			// 绑定过,则更新保存相关字段
-			// 生成采样者的报告基本信息字段
-			if (basicInfo != null) {
-				ReportInfo reportInfo = new ReportInfo();
-				BeanUtils.copyProperties(basicInfo, reportInfo);
-				// 通过出生日期计算出年龄
-				int age = DateUtil.getAgeByBirth(basicInfo.getSampleBirthday());
-				reportInfo.setSampleAge(age);
-				CustomerAccount customerAccount = customerAccountMapper.selectByPrimaryKey(basicInfo.getCustomerId());
-				if (customerAccount != null) {
-					reportInfo.setCustomerPhone(customerAccount.getPhone());
-				}
-				reportInfo.setId(report.getId());
-				reportInfo.setSubmitTime(new Date());
-				reportInfo.setSubmitQuestionnaire((byte) 1);
-				reportInfo.setSampleCode(sampleCode.trim());
-				reportInfoMapper.updateByPrimaryKeySelective(reportInfo);
+		} 
+		
+		// 绑定过,则更新保存相关字段
+		// 生成采样者的报告基本信息字段
+		if (basicInfo != null) {
+			ReportInfo reportInfo = new ReportInfo();
+			BeanUtils.copyProperties(basicInfo, reportInfo);
+
+			// 通过出生日期计算出年龄
+			int age = DateUtil.getAgeByBirth(basicInfo.getSampleBirthday());
+			reportInfo.setSampleAge(age);
+
+
+			CustomerAccount customerAccount = customerAccountMapper.selectByPrimaryKey(basicInfo.getCustomerId());
+			if (customerAccount == null) {
+				result.setCode(BizCode.DATA_NOT_FOUND);
+				result.setMessage("未登录！");
+				return 0;
 			}
-			// 问卷信息2
-			if (StringUtils.isNotBlank(questionnaire2)) {
-				Questionnaire2Bo questionnaire2Bo = JSONObject.parseObject(questionnaire2, Questionnaire2Bo.class);
-				// 症状列表
-				List<ReportSymptom> reportSymptomList = questionnaire2Bo.getReportSymptomList();
-				if (reportSymptomList != null && reportSymptomList.size() > 0) {
-					for (ReportSymptom reportSymptom : reportSymptomList) {
-						reportSymptom.setReportInfoId(report.getId());
-						reportSymptom.setId(null);
-						reportSymptomMapper.insertSelective(reportSymptom);
-					}
-					ReportInfo update = new ReportInfo();
-					update.setId(report.getId());
-					// 提交方式 1：用户提交 2：辅助提交
-					update.setSubmitWay((byte) 1);
-					// 是否提交了调查问卷 0:否 1:提交了问卷信息1 2:提交了问卷信息2
-					update.setSubmitQuestionnaire((byte) 2);
-					// 困扰健康的问题
-					update.setBesetHealthProblem(questionnaire2Bo.getBesetHealthProblem());
-					reportInfoMapper.updateByPrimaryKeySelective(update);
+
+			reportInfo.setCustomerPhone(customerAccount.getPhone());
+
+			//客户不存在，是别人的手机
+			if(!customerAccount.getPhone().equals(basicInfo.getSamplePhone())){
+				CustomerAccount customerAccountNew = customerAccountMapper.selectByPhone(basicInfo.getSamplePhone());
+				if(customerAccountNew != null){
+					reportInfo.setCustomerId(customerAccountNew.getId());
+				}else {
+					CustomerAccount accountInsert = new CustomerAccount();
+					accountInsert.setPhone(basicInfo.getSamplePhone());
+					accountInsert.setCreateTime(new Date());
+					accountInsert.setFansId(0L);
+					accountInsert.setStatus((byte) 1);
+					customerAccountMapper.insertSelective(accountInsert);
+					reportInfo.setCustomerId(accountInsert.getId());
 				}
+			}
+
+
+			reportInfo.setId(report.getId());
+			reportInfo.setSubmitTime(new Date());
+			reportInfo.setSubmitQuestionnaire((byte) 1);
+			reportInfo.setSampleCode(sampleCode.trim());
+			reportInfoMapper.updateByPrimaryKeySelective(reportInfo);
+		}
+
+		// 问卷信息2
+		if (StringUtils.isNotBlank(questionnaire2)) {
+			Questionnaire2Bo questionnaire2Bo = JSONObject.parseObject(questionnaire2, Questionnaire2Bo.class);
+			// 症状列表
+			List<ReportSymptom> reportSymptomList = questionnaire2Bo.getReportSymptomList();
+			if (reportSymptomList != null && reportSymptomList.size() > 0) {
+				for (ReportSymptom reportSymptom : reportSymptomList) {
+					reportSymptom.setReportInfoId(report.getId());
+					reportSymptom.setId(null);
+					reportSymptomMapper.insertSelective(reportSymptom);
+				}
+				ReportInfo update = new ReportInfo();
+				update.setId(report.getId());
+				// 提交方式 1：用户提交 2：辅助提交
+				update.setSubmitWay((byte) 1);
+				// 是否提交了调查问卷 0:否 1:提交了问卷信息1 2:提交了问卷信息2
+				update.setSubmitQuestionnaire((byte) 2);
+				// 困扰健康的问题
+				update.setBesetHealthProblem(questionnaire2Bo.getBesetHealthProblem());
+				reportInfoMapper.updateByPrimaryKeySelective(update);
 			}
 		}
 		return 1;

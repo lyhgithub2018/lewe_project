@@ -183,7 +183,7 @@ public class UploadFileController extends BaseController {
 				if(reportInfo!=null) {
 					//报告图片只有第一张是前端动态生成的,需要调用该接口将其上传至服务器
 					//报告图片区分儿童版和成人版,默认的6张图片已上传至服务器指定位置.
-					if(reportInfo.getSampleAge()<18) {//儿童版
+					if(reportInfo.getSampleAge() <= 18) {//儿童版
 						picIds = sysFile.getId()+",1,2,3";
 					}else {//成人版
 						picIds = sysFile.getId()+",4,5,6";
