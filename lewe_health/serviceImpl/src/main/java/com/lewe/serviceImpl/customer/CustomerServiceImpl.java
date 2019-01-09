@@ -212,7 +212,9 @@ public class CustomerServiceImpl implements ICustomerService {
 
 			//客户不存在，是别人的手机
 			if(!customerAccount.getPhone().equals(basicInfo.getSamplePhone())){
+				logger.error("customerAccount.getPhone()="+customerAccount.getPhone()+"//basicInfo.getSamplePhone()="+basicInfo.getSamplePhone());
 				CustomerAccount customerAccountNew = customerAccountMapper.selectByPhone(basicInfo.getSamplePhone());
+
 				if(customerAccountNew != null){
 					reportInfo.setCustomerId(customerAccountNew.getId());
 				}else {
@@ -222,9 +224,12 @@ public class CustomerServiceImpl implements ICustomerService {
 					accountInsert.setFansId(0L);
 					accountInsert.setStatus((byte) 1);
 					customerAccountMapper.insertSelective(accountInsert);
+					logger.error("accountInsert.getId()="+accountInsert.getId());
 					reportInfo.setCustomerId(accountInsert.getId());
 				}
 			}
+			logger.error("report.getId()="+report.getId());
+			logger.error("reportInfo.getId()="+reportInfo.getCustomerId());
 
 
 			reportInfo.setId(report.getId());
