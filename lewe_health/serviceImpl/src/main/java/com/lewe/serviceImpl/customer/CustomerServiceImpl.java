@@ -522,6 +522,9 @@ public class CustomerServiceImpl implements ICustomerService {
 			} else if (reportInfo.getCheckStatus() == 0) {
 				report.put("status", 1);
 				report.put("statusDesc", "检测中");
+			} else if (reportInfo.getAuditStatus() == 0) {
+				report.put("status", 1);
+				report.put("statusDesc", "审核中");
 			} else {
 				report.put("status", 2);
 				report.put("statusDesc", "查看报告");
