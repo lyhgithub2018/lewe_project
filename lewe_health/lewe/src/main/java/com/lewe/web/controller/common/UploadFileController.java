@@ -127,9 +127,11 @@ public class UploadFileController extends BaseController {
 				result.setMessage("缺少参数");
 				return result;
 			}
+
 			//将base64转成MultipartFile
 			MultipartFile reportFile = BASE64DecodedMultipartFile.base64ToMultipart(base64str);
 			request.setCharacterEncoding("utf-8"); // 设置编码
+
 			//文件上传路径
 			String uploadPath = PropertiesUtil.getApiPropertyByKey("upload.reportFile.path");
 			File dir = new File(uploadPath);
@@ -138,25 +140,32 @@ public class UploadFileController extends BaseController {
 			}
 			// 文件原始名称
 			String originalFilename = reportFile.getOriginalFilename();
+
 			// 文件类型
 			String fileType = originalFilename.substring(originalFilename.lastIndexOf(".")+1);
 			if(StringUtils.isBlank(fileType)) {
 				fileType = "jpg";
 			}
+
 			// 自己定义文件唯一名称
 			String fileName = DateUtil.getDays() + System.currentTimeMillis() + "." + fileType;
+
 			//美年端的文件名单独处理
 			ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportInfoId);
 			if(reportInfo!=null) {
 				Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
+				fileName = reportInfo.getSampleName()+"_"+ reportInfo.getSampleCode()+ "." + fileType;
 				if(hospital!=null && hospital.getHospitalName().contains("美年")) {
 					//美年端用sampleCode+itemId保证报告文件名的唯一性
-					fileName = reportInfo.getSampleCode()+"10160"+ "." + fileType;
+					fileName = reportInfo.getSampleName()+"_"+ reportInfo.getSampleCode()+"10160"+ "." + fileType;
 				}
 			}
+
 			// 目标路径
 			String destPath = uploadPath + fileName;
 			File localFile = new File(destPath);
+			localFile.deleteOnExit();
+
 			// 图片上传到服务器
 			reportFile.transferTo(localFile);
 

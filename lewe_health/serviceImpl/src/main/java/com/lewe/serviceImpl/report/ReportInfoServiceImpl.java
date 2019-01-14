@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import com.lewe.bean.report.ReportInfo;
 import com.lewe.bean.report.vo.UsedCountInfo;
 import com.lewe.bean.sys.Account;
 import com.lewe.bean.sys.Channel;
+import com.lewe.bean.sys.Role;
 import com.lewe.bean.sys.SysFile;
 import com.lewe.dao.check.CheckItemMapper;
 import com.lewe.dao.report.ReportIllnessMapper;
@@ -25,6 +27,7 @@ import com.lewe.dao.report.ReportInfoMapper;
 import com.lewe.dao.report.UsedCountMapper;
 import com.lewe.dao.sys.AccountMapper;
 import com.lewe.dao.sys.ChannelMapper;
+import com.lewe.dao.sys.RoleMapper;
 import com.lewe.dao.sys.SysFileMapper;
 import com.lewe.service.customer.ICustomerManageService;
 import com.lewe.service.report.IReportInfoService;
@@ -51,6 +54,8 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	private ReportIllnessMapper reportIllnessMapper;
 	@Autowired
 	private SysFileMapper sysFileMapper;
+	@Autowired
+	private RoleMapper roleMapper;
 
 	@Autowired
 	private ICustomerManageService customerManageService;
@@ -159,6 +164,19 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		}
 		json.put("page", page);
 		json.put("reportCountList", reportCountList);
+
+		
+		String hasExport = "1";
+		if(loginAccount.getRoleId() != null){
+			Role rf =	roleMapper.selectByPrimaryKey(loginAccount.getRoleId());
+			if(rf.getName() != null && rf.getName().indexOf("管理员") >= 0){
+				hasExport = "1";
+			}else{
+				hasExport = "0";
+			}
+		}
+
+		json.put("hasExport", hasExport);
 		return json;
 	}
 

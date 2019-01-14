@@ -78,9 +78,9 @@ public class DownLoadController {
 								String domainName = PropertiesUtil.getApiPropertyByKey("domain.name");
 								// 前端项目路径
 								String leweWebPath = PropertiesUtil.getApiPropertyByKey("lewe.web.path");
-								SysFile sysfile = sysFileMapper
-										.selectByPrimaryKey(Long.valueOf(reportInfo.getReportPdfIds()));
+								SysFile sysfile = sysFileMapper.selectByPrimaryKey(Long.valueOf(reportInfo.getReportPdfIds()));
 								String url = sysfile.getUrl();
+								
 								// 将文件的网络路径转换成本地路径读取
 								if (url.startsWith(domainName)) {
 									url = url.replaceAll(domainName, leweWebPath);
