@@ -15,6 +15,15 @@ public interface ICheckManageService {
 	public int saveCheckItem(String checkItem, Account account, Object apiResult);
 
 	/**
+	 * 检测管理-保存检测项目
+	 * @param checkItem
+	 * @param account
+	 * @param ApiResult
+	 * @return
+	 */
+	public int modifyAdvice(String checkItem, Account account, Object apiResult);
+
+	/**
 	 * 检测管理-删除检测项目
 	 * @param itemId
 	 * @param account

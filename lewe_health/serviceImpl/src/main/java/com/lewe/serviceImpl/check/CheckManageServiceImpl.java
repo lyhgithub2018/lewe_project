@@ -6,13 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.CheckDevice;
@@ -22,7 +15,6 @@ import com.lewe.bean.check.GasBagDefault;
 import com.lewe.bean.check.Substrate;
 import com.lewe.bean.customer.query.SampleInfoQuery;
 import com.lewe.bean.hospital.Hospital;
-import com.lewe.bean.hospital.HospitalGroup;
 import com.lewe.bean.report.ReportCheckData;
 import com.lewe.bean.report.ReportIllness;
 import com.lewe.bean.report.ReportInfo;
@@ -56,6 +48,13 @@ import com.lewe.util.common.StringUtils;
 import com.lewe.util.common.aliyun.SMSUtil;
 import com.lewe.util.common.constants.ReportStatus;
 import com.lewe.util.common.mei.nian.MeiNianReportUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("checkManageService")
 public class CheckManageServiceImpl implements ICheckManageService {
@@ -150,6 +149,25 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					checkItemSubstrateMapper.insertSelective(itemSubstrate);
 				}
 			}
+		}
+		return 1;
+	}
+
+	@Transactional
+	public int modifyAdvice(String jsonstr, Account account, Object apiResult) {
+		if (jsonstr != null) {
+			ApiResult result = (ApiResult) apiResult;
+			CheckItemBo checkItemBo = JSONObject.parseObject(jsonstr, CheckItemBo.class);
+			if (StringUtils.isBlank(checkItemBo.getName())) {
+				result.setCode(BizCode.PARAM_EMPTY);
+				result.setMessage("请输入建议");
+				return 0;
+			}
+
+			ReportInfo rf = new ReportInfo();
+			rf.setId(checkItemBo.getId().longValue());
+			rf.setAdviceMsg(checkItemBo.getName());
+			reportInfoMapper.updateByPrimaryKeySelective(rf);
 		}
 		return 1;
 	}
@@ -567,14 +585,13 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				update.setId(reportInfo.getId());
 				int reportResult = json.getIntValue("reslut");
 				update.setReportResult(reportResult);// 报告结果标识 1：轻度 2：中度 3：重度 4：阳性 5：阴性
-				
+
 				// 气体数据检测结果描述
-				if(reportResult == 5){
+				if (reportResult == 5) {
 					update.setGasCheckResult("菌群平衡，小肠细菌过度生长" + json.getString("reslutDesc"));
-				}else {
+				} else {
 					update.setGasCheckResult("菌群失衡，小肠细菌过度生长" + json.getString("reslutDesc"));
 				}
-				
 
 				// 检后分析文案处理(依据甲方提供的文案)
 				Integer sampleAge = reportInfo.getSampleAge();
@@ -605,7 +622,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					}
 				}
 				update.setReportResultDescription(reportResultDescription);
-				
+
 				// 数据分析文案
 				String reportDataAnalysis = "在0min数值超出正常数值引起的原因有平时的吸烟，喝酒，口腔卫生习惯等引起，在30min时消化在胃部，数值呈上升趋势，胃部可能存在hp，建议去做hp检测，在60-90min消化进入小肠段数值继续呈上升趋势，证明小肠段有细菌存在，发生肠道菌群失衡，您的数值已达到重度请仔细阅读我们的干预建议，及时到医院就诊。";
 				update.setReportDataAnalysis(reportDataAnalysis);
@@ -718,18 +735,21 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			CH4_H2Sub = 0;
 		}
 
-		logger.error("CH4Con0="+CH4Con0+";H2Con0="+H2Con0+";"+"CH4Con1="+CH4Con1+";H2Con1="+H2Con1+";");
-		logger.error("H2max="+H2max+";CH4max="+CH4max+";"+"CH4Sub="+CH4Sub+";H2Sub="+H2Sub+";CH4_H2Sub="+CH4_H2Sub);
+		logger.error(
+				"CH4Con0=" + CH4Con0 + ";H2Con0=" + H2Con0 + ";" + "CH4Con1=" + CH4Con1 + ";H2Con1=" + H2Con1 + ";");
+		logger.error("H2max=" + H2max + ";CH4max=" + CH4max + ";" + "CH4Sub=" + CH4Sub + ";H2Sub=" + H2Sub
+				+ ";CH4_H2Sub=" + CH4_H2Sub);
 
-		if (CH4Con0 <= 12 && H2Con0 > 20) {	
+		if (CH4Con0 <= 12 && H2Con0 > 20) {
 			if (H2Con1 > 40) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
-				logger.error("CH4Con0 <= 12 && H2Con0 > 20 H2Con1 > 40 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 H2Con1 > 40 reslut=" + reslut + " reslutDesc=" + reslutDesc);
 			} else if (H2Con1 > 20 && H2Con1 <= 40) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
-				logger.error("CH4Con0 <= 12 && H2Con0 > 20 H2Con1 > 20 && H2Con1 <= 40 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 H2Con1 > 20 && H2Con1 <= 40 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			} else if (CH4Con1 > 12 && H2Con1 <= 20) {
 				if (H2max > 80 || CH4max > 52) {
 					reslut = 3;
@@ -744,32 +764,38 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
-				logger.error("CH4Con0 <= 12 && H2Con0 > 20 CH4Con1 > 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 CH4Con1 > 12 && H2Con1 <= 20 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			} else if (CH4Con1 <= 12 && H2Con1 <= 20) {
 				if (CH4Sub > 52 || H2Sub > 80 || CH4_H2Sub > 55) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80) || (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
+				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80)
+						|| (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40) || (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
+				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40)
+						|| (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4Sub <= 12 && H2Sub <= 20 && CH4_H2Sub <= 15) {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
-				logger.error("CH4Con0 <= 12 && H2Con0 > 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 <= 12 && H2Con0 > 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			}
 		} else if (CH4Con0 > 12 && H2Con0 <= 20) {
 			if (CH4Con1 > 32) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
-				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 > 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error(
+						"CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 > 32 reslut=" + reslut + " reslutDesc=" + reslutDesc);
 			} else if (CH4Con1 > 12 && CH4Con1 <= 32) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
-				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 > 12 && CH4Con1 <= 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 > 12 && CH4Con1 <= 32 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			}
 			if (CH4Con1 <= 12 && H2Con1 > 20) {
 				if (CH4max > 52 || H2max > 80) {
@@ -785,81 +811,100 @@ public class CheckManageServiceImpl implements ICheckManageService {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
-				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 <= 12 && H2Con1 > 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 <= 12 && H2Con1 > 20 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			} else if (CH4Con1 <= 12 && H2Con1 <= 20) {
 				if (CH4Sub > 52 || H2Sub > 80 || CH4_H2Sub > 55) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80) || (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
+				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80)
+						|| (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40) || (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
+				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40)
+						|| (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4Sub <= 12 && H2Sub <= 20 && CH4_H2Sub <= 15) {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
-				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 > 12 && H2Con0 <= 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			}
 		} else if (CH4Con0 > 12 && H2Con0 > 20) {
 			if (H2Con1 > 40 || CH4Con1 > 32) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
-				logger.error("CH4Con0 > 12 && H2Con0 > 20 H2Con1 > 40 || CH4Con1 > 32 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 > 12 && H2Con0 > 20 H2Con1 > 40 || CH4Con1 > 32 reslut=" + reslut + " reslutDesc="
+						+ reslutDesc);
 			} else if ((H2Con1 > 20 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32)) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
-				logger.error("CH4Con0 > 12 && H2Con0 > 20 (H2Con1 > 12 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32) reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error(
+						"CH4Con0 > 12 && H2Con0 > 20 (H2Con1 > 12 && H2Con1 <= 40) || (CH4Con1 > 12 && CH4Con1 <= 32) reslut="
+								+ reslut + " reslutDesc=" + reslutDesc);
 			} else if (CH4Con1 <= 12 && H2Con1 <= 20) {
 				if (CH4Sub > 52 || H2Sub > 80 || CH4_H2Sub > 55) {
 					reslut = 3;
 					reslutDesc = "重度阳性";
-				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80) || (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
+				} else if ((CH4Sub > 32 && CH4Sub <= 52) || (H2Sub > 40 && H2Sub <= 80)
+						|| (CH4_H2Sub > 35 && CH4_H2Sub <= 55)) {
 					reslut = 2;
 					reslutDesc = "中度阳性";
-				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40) || (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
+				} else if ((CH4Sub > 12 && CH4Sub <= 32) || (H2Sub > 20 && H2Sub <= 40)
+						|| (CH4_H2Sub > 15 && CH4_H2Sub <= 35)) {
 					reslut = 1;
 					reslutDesc = "轻度阳性";
 				} else if (CH4Sub <= 12 && H2Sub <= 20 && CH4_H2Sub <= 15) {
 					reslut = 5;
 					reslutDesc = "阴性";
 				}
-				logger.error("CH4Con0 > 12 && H2Con0 > 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 > 12 && H2Con0 > 20 CH4Con1 <= 12 && H2Con1 <= 20 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			}
 		} else if (CH4Con0 <= 12 && H2Con0 <= 20) {
 			int CH4Sub0 = CH4max - CH4Con0;
 			int H2Sub0 = H2max - H2Con0;
 			int CH4_H2Sub0 = (CH4max + H2max) - (CH4Con0 + H2Con0);
-			logger.error("CH4Sub0="+CH4Sub0+";H2Sub0="+H2Sub0+";"+"CH4_H2Sub0="+CH4_H2Sub0+";");
+			logger.error("CH4Sub0=" + CH4Sub0 + ";H2Sub0=" + H2Sub0 + ";" + "CH4_H2Sub0=" + CH4_H2Sub0 + ";");
 			if (CH4Sub0 > 52 || H2Sub0 > 80 || CH4_H2Sub0 > 55) {
 				reslut = 3;
 				reslutDesc = "重度阳性";
-				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 CH4Sub0 > 52 || H2Sub0 > 80 || CH4_H2Sub0 > 55 reslut="+ reslut  + " reslutDesc="+reslutDesc);
-			} else if ((CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80) || (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55)) {
+				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 CH4Sub0 > 52 || H2Sub0 > 80 || CH4_H2Sub0 > 55 reslut="
+						+ reslut + " reslutDesc=" + reslutDesc);
+			} else if ((CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80)
+					|| (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55)) {
 				reslut = 2;
 				reslutDesc = "中度阳性";
-				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 (CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80) || (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55) reslut="+ reslut  + " reslutDesc="+reslutDesc);
-			} else if ((CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40) || (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35)) {
+				logger.error(
+						"CH4Con0 <= 12 && H2Con0 <= 20 (CH4Sub0 > 32 && CH4Sub0 <= 52) || (H2Sub0 > 40 && H2Sub0 <= 80) || (CH4_H2Sub0 > 35 && CH4_H2Sub0 <= 55) reslut="
+								+ reslut + " reslutDesc=" + reslutDesc);
+			} else if ((CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40)
+					|| (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35)) {
 				reslut = 1;
 				reslutDesc = "轻度阳性";
-				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 (CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40) || (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35) reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error(
+						"CH4Con0 <= 12 && H2Con0 <= 20 (CH4Sub0 > 12 && CH4Sub0 <= 32) || (H2Sub0 > 20 && H2Sub0 <= 40) || (CH4_H2Sub0 > 15 && CH4_H2Sub0 <= 35) reslut="
+								+ reslut + " reslutDesc=" + reslutDesc);
 			} else if (CH4Sub0 <= 12 && H2Sub0 <= 20 && CH4_H2Sub0 <= 15) {
 				reslut = 5;
 				reslutDesc = "阴性";
-				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 CH4Sub0 <= 12 && H2Sub0 <= 20 && CH4_H2Sub0 <= 15 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("CH4Con0 <= 12 && H2Con0 <= 20 CH4Sub0 <= 12 && H2Sub0 <= 20 && CH4_H2Sub0 <= 15 reslut="
+						+ reslut + " reslutDesc=" + reslutDesc);
 			}
 		} else {
 			reslut = 5;
 			reslutDesc = "阴性";
-			logger.error("else reslut="+ reslut  + " reslutDesc="+reslutDesc);
+			logger.error("else reslut=" + reslut + " reslutDesc=" + reslutDesc);
 		}
 
 		if (isHospital == 1) {// 如果是医院,诊断结果不区分轻重度只有阳性阴性
 			if (reslut == 1 || reslut == 2 || reslut == 3) {
 				reslut = 4;
 				reslutDesc = "阳性";
-				logger.error("isHospital == 1 reslut == 1 || reslut == 2 || reslut == 3 reslut="+ reslut  + " reslutDesc="+reslutDesc);
+				logger.error("isHospital == 1 reslut == 1 || reslut == 2 || reslut == 3 reslut=" + reslut
+						+ " reslutDesc=" + reslutDesc);
 			}
 		}
 

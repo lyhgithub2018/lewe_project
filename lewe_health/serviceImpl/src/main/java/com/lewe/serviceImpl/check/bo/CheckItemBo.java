@@ -15,6 +15,7 @@ public class CheckItemBo {
 	 private String name;//项目名称
 	 //检测项目所对应的底物
 	 private List<CheckItemSubstrate> substrateList = new ArrayList<CheckItemSubstrate>();
+	 
 	public Integer getId() {
 		return id;
 	}

@@ -358,6 +358,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		}
 		// 2.校验账号是否存在
 		CustomerAccount account = customerAccountMapper.selectByPhone(phone);
+
 		// 3.插入新账号
 		if (account == null) {
 			CustomerAccount customer = customerAccountMapper.selectByFansId(fansId);
@@ -366,6 +367,7 @@ public class CustomerServiceImpl implements ICustomerService {
 				result.setMessage("该微信号已被账号:" + customer.getPhone() + "绑定");
 				return null;
 			}
+			
 			account = new CustomerAccount();
 			account.setPhone(phone);
 			account.setCreateTime(new Date());

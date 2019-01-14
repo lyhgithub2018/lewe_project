@@ -121,6 +121,21 @@ public class CheckManageController extends BaseController{
 		}
 		return result;
 	}
+
+		/**
+	 * 保存检测项目
+	 */
+	@ResponseBody
+	@RequestMapping("modifyAdvice")
+	public ApiResult modifyAdvice(HttpServletRequest request,String adviceMsg,HttpServletResponse response) {
+		ApiResult result = new ApiResult();
+		Account account = getSessionAccount(request,result);
+		if(account!=null) {
+			checkManageService.modifyAdvice(adviceMsg,account,result);
+		}
+		return result;
+	}
+
 	/**
 	 * 删除检测项目
 	 */

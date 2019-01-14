@@ -270,10 +270,26 @@ public class ReportInfo implements Serializable {
      */
     private String reportPdfIds;
 
+    private String adviceMsg;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
+    }
+
+    /**
+     * @return the adviceMsg
+     */
+    public String getAdviceMsg() {
+        return adviceMsg;
+    }
+
+    /**
+     * @param adviceMsg the adviceMsg to set
+     */
+    public void setAdviceMsg(String adviceMsg) {
+        this.adviceMsg = adviceMsg;
     }
 
     public void setId(Long id) {

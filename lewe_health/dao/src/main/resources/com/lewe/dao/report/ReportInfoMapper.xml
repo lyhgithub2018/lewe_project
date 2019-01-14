@@ -110,6 +110,8 @@
 			property="reportPictureIds" />
 		<result column="report_pdf_ids" jdbcType="VARCHAR"
 			property="reportPdfIds" />
+		<result column="advice_msg" jdbcType="VARCHAR"
+			property="adviceMsg" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, customer_id, customer_phone, sample_code, sample_name, sample_phone,
@@ -129,7 +131,7 @@
 		sys_report_code,
 		report_create_time, report_name, report_status, report_result, report_result_description,
 		report_data_analysis, intervention_suggestion, report_picture_ids,
-		report_pdf_ids
+		report_pdf_ids,advice_msg
 	</sql>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
 		resultMap="BaseResultMap">
@@ -556,6 +558,9 @@
 			<if test="sampleAge != null">
 				sample_age = #{sampleAge,jdbcType=INTEGER},
 			</if>
+			<if test="adviceMsg != null">
+				advice_msg = #{adviceMsg,jdbcType=VARCHAR},
+			</if>
 			<if test="sampleBirthday != null">
 				sample_birthday = #{sampleBirthday,jdbcType=DATE},
 			</if>
@@ -917,6 +922,7 @@
 			<if test="keyword != null and keyword !=''">
 				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
 			</if>
+			
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
 			<if test="submitQuestionnaireNotQuery0 != null">
 				and submit_questionnaire !=0
