@@ -1362,6 +1362,7 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			json.put("checkDataList", jsonList);// 检测数据
 			// 困扰健康的问题
 			json.put("besetHealthProblem", reportInfo.getBesetHealthProblem());
+			json.put("adviceMsg", reportInfo.getAdviceMsg());
 		}
 		return json;
 	}
