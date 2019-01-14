@@ -350,9 +350,9 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			dataList.add(report);
 		}
 		// 定义excel列名称字段名
-		String[] keyFields = { "itemName", "name", "sex", "age", "phone", "code", "checkerName", "reportTime",
-				"reportCode" };
+		String[] keyFields = { "itemName", "name", "sex", "age", "phone", "code", "checkerName", "reportTime", "reportCode" };
 		String[] valueFields = { "检测项目", "姓名", "性别", "年龄", "电话", "检测编号", "检测员", "报告时间", "报告编号" };
+
 		// 生成Excel文件
 		HSSFWorkbook book = ExcelUtil.createReportCountExcel("检测报告统计", keyFields, valueFields, dataList);
 		return book;
