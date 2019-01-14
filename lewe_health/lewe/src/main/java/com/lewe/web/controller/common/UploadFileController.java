@@ -154,10 +154,10 @@ public class UploadFileController extends BaseController {
 			ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportInfoId);
 			if(reportInfo!=null) {
 				Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
-				fileName = reportInfo.getSampleName()+"_"+ reportInfo.getSampleCode()+ "." + fileType;
+				fileName = reportInfo.getSampleCode()+ "." + fileType;
 				if(hospital!=null && hospital.getHospitalName().contains("美年")) {
 					//美年端用sampleCode+itemId保证报告文件名的唯一性
-					fileName = reportInfo.getSampleName()+"_"+ reportInfo.getSampleCode()+"10160"+ "." + fileType;
+					fileName = reportInfo.getSampleCode()+"10160"+ "." + fileType;
 				}
 			}
 
