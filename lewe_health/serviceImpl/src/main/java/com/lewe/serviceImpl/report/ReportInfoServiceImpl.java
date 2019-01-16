@@ -330,14 +330,14 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	}
 
 	public JSONObject getReport(ReportInfo reportInfo, Map<Long, String> roomMap, Map<Long, String> ysMap,
-			Map<Long, String> sbMap, Map<Long, String> acMap, Map<Long, String> syMap, Map<Long, String> illMap) {
+			Map<Long, String> sbMap, Map<Long, String> acMap, Map<Integer, String> syMap, Map<Integer, String> illMap) {
 
 		JSONObject json = new JSONObject();
 		json.put("id", reportInfo.getId());
 		json.put("reportName", reportInfo.getReportName());// 报告名称
 		json.put("sysReportCode", reportInfo.getSysReportCode());// 系统报告编号
 		json.put("auditAccountId", reportInfo.getAuditAccountId());// 审核员id
-		json.put("auditTime", reportInfo.getAuditTime());// 审核时间
+
 		// 机构信息
 		json.put("hospitalId", reportInfo.getHospitalId());// 机构id
 		Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
@@ -351,9 +351,9 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		json.put("samplePhone", reportInfo.getSamplePhone());// 采样者手机号
 		json.put("sampleCode", reportInfo.getSampleCode());// 采样者编号
 		json.put("sampleName", reportInfo.getSampleName());// 采样者姓名
-		json.put("sampleSex", reportInfo.getSampleSex());// 采样者性别
+		json.put("sampleSex", reportInfo.getSampleSex() == null || reportInfo.getSampleSex() == 1 ? "男" : "女");// 采样者性别
 		json.put("sampleAge", reportInfo.getSampleAge());// 采样者年龄
-		json.put("sampleHeight", reportInfo.getSampleHeight());// 采样者身高
+		json.put("sampleHeight", reportInfo.getSampleHeight() == null ? "0.00" : reportInfo.getSampleHeight() / 100);// 采样者身高
 		json.put("sampleWeight", reportInfo.getSampleWeight());// 采样者体重
 
 		json.put("submitTime", reportInfo.getSubmitTime() == null ? null
@@ -361,7 +361,9 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		json.put("checkTime", reportInfo.getCheckTime() == null ? null
 				: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测时间
 		json.put("scanTime", reportInfo.getHospitalScanTime() == null ? null
-				: DateUtil.formatDate(reportInfo.getHospitalScanTime(), "yyyy-MM-dd"));// 检测时间
+				: DateUtil.formatDate(reportInfo.getHospitalScanTime(), "yyyy-MM-dd"));// 扫描
+		json.put("auditTime", reportInfo.getAuditTime() == null ? null
+				: DateUtil.formatDate(reportInfo.getAuditTime(), "yyyy-MM-dd"));// 审核时间
 
 		json.put("ksName",
 				reportInfo.getHospitalRoomId() == null || !roomMap.containsKey(reportInfo.getHospitalRoomId()) ? null
@@ -403,7 +405,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 
 		String syStr = "";
 		for (ReportSymptom var : symptomList) {
-			syStr += !syMap.containsKey(var.getId().longValue()) ? "无" : syMap.get(var.getId().longValue());
+			syStr += !syMap.containsKey(var.getId()) ? "无" : syMap.get(var.getId());
 			syStr += "【";
 			if (var.getSymptomDegree() == 0) {
 				syStr += "无";
@@ -420,7 +422,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 
 		String syStrN = "";
 		for (ReportIllness var : illnessList) {
-			syStrN += !illMap.containsKey(var.getId().longValue()) ? "无" : illMap.get(var.getId().longValue());
+			syStrN += !illMap.containsKey(var.getId()) ? "无" : illMap.get(var.getId());
 			syStrN += "【";
 			if (var.getIllnessDegree() == 0) {
 				syStrN += "无";
@@ -439,17 +441,24 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 				reportInfo.getTakeAntibiotics() == null || reportInfo.getTakeAntibiotics() == 0 ? "否" : "是");// 近一个月是否服用抗生素
 																												// 0:否
 																												// 1:是
-		json.put("antibioticsName", reportInfo.getAntibioticsName());// 所服用抗生素的药品名称
+		json.put("antibioticsName",
+				StringUtils.isBlank(reportInfo.getAntibioticsName()) ? "No" : reportInfo.getAntibioticsName());// 所服用抗生素的药品名称
+
 		json.put("helicobacterPyloriCheck", reportInfo.getHelicobacterPyloriCheck());// 幽门螺旋杆菌检测 0:未检测 1:阳性 2:阴性
-		json.put("hpCheckResult", reportInfo.getHpCheckResult());// 幽门螺旋杆菌检测结果
+
+		json.put("hpCheckResult",
+				StringUtils.isBlank(reportInfo.getHpCheckResult()) ? "No" : reportInfo.getHpCheckResult());// 幽门螺旋杆菌检测结果
+
 		json.put("gastroscopeEnteroscopyCheck", reportInfo.getGastroscopeEnteroscopyCheck());// 胃镜/肠镜检测 0:未检测 1:胃镜 //
 																								// 2:肠镜
-		json.put("geCheckResult", reportInfo.getGeCheckResult());// 胃镜/肠镜检测结果
+		json.put("geCheckResult",
+				StringUtils.isBlank(reportInfo.getGeCheckResult()) ? "No" : reportInfo.getGeCheckResult());// 胃镜/肠镜检测结果
+
 		json.put("foodMedicineAllergy",
 				reportInfo.getFoodMedicineAllergy() == null || reportInfo.getFoodMedicineAllergy() == 0 ? "否" : "是");// 食物/药物过敏
 																														// 0:否
 																														// 1:是
-		json.put("allergyFood", reportInfo.getAllergyFood());// 过敏物品名称
+		json.put("allergyFood", StringUtils.isBlank(reportInfo.getAllergyFood()) ? "No" : reportInfo.getAllergyFood());// 过敏物品名称
 
 		json.put("gasCheckResult", reportInfo.getGasCheckResult());// 气体检测结果描述
 		json.put("reportResult", reportInfo.getReportResult());// 报告结果标识
@@ -470,6 +479,20 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		} else {
 			paramMap = new HashMap<String, Object>();
 		}
+
+		List<Long> hosIdList = customerManageService.getUserHostList(loginAccount);
+		// 这里做权限判定
+		if (hosIdList == null) {
+			// 主账号
+		} else if (hosIdList.size() == 0) {
+			// 无权限
+			hosIdList.add(0L);
+			paramMap.put("hospitalIdList", hosIdList);
+		} else {
+			// 非主账号，有权限
+			paramMap.put("hospitalIdList", hosIdList);
+		}
+
 		paramMap.put("reportStatus", ReportStatus.RESULT_CREATE.getValue());
 		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
 			paramMap.put("hospitalId", loginAccount.getHospitalId());
@@ -526,16 +549,16 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			acMap.put(accountDo.getId().longValue(), accountDo.getName());
 		}
 
-		Map<Long, String> syMap = new HashMap<Long, String>();
+		Map<Integer, String> syMap = new HashMap<Integer, String>();
 		List<Symptom> symptomList = symptomMapper.selectListByMap(queryMap);
 		for (Symptom symptom : symptomList) {
-			syMap.put(symptom.getId().longValue(), symptom.getName());
+			syMap.put(symptom.getId(), symptom.getName());
 		}
 
-		Map<Long, String> illMap = new HashMap<Long, String>();
+		Map<Integer, String> illMap = new HashMap<Integer, String>();
 		List<Illness> illnessList = illnessMapper.selectListByMap(map);
 		for (Illness illness : illnessList) {
-			illMap.put(illness.getId().longValue(), illness.getName());
+			illMap.put(illness.getId(), illness.getName());
 		}
 
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
@@ -574,6 +597,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
 			paramMap.put("hospitalId", loginAccount.getHospitalId());
 		}
+
 		// 查询日期
 		Object queryDate = paramMap.get("queryDate");
 		paramMap.put("queryDate", queryDate);
