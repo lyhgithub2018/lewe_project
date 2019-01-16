@@ -5,33 +5,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
+import com.lewe.bean.check.CheckDevice;
 import com.lewe.bean.check.CheckItem;
+import com.lewe.bean.check.CheckItemSubstrate;
+import com.lewe.bean.check.GasBagDefault;
+import com.lewe.bean.check.Substrate;
+import com.lewe.bean.hospital.Hospital;
+import com.lewe.bean.hospital.HospitalDoctor;
+import com.lewe.bean.hospital.HospitalRoom;
+import com.lewe.bean.report.ReportCheckData;
 import com.lewe.bean.report.ReportIllness;
 import com.lewe.bean.report.ReportInfo;
+import com.lewe.bean.report.ReportSymptom;
 import com.lewe.bean.report.vo.UsedCountInfo;
 import com.lewe.bean.sys.Account;
 import com.lewe.bean.sys.Channel;
+import com.lewe.bean.sys.Illness;
 import com.lewe.bean.sys.Role;
+import com.lewe.bean.sys.Symptom;
 import com.lewe.bean.sys.SysFile;
+import com.lewe.dao.check.CheckDeviceMapper;
 import com.lewe.dao.check.CheckItemMapper;
+import com.lewe.dao.check.CheckItemSubstrateMapper;
+import com.lewe.dao.check.GasBagDefaultMapper;
+import com.lewe.dao.check.SubstrateMapper;
+import com.lewe.dao.hospital.HospitalDoctorMapper;
+import com.lewe.dao.hospital.HospitalMapper;
+import com.lewe.dao.hospital.HospitalRoomMapper;
+import com.lewe.dao.report.ReportCheckDataMapper;
 import com.lewe.dao.report.ReportIllnessMapper;
 import com.lewe.dao.report.ReportInfoMapper;
+import com.lewe.dao.report.ReportSymptomMapper;
 import com.lewe.dao.report.UsedCountMapper;
 import com.lewe.dao.sys.AccountMapper;
 import com.lewe.dao.sys.ChannelMapper;
+import com.lewe.dao.sys.IllnessMapper;
 import com.lewe.dao.sys.RoleMapper;
+import com.lewe.dao.sys.SymptomMapper;
 import com.lewe.dao.sys.SysFileMapper;
 import com.lewe.service.customer.ICustomerManageService;
 import com.lewe.service.report.IReportInfoService;
-import com.lewe.serviceImpl.report.bo.ReportCountExcel;
 import com.lewe.serviceImpl.report.bo.UsedCountExcel;
 import com.lewe.util.common.ApiResult;
 import com.lewe.util.common.BizCode;
@@ -41,6 +55,12 @@ import com.lewe.util.common.StringUtils;
 import com.lewe.util.common.constants.AccountType;
 import com.lewe.util.common.constants.ReportStatus;
 import com.lewe.util.common.excel.ExcelUtil;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("reportInfoService")
 public class ReportInfoServiceImpl implements IReportInfoService {
@@ -58,7 +78,35 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	private RoleMapper roleMapper;
 
 	@Autowired
+	private CheckDeviceMapper checkDeviceMapper;
+
+	@Autowired
+	private ReportSymptomMapper reportSymptomMapper;
+	@Autowired
+	private HospitalMapper hospitalMapper;
+	@Autowired
+	private GasBagDefaultMapper gasBagDefaultMapper;
+	@Autowired
+	private ReportCheckDataMapper reportCheckDataMapper;
+	@Autowired
+	private SubstrateMapper substrateMapper;
+	@Autowired
+	private CheckItemSubstrateMapper checkItemSubstrateMapper;
+
+	@Autowired
 	private ICustomerManageService customerManageService;
+
+	@Autowired
+	private HospitalRoomMapper hospitalRoomMapper;
+
+	@Autowired
+	private HospitalDoctorMapper hospitalDoctorMapper;
+
+	@Autowired
+	private SymptomMapper symptomMapper;
+
+	@Autowired
+	private IllnessMapper illnessMapper;
 
 	public static final Logger logger = LoggerFactory.getLogger(ReportInfoServiceImpl.class);
 
@@ -75,19 +123,19 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		paramMap.put("reportStatus", ReportStatus.RESULT_CREATE.getValue());
 
 		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
-		
-		//这里做权限判定
-		if(hospitalIds == null){
-			//主账号
-		} else if(hospitalIds.size() == 0){
-			//无权限
-			hospitalIds.add(0L); 
-			paramMap.put("hospitalIdList",hospitalIds);
+
+		// 这里做权限判定
+		if (hospitalIds == null) {
+			// 主账号
+		} else if (hospitalIds.size() == 0) {
+			// 无权限
+			hospitalIds.add(0L);
+			paramMap.put("hospitalIdList", hospitalIds);
 		} else {
-			//非主账号，有权限
-			paramMap.put("hospitalIdList",hospitalIds);
+			// 非主账号，有权限
+			paramMap.put("hospitalIdList", hospitalIds);
 		}
- 
+
 		String keyword = "";
 		Object obj = paramMap.get("keyword");
 		if (StringUtils.isNotBlank(obj)) {
@@ -165,13 +213,12 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		json.put("page", page);
 		json.put("reportCountList", reportCountList);
 
-		
 		String hasExport = "1";
-		if(loginAccount.getRoleId() != null){
-			Role rf =	roleMapper.selectByPrimaryKey(loginAccount.getRoleId());
-			if(rf.getName() != null && rf.getName().indexOf("管理员") >= 0){
+		if (loginAccount.getRoleId() != null) {
+			Role rf = roleMapper.selectByPrimaryKey(loginAccount.getRoleId());
+			if (rf.getName() != null && rf.getName().indexOf("管理员") >= 0) {
 				hasExport = "1";
-			}else{
+			} else {
 				hasExport = "0";
 			}
 		}
@@ -281,12 +328,137 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		return json;
 	}
 
+	public JSONObject getReport(ReportInfo reportInfo, Map<Long, String> roomMap, Map<Long, String> ysMap,
+			Map<Long, String> sbMap, Map<Long, String> acMap, Map<Long, String> syMap, Map<Long, String> illMap) {
+
+		JSONObject json = new JSONObject();
+		json.put("id", reportInfo.getId());
+		json.put("reportName", reportInfo.getReportName());// 报告名称
+		json.put("sysReportCode", reportInfo.getSysReportCode());// 系统报告编号
+		json.put("auditAccountId", reportInfo.getAuditAccountId());// 审核员id
+		json.put("auditTime", reportInfo.getAuditTime());// 审核时间
+		// 机构信息
+		json.put("hospitalId", reportInfo.getHospitalId());// 机构id
+		Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
+		json.put("hospitalName", hospital == null ? null : hospital.getHospitalName());// 机构名称
+		json.put("hospitalRoomId", reportInfo.getHospitalRoomId());// 送检科室id
+		json.put("hospitalDoctorId", reportInfo.getHospitalDoctorId());// 送检医生id
+		json.put("checkDeviceId", reportInfo.getCheckDeviceId());// 检测设备id
+		json.put("checkAccountId", reportInfo.getCheckAccountId());// 检测设备id
+		// 基础信息
+		json.put("customerPhone", reportInfo.getCustomerPhone());// 用户手机号
+		json.put("samplePhone", reportInfo.getSamplePhone());// 采样者手机号
+		json.put("sampleCode", reportInfo.getSampleCode());// 采样者编号
+		json.put("sampleName", reportInfo.getSampleName());// 采样者姓名
+		json.put("sampleSex", reportInfo.getSampleSex());// 采样者性别
+		json.put("sampleAge", reportInfo.getSampleAge());// 采样者年龄
+		json.put("sampleHeight", reportInfo.getSampleHeight());// 采样者身高
+		json.put("sampleWeight", reportInfo.getSampleWeight());// 采样者体重
+		
+		json.put("submitTime", reportInfo.getSubmitTime() == null ? null
+				: DateUtil.formatDate(reportInfo.getSubmitTime(), "yyyy-MM-dd"));// 采样时间
+		json.put("checkTime", reportInfo.getCheckTime() == null ? null
+				: DateUtil.formatDate(reportInfo.getCheckTime(), "yyyy-MM-dd"));// 检测时间
+		json.put("scanTime", reportInfo.getHospitalScanTime() == null ? null
+				: DateUtil.formatDate(reportInfo.getHospitalScanTime(), "yyyy-MM-dd"));// 检测时间
+
+		json.put("ksName",
+				reportInfo.getHospitalRoomId() == null || !roomMap.containsKey(reportInfo.getHospitalRoomId()) ? null
+						: roomMap.get(reportInfo.getHospitalRoomId()));
+
+		json.put("ysName",
+				reportInfo.getHospitalDoctorId() == null || !ysMap.containsKey(reportInfo.getHospitalDoctorId()) ? null
+						: ysMap.get(reportInfo.getHospitalDoctorId()));
+
+		json.put("shName",
+				reportInfo.getAuditAccountId() == null || !acMap.containsKey(reportInfo.getAuditAccountId()) ? null
+						: acMap.get(reportInfo.getAuditAccountId()));
+
+		json.put("jcName",
+				reportInfo.getCheckAccountId() == null || !acMap.containsKey(reportInfo.getCheckAccountId()) ? null
+						: acMap.get(reportInfo.getCheckAccountId()));
+
+		json.put("sbName",
+				reportInfo.getCheckDeviceId() == null || !sbMap.containsKey(reportInfo.getCheckDeviceId().longValue())
+						? null
+						: sbMap.get(reportInfo.getCheckDeviceId().longValue()));
+
+		// 检测项目及底物
+		json.put("checkItemId", reportInfo.getCheckItemId());// 检测项目id
+		CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());
+		json.put("checkItemName", checkItem == null ? null : checkItem.getName());// 项目名称
+		Substrate substrate = substrateMapper.selectByPrimaryKey(reportInfo.getCheckSubstrateId());
+		json.put("checkSubstrateId", reportInfo.getCheckSubstrateId());// 检测项目底物id
+		json.put("checkSubstrateName", substrate == null ? null : substrate.getName());// 底物名称
+		json.put("checkSubstrateDosage", reportInfo.getCheckSubstrateDosage());// 检测项目底物剂量
+
+		json.put("reportStatus", reportInfo.getReportStatus());
+
+		// 采样疾病信息
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportInfoId", reportInfo.getId());
+		List<ReportIllness> illnessList = reportIllnessMapper.selectListByMap(map);
+		List<ReportSymptom> symptomList = reportSymptomMapper.selectListByMap(map);
+
+		String syStr = "";
+		for (ReportSymptom var : symptomList) {
+			syStr += !syMap.containsKey(var.getId().longValue()) ? "无" : syMap.get(var.getId().longValue());
+			syStr += "【";
+			if (var.getSymptomDegree() == 0) {
+				syStr += "无";
+			} else if (var.getSymptomDegree() == 1) {
+				syStr += "轻度";
+			} else if (var.getSymptomDegree() == 2) {
+				syStr += "中度";
+			} else if (var.getSymptomDegree() == 3) {
+				syStr += "重度";
+			}
+			syStr += "】、";
+		}
+		json.put("symptomList", syStr);// 症状列表
+
+		String syStrN = "";
+		for (ReportIllness var : illnessList) {
+			syStrN += !illMap.containsKey(var.getId().longValue()) ? "无" : illMap.get(var.getId().longValue());
+			syStrN += "【";
+			if (var.getIllnessDegree() == 0) {
+				syStrN += "无";
+			} else if (var.getIllnessDegree() == 1) {
+				syStrN += "轻度";
+			} else if (var.getIllnessDegree() == 2) {
+				syStrN += "中度";
+			} else if (var.getIllnessDegree() == 3) {
+				syStrN += "重度";
+			}
+			syStrN += "】、";
+		}
+		json.put("illnessList", syStrN);// 疾病列表
+
+		json.put("takeAntibiotics", reportInfo.getTakeAntibiotics() == 0 ? "否" : "是");// 近一个月是否服用抗生素 0:否 1:是
+		json.put("antibioticsName", reportInfo.getAntibioticsName());// 所服用抗生素的药品名称
+		json.put("helicobacterPyloriCheck", reportInfo.getHelicobacterPyloriCheck());// 幽门螺旋杆菌检测 0:未检测 1:阳性 2:阴性
+		json.put("hpCheckResult", reportInfo.getHpCheckResult());// 幽门螺旋杆菌检测结果
+		json.put("gastroscopeEnteroscopyCheck", reportInfo.getGastroscopeEnteroscopyCheck());// 胃镜/肠镜检测 0:未检测 1:胃镜 //
+																								// 2:肠镜
+		json.put("geCheckResult", reportInfo.getGeCheckResult());// 胃镜/肠镜检测结果
+		json.put("foodMedicineAllergy", reportInfo.getFoodMedicineAllergy() == 0 ? "否" : "是");// 食物/药物过敏 0:否 1:是
+		json.put("allergyFood", reportInfo.getAllergyFood());// 过敏物品名称
+
+		json.put("gasCheckResult", reportInfo.getGasCheckResult());// 气体检测结果描述
+		json.put("reportResult", reportInfo.getReportResult());// 报告结果标识
+		json.put("reportResultDescription", reportInfo.getReportResultDescription());// 报告结果描述
+		json.put("reportDataAnalysis", reportInfo.getReportDataAnalysis());// 数据分析
+		json.put("interventionSuggestion", reportInfo.getInterventionSuggestion());// 数据分析
+
+		// 困扰健康的问题
+		json.put("besetHealthProblem", reportInfo.getBesetHealthProblem());
+		json.put("adviceMsg", reportInfo.getAdviceMsg());
+		return json;
+	}
+
 	public HSSFWorkbook exportReportCountList(String reportInfoQuery, Account loginAccount, Object apiResult) {
 		Map<String, Object> paramMap = null;
 		if (StringUtils.isNotBlank(reportInfoQuery)) {
-			// JSONObject parseObject = JSONObject.parseObject(reportInfoQuery);
-			// String str = parseObject.getString("reportInfoQuery");
-			// paramMap = jsonToMap(parseObject.toJSONString());
 			paramMap = jsonToMap(reportInfoQuery);
 		} else {
 			paramMap = new HashMap<String, Object>();
@@ -294,11 +466,6 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		paramMap.put("reportStatus", ReportStatus.RESULT_CREATE.getValue());
 		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
 			paramMap.put("hospitalId", loginAccount.getHospitalId());
-			// 若当前账号归属于某个门店组,则按门店组id查询
-			/*
-			 * if(loginAccount.getHospitalGroupId()!=null) { paramMap.put("hospitalGroupId",
-			 * loginAccount.getHospitalGroupId()); }
-			 */
 		}
 		String keyword = "";
 		Object obj = paramMap.get("keyword");
@@ -326,35 +493,64 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 				map.put("reportInfoIdList", reportInfoIdList);
 			}
 		}
+
+		Map<String, Object> queryMap = new HashMap<String, Object>();
+		List<HospitalRoom> roomList = hospitalRoomMapper.selectListByMap(queryMap);
+		Map<Long, String> roomMap = new HashMap<Long, String>();
+		for (HospitalRoom hospitalRoom : roomList) {
+			roomMap.put(hospitalRoom.getId(), hospitalRoom.getRoomName());
+		}
+
+		Map<Long, String> ysMap = new HashMap<Long, String>();
+		List<HospitalDoctor> doctorList = hospitalDoctorMapper.selectListByMap(queryMap);
+		for (HospitalDoctor hospitalDoctor : doctorList) {
+			ysMap.put(hospitalDoctor.getId(), hospitalDoctor.getDoctorName());
+		}
+
+		Map<Long, String> sbMap = new HashMap<Long, String>();
+		List<CheckDevice> deviceList = checkDeviceMapper.selectListByMap(queryMap);
+		for (CheckDevice checkDevice : deviceList) {
+			sbMap.put(checkDevice.getId().longValue(), checkDevice.getCode());
+		}
+
+		Map<Long, String> acMap = new HashMap<Long, String>();
+		List<Account> accountList = accountMapper.selectListByMap(queryMap);
+		for (Account accountDo : accountList) {
+			acMap.put(accountDo.getId().longValue(), accountDo.getName());
+		}
+
+		Map<Long, String> syMap = new HashMap<Long, String>();
+		List<Symptom> symptomList = symptomMapper.selectListByMap(queryMap);
+		for (Symptom symptom : symptomList) {
+			syMap.put(symptom.getId().longValue(), symptom.getName());
+		}
+
+		Map<Long, String> illMap = new HashMap<Long, String>();
+		List<Illness> illnessList = illnessMapper.selectListByMap(map);
+		for (Illness illness : illnessList) {
+			illMap.put(illness.getId().longValue(), illness.getName());
+		}
+
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
-		List<ReportCountExcel> dataList = new ArrayList<ReportCountExcel>();
+		List<JSONObject> dataList = new ArrayList<JSONObject>();
 		for (ReportInfo reportInfo : list) {
-			ReportCountExcel report = new ReportCountExcel();
-			// 查询检测项目的名称
-			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());
-			report.setItemName(checkItem == null ? null : checkItem.getName());
-			report.setName(reportInfo.getSampleName());
-			if (reportInfo.getSampleSex() == 1) {
-				report.setSex("男");
-			} else if (reportInfo.getSampleSex() == 2) {
-				report.setSex("女");
-			}
-			report.setAge(reportInfo.getSampleAge());
-			report.setPhone(reportInfo.getSamplePhone());
-			report.setCode(reportInfo.getSampleCode());
-			Account account = accountMapper.selectByPrimaryKey(reportInfo.getCheckAccountId());
-			report.setCheckerName(account == null ? "" : account.getName());
-			report.setReportTime(reportInfo.getReportCreateTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getReportCreateTime(), "yyyy-MM-dd"));
-			report.setReportCode(reportInfo.getSysReportCode());
+			JSONObject report = getReport(reportInfo, roomMap, ysMap, sbMap, acMap, syMap, illMap);
 			dataList.add(report);
 		}
+
 		// 定义excel列名称字段名
-		String[] keyFields = { "itemName", "name", "sex", "age", "phone", "code", "checkerName", "reportTime", "reportCode" };
-		String[] valueFields = { "检测项目", "姓名", "性别", "年龄", "电话", "检测编号", "检测员", "报告时间", "报告编号" };
+		String[] keyFieldsNew = { "sysReportCode", "hospitalName", "sampleCode", "checkItemName", "checkSubstrateName",
+				"samplePhone", "sampleName", "sampleSex", "sampleAge", "sampleWeight", "sampleHeight", "submitTime",
+				"scanTime", "checkTime", "auditTime", "sbName", "jcName", "shName", "ksName", "ysName", "sbName",
+				"gasCheckResult", "symptomList", "illnessList", "antibioticsName", "hpCheckResult", "geCheckResult",
+				"allergyFood" };
+
+		String[] valueFieldsNew = { "报告编号", "门店", "渠道自有编号", "检测项目", "底物名称", "电话", "患者姓名", "性别", "年龄岁", "体重kg", "身高m",
+				"分析样本创建日期", "样本发回日期", "样本收入日期", "检测完成日期", "设备编号", "检测", "审核", "科室", "医生", "结果", "检测前症状和体征", "合并疾病",
+				"服用过抗生素", "幽门螺旋杆菌", "肠镜检查", "药物过敏" };
 
 		// 生成Excel文件
-		HSSFWorkbook book = ExcelUtil.createReportCountExcel("检测报告统计", keyFields, valueFields, dataList);
+		HSSFWorkbook book = ExcelUtil.createReportCountExcel("检测报告统计", keyFieldsNew, valueFieldsNew, dataList);
 		return book;
 	}
 
@@ -369,11 +565,6 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		}
 		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
 			paramMap.put("hospitalId", loginAccount.getHospitalId());
-			// 若当前账号归属于某个门店组,则按门店组id查询
-			/*
-			 * if(loginAccount.getHospitalGroupId()!=null) { paramMap.put("hospitalGroupId",
-			 * loginAccount.getHospitalGroupId()); }
-			 */
 		}
 		// 查询日期
 		Object queryDate = paramMap.get("queryDate");

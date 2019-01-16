@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lewe.serviceImpl.report.bo.ReportCountExcel;
 import com.lewe.serviceImpl.report.bo.UsedCountExcel;
 import com.lewe.util.common.StringUtils;
@@ -644,8 +645,7 @@ public class ExcelUtil {
 	 * @param dataList  数据
 	 * @return
 	 */
-	public static HSSFWorkbook createReportCountExcel(String bookTitle, String[] keyFields, String[] valueFields,
-			List<ReportCountExcel> dataList) {
+	public static HSSFWorkbook createReportCountExcel(String bookTitle, String[] keyFields, String[] valueFields, List<JSONObject> dataList) {
 		// 声明一个工作薄
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		// 生成一个表格
