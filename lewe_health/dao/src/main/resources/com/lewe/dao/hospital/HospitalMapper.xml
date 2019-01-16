@@ -112,6 +112,7 @@
       </if>
     </trim>
     
+    
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
         #{id,jdbcType=BIGINT},
@@ -250,7 +251,7 @@
       show_field_ids = #{showFieldIds,jdbcType=VARCHAR} 
     where id = #{id,jdbcType=BIGINT}
   </update>
-  
+
   <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
   	SELECT COUNT(id) FROM hospital
   	<where>
