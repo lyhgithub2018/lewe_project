@@ -434,14 +434,20 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		}
 		json.put("illnessList", syStrN);// 疾病列表
 
-		json.put("takeAntibiotics", reportInfo.getTakeAntibiotics() == 0 ? "否" : "是");// 近一个月是否服用抗生素 0:否 1:是
+		json.put("takeAntibiotics",
+				reportInfo.getTakeAntibiotics() == null || reportInfo.getTakeAntibiotics() == 0 ? "否" : "是");// 近一个月是否服用抗生素
+																												// 0:否
+																												// 1:是
 		json.put("antibioticsName", reportInfo.getAntibioticsName());// 所服用抗生素的药品名称
 		json.put("helicobacterPyloriCheck", reportInfo.getHelicobacterPyloriCheck());// 幽门螺旋杆菌检测 0:未检测 1:阳性 2:阴性
 		json.put("hpCheckResult", reportInfo.getHpCheckResult());// 幽门螺旋杆菌检测结果
 		json.put("gastroscopeEnteroscopyCheck", reportInfo.getGastroscopeEnteroscopyCheck());// 胃镜/肠镜检测 0:未检测 1:胃镜 //
 																								// 2:肠镜
 		json.put("geCheckResult", reportInfo.getGeCheckResult());// 胃镜/肠镜检测结果
-		json.put("foodMedicineAllergy", reportInfo.getFoodMedicineAllergy() == 0 ? "否" : "是");// 食物/药物过敏 0:否 1:是
+		json.put("foodMedicineAllergy",
+				reportInfo.getFoodMedicineAllergy() == null || reportInfo.getFoodMedicineAllergy() == 0 ? "否" : "是");// 食物/药物过敏
+																														// 0:否
+																														// 1:是
 		json.put("allergyFood", reportInfo.getAllergyFood());// 过敏物品名称
 
 		json.put("gasCheckResult", reportInfo.getGasCheckResult());// 气体检测结果描述
@@ -542,12 +548,12 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		String[] keyFieldsNew = { "sysReportCode", "hospitalName", "sampleCode", "checkItemName", "checkSubstrateName",
 				"samplePhone", "sampleName", "sampleSex", "sampleAge", "sampleWeight", "sampleHeight", "submitTime",
 				"scanTime", "checkTime", "auditTime", "sbName", "jcName", "shName", "ksName", "ysName", "sbName",
-				"gasCheckResult", "symptomList", "illnessList","besetHealthProblem", "antibioticsName", "hpCheckResult", "geCheckResult",
-				"allergyFood" };
+				"gasCheckResult", "symptomList", "illnessList", "besetHealthProblem", "antibioticsName",
+				"hpCheckResult", "geCheckResult", "allergyFood" };
 
 		String[] valueFieldsNew = { "报告编号", "门店", "渠道自有编号", "检测项目", "底物名称", "电话", "患者姓名", "性别", "年龄岁", "体重kg", "身高m",
 				"分析样本创建日期", "样本发回日期", "样本收入日期", "检测完成日期", "设备编号", "检测", "审核", "科室", "医生", "结果", "检测前症状和体征", "合并疾病",
-				"困扰健康的问题","服用过抗生素", "幽门螺旋杆菌", "肠镜检查", "药物过敏" };
+				"困扰健康的问题", "服用过抗生素", "幽门螺旋杆菌", "肠镜检查", "药物过敏" };
 
 		// 生成Excel文件
 		HSSFWorkbook book = ExcelUtil.createReportCountExcel("检测报告统计", keyFieldsNew, valueFieldsNew, dataList);
