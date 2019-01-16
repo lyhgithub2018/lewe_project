@@ -256,7 +256,8 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 					symptom.setReportInfoId(reportInfo.getId());
 					reportSymptomMapper.insertSelective(symptom);
 				}
-				String content = "新增了一个客户,姓名:" + customerInfoBo.getSampleName() + ",编号:" + customerInfoBo.getSampleCode();
+				String content = "新增了一个客户,姓名:" + customerInfoBo.getSampleName() + ",编号:"
+						+ customerInfoBo.getSampleCode();
 				sysLogService.addSysLog(loginAccount, content, new Date());
 			} else if (operateType == 2) {// 修改
 				if (StringUtils.isBlank(customerInfoBo.getId())) {
@@ -361,29 +362,28 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		JSONObject json = new JSONObject();
 		List<JSONObject> jsonList = new ArrayList<JSONObject>();
 		for (String code : arr) {
-			if (StringUtils.isBlank(code)){
+			if (StringUtils.isBlank(code)) {
 				continue;
 			}
 			ReportInfo reportInfo = reportInfoMapper.selectBySampleCode(code.trim());
 
 			if (reportInfo != null) {
-				
-				if (reportInfo.getReportStatus() == null
-						|| ReportStatus.HOSPITAL_SCAN.getValue() == reportInfo.getReportStatus()
-						|| ReportStatus.USER_BIND.getValue() == reportInfo.getReportStatus()) {
 
-					ReportInfo update = new ReportInfo();
-					update.setId(reportInfo.getId());
-					update.setReportStatus(ReportStatus.HOSPITAL_SCAN.getValue());
-					update.setHospitalScanTime(new Date());
+				ReportInfo update = new ReportInfo();
+				update.setId(reportInfo.getId());
+				update.setHospitalScanTime(new Date());
 
-					if (reportInfo.getHospitalId() == null || (loginAccount.getHospitalId() != null
-							&& !loginAccount.getHospitalId().equals(reportInfo.getHospitalId()))) {
-						update.setHospitalId(loginAccount.getHospitalId());
-					}
-
-					reportInfoMapper.updateByPrimaryKeySelective(update);
+				if (reportInfo.getHospitalId() == null || (loginAccount.getHospitalId() != null
+						&& !loginAccount.getHospitalId().equals(reportInfo.getHospitalId()))) {
+					update.setHospitalId(loginAccount.getHospitalId());
 				}
+
+				if (reportInfo.getReportStatus() == null 
+						|| ReportStatus.USER_BIND.getValue() == reportInfo.getReportStatus()) {
+					update.setReportStatus(ReportStatus.HOSPITAL_SCAN.getValue());
+				}
+
+				reportInfoMapper.updateByPrimaryKeySelective(update);
 
 				// 是否提交了调查问卷 0:否 1:提交了问卷信息1 2:提交了问卷信息2
 				Byte submitQuestionnaire = reportInfo.getSubmitQuestionnaire();
