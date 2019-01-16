@@ -731,6 +731,7 @@ public class HospitalServiceImpl implements IHospitalService{
 			json.put("channelName", channel==null?"":channel.getName());
 			json.put("isHospital", hospital.getIsHospital());
 			json.put("reportNeedAduit", hospital.getReportNeedAduit());
+			json.put("show_field_ids", hospital.getShowFieldIds());
 		}
 		return json;
 	}
