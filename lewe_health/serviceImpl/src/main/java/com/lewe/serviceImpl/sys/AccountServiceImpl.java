@@ -169,13 +169,14 @@ public class AccountServiceImpl implements IAccountService {
 			if (hospital != null) {
 				account.setChannelId(hospital.getChannelId());
 			}
+			Account accountDB = accountMapper.selectByAccount(account.getAccount());
+
 			String content = "";
 			if (account.getId() == null) {
 				// 新增
-				Account accountDB = accountMapper.selectByAccount(account.getAccount());
 				if (accountDB != null) {
 					result.setCode(BizCode.DATA_EXIST);
-					result.setMessage("该账号已存在！请重新填写");
+					result.setMessage("[新增]该账号已存在！请重新填写");
 					return 0;
 				}
 				account.setCreatorId(loginAccount.getId());
@@ -184,10 +185,9 @@ public class AccountServiceImpl implements IAccountService {
 				content = "新增了一个账号信息,姓名:" + account.getName() + ",账号:" + account.getAccount();
 			} else {
 				// 修改
-				Account accountDB = accountMapper.selectByAccount(account.getAccount());
-				if (accountDB != null && accountDB.getId() != account.getId()) {
+				if (accountDB != null && accountDB.getId().longValue() != account.getId().longValue()) {
 					result.setCode(BizCode.DATA_EXIST);
-					result.setMessage("该账号已存在！请重新填写");
+					result.setMessage("[修改]该账号已存在！请重新填写");
 					return 0;
 				}
 				account.setUpdateTime(new Date());
