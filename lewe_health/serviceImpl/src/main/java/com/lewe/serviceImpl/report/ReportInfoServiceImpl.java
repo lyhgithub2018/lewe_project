@@ -8,13 +8,10 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 import com.lewe.bean.check.CheckDevice;
 import com.lewe.bean.check.CheckItem;
-import com.lewe.bean.check.CheckItemSubstrate;
-import com.lewe.bean.check.GasBagDefault;
 import com.lewe.bean.check.Substrate;
 import com.lewe.bean.hospital.Hospital;
 import com.lewe.bean.hospital.HospitalDoctor;
 import com.lewe.bean.hospital.HospitalRoom;
-import com.lewe.bean.report.ReportCheckData;
 import com.lewe.bean.report.ReportIllness;
 import com.lewe.bean.report.ReportInfo;
 import com.lewe.bean.report.ReportSymptom;
@@ -405,7 +402,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 
 		String syStr = "";
 		for (ReportSymptom var : symptomList) {
-			syStr += !syMap.containsKey(var.getId()) ? "无" : syMap.get(var.getId());
+			syStr += !syMap.containsKey(var.getSymptomId()) ? "无" : syMap.get(var.getSymptomId());
 			syStr += "【";
 			if (var.getSymptomDegree() == 0) {
 				syStr += "无";
@@ -422,7 +419,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 
 		String syStrN = "";
 		for (ReportIllness var : illnessList) {
-			syStrN += !illMap.containsKey(var.getId()) ? "无" : illMap.get(var.getId());
+			syStrN += !illMap.containsKey(var.getIllnessId()) ? "无" : illMap.get(var.getIllnessId());
 			syStrN += "【";
 			if (var.getIllnessDegree() == 0) {
 				syStrN += "无";
