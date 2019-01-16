@@ -46,6 +46,7 @@ import com.lewe.dao.sys.SymptomMapper;
 import com.lewe.dao.sys.SysFileMapper;
 import com.lewe.service.customer.ICustomerManageService;
 import com.lewe.service.report.IReportInfoService;
+import com.lewe.serviceImpl.report.bo.ReportCountExcel;
 import com.lewe.serviceImpl.report.bo.UsedCountExcel;
 import com.lewe.util.common.ApiResult;
 import com.lewe.util.common.BizCode;
@@ -538,16 +539,17 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		}
 
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
-		List<JSONObject> dataList = new ArrayList<JSONObject>();
+		List<ReportCountExcel> dataList = new ArrayList<ReportCountExcel>();
 		for (ReportInfo reportInfo : list) {
 			JSONObject report = getReport(reportInfo, roomMap, ysMap, sbMap, acMap, syMap, illMap);
-			dataList.add(report);
+			ReportCountExcel jb = (ReportCountExcel) JSONObject.toJavaObject(report, ReportCountExcel.class);
+			dataList.add(jb);
 		}
 
 		// 定义excel列名称字段名
 		String[] keyFieldsNew = { "sysReportCode", "hospitalName", "sampleCode", "checkItemName", "checkSubstrateName",
 				"samplePhone", "sampleName", "sampleSex", "sampleAge", "sampleWeight", "sampleHeight", "submitTime",
-				"scanTime", "checkTime", "auditTime", "sbName", "jcName", "shName", "ksName", "ysName", "sbName",
+				"scanTime", "checkTime", "auditTime", "sbName", "jcName", "shName", "ksName", "ysName",
 				"gasCheckResult", "symptomList", "illnessList", "besetHealthProblem", "antibioticsName",
 				"hpCheckResult", "geCheckResult", "allergyFood" };
 

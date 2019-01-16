@@ -645,7 +645,7 @@ public class ExcelUtil {
 	 * @param dataList  数据
 	 * @return
 	 */
-	public static HSSFWorkbook createReportCountExcel(String bookTitle, String[] keyFields, String[] valueFields, List<JSONObject> dataList) {
+	public static HSSFWorkbook createReportCountExcel(String bookTitle, String[] keyFields, String[] valueFields, List<ReportCountExcel> dataList) {
 		// 声明一个工作薄
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		// 生成一个表格

@@ -2,72 +2,262 @@ package com.lewe.serviceImpl.report.bo;
 
 /**
  * 报告统计需要导出的字段
+ * 
  * @author 小辉
  *
  */
 public class ReportCountExcel {
-	private String itemName;//检测项目名
-	private String name;//姓名
-	private String sex;//性别
-	private Integer age;//年龄
-	private String phone;//电话
-	private String code;//采样编号
-	private String checkerName;//检测员
-	private String reportTime;//报告时间
-	private String reportCode;//报告编号
-	public String getItemName() {
-		return itemName;
+	private String sysReportCode;
+	private String hospitalName;
+	private String sampleCode;
+	private String checkItemName;
+	private String checkSubstrateName;
+	private String samplePhone;
+	private String sampleName;
+	private String sampleSex;
+	private String sampleAge;
+	private String sampleWeight;
+	private String sampleHeight;
+	private String submitTime;
+	private String scanTime;
+	private String checkTime;
+	private String auditTime;
+	private String sbName;
+	private String jcName;
+	private String shName;
+	private String ksName;
+	private String ysName;
+	private String gasCheckResult;
+	private String symptomList;
+	private String illnessList;
+	private String besetHealthProblem;
+	private String antibioticsName;
+	private String hpCheckResult;
+	private String geCheckResult;
+	private String allergyFood;
+
+	public String getSysReportCode() {
+		return sysReportCode;
 	}
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
+
+	public void setSysReportCode(String sysReportCode) {
+		this.sysReportCode = sysReportCode;
 	}
-	public String getName() {
-		return name;
+
+	public String getHospitalName() {
+		return hospitalName;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setHospitalName(String hospitalName) {
+		this.hospitalName = hospitalName;
 	}
-	public String getSex() {
-		return sex;
+
+	public String getSampleCode() {
+		return sampleCode;
 	}
-	public void setSex(String sex) {
-		this.sex = sex;
+
+	public void setSampleCode(String sampleCode) {
+		this.sampleCode = sampleCode;
 	}
-	public Integer getAge() {
-		return age;
+
+	public String getCheckItemName() {
+		return checkItemName;
 	}
-	public void setAge(Integer age) {
-		this.age = age;
+
+	public void setCheckItemName(String checkItemName) {
+		this.checkItemName = checkItemName;
 	}
-	public String getPhone() {
-		return phone;
+
+	public String getCheckSubstrateName() {
+		return checkSubstrateName;
 	}
-	public void setPhone(String phone) {
-		this.phone = phone;
+
+	public void setCheckSubstrateName(String checkSubstrateName) {
+		this.checkSubstrateName = checkSubstrateName;
 	}
-	public String getCode() {
-		return code;
+
+	public String getSamplePhone() {
+		return samplePhone;
 	}
-	public void setCode(String code) {
-		this.code = code;
+
+	public void setSamplePhone(String samplePhone) {
+		this.samplePhone = samplePhone;
 	}
-	public String getCheckerName() {
-		return checkerName;
+
+	public String getSampleName() {
+		return sampleName;
 	}
-	public void setCheckerName(String checkerName) {
-		this.checkerName = checkerName;
+
+	public void setSampleName(String sampleName) {
+		this.sampleName = sampleName;
 	}
-	public String getReportTime() {
-		return reportTime;
+
+	public String getSampleSex() {
+		return sampleSex;
 	}
-	public void setReportTime(String reportTime) {
-		this.reportTime = reportTime;
+
+	public void setSampleSex(String sampleSex) {
+		this.sampleSex = sampleSex;
 	}
-	public String getReportCode() {
-		return reportCode;
+
+	public String getSampleAge() {
+		return sampleAge;
 	}
-	public void setReportCode(String reportCode) {
-		this.reportCode = reportCode;
+
+	public void setSampleAge(String sampleAge) {
+		this.sampleAge = sampleAge;
 	}
-	
+
+	public String getSampleWeight() {
+		return sampleWeight;
+	}
+
+	public void setSampleWeight(String sampleWeight) {
+		this.sampleWeight = sampleWeight;
+	}
+
+	public String getSampleHeight() {
+		return sampleHeight;
+	}
+
+	public void setSampleHeight(String sampleHeight) {
+		this.sampleHeight = sampleHeight;
+	}
+
+	public String getSubmitTime() {
+		return submitTime;
+	}
+
+	public void setSubmitTime(String submitTime) {
+		this.submitTime = submitTime;
+	}
+
+	public String getScanTime() {
+		return scanTime;
+	}
+
+	public void setScanTime(String scanTime) {
+		this.scanTime = scanTime;
+	}
+
+	public String getCheckTime() {
+		return checkTime;
+	}
+
+	public void setCheckTime(String checkTime) {
+		this.checkTime = checkTime;
+	}
+
+	public String getAuditTime() {
+		return auditTime;
+	}
+
+	public void setAuditTime(String auditTime) {
+		this.auditTime = auditTime;
+	}
+
+	public String getSbName() {
+		return sbName;
+	}
+
+	public void setSbName(String sbName) {
+		this.sbName = sbName;
+	}
+
+	public String getJcName() {
+		return jcName;
+	}
+
+	public void setJcName(String jcName) {
+		this.jcName = jcName;
+	}
+
+	public String getShName() {
+		return shName;
+	}
+
+	public void setShName(String shName) {
+		this.shName = shName;
+	}
+
+	public String getKsName() {
+		return ksName;
+	}
+
+	public void setKsName(String ksName) {
+		this.ksName = ksName;
+	}
+
+	public String getYsName() {
+		return ysName;
+	}
+
+	public void setYsName(String ysName) {
+		this.ysName = ysName;
+	}
+
+	public String getGasCheckResult() {
+		return gasCheckResult;
+	}
+
+	public void setGasCheckResult(String gasCheckResult) {
+		this.gasCheckResult = gasCheckResult;
+	}
+
+	public String getSymptomList() {
+		return symptomList;
+	}
+
+	public void setSymptomList(String symptomList) {
+		this.symptomList = symptomList;
+	}
+
+	public String getIllnessList() {
+		return illnessList;
+	}
+
+	public void setIllnessList(String illnessList) {
+		this.illnessList = illnessList;
+	}
+
+	public String getBesetHealthProblem() {
+		return besetHealthProblem;
+	}
+
+	public void setBesetHealthProblem(String besetHealthProblem) {
+		this.besetHealthProblem = besetHealthProblem;
+	}
+
+	public String getAntibioticsName() {
+		return antibioticsName;
+	}
+
+	public void setAntibioticsName(String antibioticsName) {
+		this.antibioticsName = antibioticsName;
+	}
+
+	public String getHpCheckResult() {
+		return hpCheckResult;
+	}
+
+	public void setHpCheckResult(String hpCheckResult) {
+		this.hpCheckResult = hpCheckResult;
+	}
+
+	public String getGeCheckResult() {
+		return geCheckResult;
+	}
+
+	public void setGeCheckResult(String geCheckResult) {
+		this.geCheckResult = geCheckResult;
+	}
+
+	public String getAllergyFood() {
+		return allergyFood;
+	}
+
+	public void setAllergyFood(String allergyFood) {
+		this.allergyFood = allergyFood;
+	}
+
 }
