@@ -38,10 +38,26 @@ public class Hospital implements Serializable {
 
     private Byte isDel;
 
+    private String showFieldIds;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
+    }
+ 
+    /**
+     * @return the showFieldIds
+     */
+    public String getShowFieldIds() {
+        return showFieldIds;
+    }
+
+    /**
+     * @param showFieldIds the showFieldIds to set
+     */
+    public void setShowFieldIds(String showFieldIds) {
+        this.showFieldIds = showFieldIds;
     }
 
     public void setId(Long id) {

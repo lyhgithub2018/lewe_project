@@ -19,12 +19,14 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
     <result column="is_del" jdbcType="TINYINT" property="isDel" />
+    <result column="show_field_ids" jdbcType="VARCHAR" property="showFieldIds" />
   </resultMap>
   <sql id="Base_Column_List">
     id, hospital_name, hospital_code, channel_id, is_hospital, check_item_ids, province_code, 
     city_code, county_code, area_code_name, detail_address, logo_url, report_need_aduit, 
-    create_time, update_time, creator_id, is_del
+    create_time, update_time, creator_id, is_del,show_field_ids
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -35,20 +37,22 @@
     delete from hospital
     where id = #{id,jdbcType=BIGINT}
   </delete>
+
   <insert id="insert" parameterType="com.lewe.bean.hospital.Hospital">
     insert into hospital (id, hospital_name, hospital_code, 
       channel_id, is_hospital, check_item_ids, 
       province_code, city_code, county_code, 
       area_code_name, detail_address, logo_url, 
       report_need_aduit, create_time, update_time, 
-      creator_id, is_del)
+      creator_id, is_del,show_field_ids)
     values (#{id,jdbcType=BIGINT}, #{hospitalName,jdbcType=VARCHAR}, #{hospitalCode,jdbcType=VARCHAR}, 
       #{channelId,jdbcType=INTEGER}, #{isHospital,jdbcType=TINYINT}, #{checkItemIds,jdbcType=VARCHAR}, 
       #{provinceCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, 
       #{areaCodeName,jdbcType=VARCHAR}, #{detailAddress,jdbcType=VARCHAR}, #{logoUrl,jdbcType=VARCHAR}, 
       #{reportNeedAduit,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{creatorId,jdbcType=BIGINT}, #{isDel,jdbcType=TINYINT})
+      #{creatorId,jdbcType=BIGINT}, #{isDel,jdbcType=TINYINT}, #{showFieldIds,jdbcType=VARCHAR})
   </insert>
+
   <insert id="insertSelective" parameterType="com.lewe.bean.hospital.Hospital" useGeneratedKeys="true" keyProperty="id">
     insert into hospital
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -103,7 +107,11 @@
       <if test="isDel != null">
         is_del,
       </if>
+      <if test="showFieldIds != null">
+        show_field_ids,
+      </if>
     </trim>
+    
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
         #{id,jdbcType=BIGINT},
@@ -156,8 +164,12 @@
       <if test="isDel != null">
         #{isDel,jdbcType=TINYINT},
       </if>
+       <if test="showFieldIds != null">
+        #{showFieldIds,jdbcType=VARCHAR},
+      </if> 
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.hospital.Hospital">
     update hospital
     <set>
@@ -209,9 +221,14 @@
       <if test="isDel != null">
         is_del = #{isDel,jdbcType=TINYINT},
       </if>
+      <if test="showFieldIds != null">
+        show_field_ids = #{showFieldIds,jdbcType=VARCHAR},
+      </if> 
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
   <update id="updateByPrimaryKey" parameterType="com.lewe.bean.hospital.Hospital">
     update hospital
     set hospital_name = #{hospitalName,jdbcType=VARCHAR},
@@ -229,9 +246,11 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       creator_id = #{creatorId,jdbcType=BIGINT},
-      is_del = #{isDel,jdbcType=TINYINT}
+      is_del = #{isDel,jdbcType=TINYINT},
+      show_field_ids = #{showFieldIds,jdbcType=VARCHAR} 
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
   <select id="selectCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
   	SELECT COUNT(id) FROM hospital
   	<where>
