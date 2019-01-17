@@ -852,10 +852,10 @@
 			<if test="reportStatus != null">
 				and report_status = #{reportStatus}
 			</if>
-			<if test="beginDate != null and beginDate !='' ">
+			<if test="beginDate != null">
     		<![CDATA[ and submit_time >= #{beginDate} ]]>
 			</if>
-			<if test="endDate != null and endDate !='' ">
+			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
@@ -913,10 +913,10 @@
 			<if test="auditStatus != null">
 				and audit_status = #{auditStatus}
 			</if>
-			<if test="beginDate != null and beginDate !='' ">
+			<if test="beginDate != null">
     		<![CDATA[ and submit_time >= #{beginDate} ]]>
 			</if>
-			<if test="endDate != null and endDate !='' ">
+			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
@@ -964,10 +964,10 @@
 			<if test="auditStatus != null">
 				and audit_status = #{auditStatus}
 			</if>
-			<if test="beginDate != null and beginDate !='' ">
+			<if test="beginDate != null">
     		<![CDATA[ and submit_time >= #{beginDate} ]]>
 			</if>
-			<if test="endDate != null and endDate !='' ">
+			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
@@ -1030,10 +1030,10 @@
 			<if test="reportResult != null">
 				and report_result = #{reportResult}
 			</if>
-			<if test="beginDate != null and beginDate !='' ">
+			<if test="beginDate != null">
     		<![CDATA[ and submit_time >= #{beginDate} ]]>
 			</if>
-			<if test="endDate != null and endDate !='' ">
+			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
@@ -1051,14 +1051,13 @@
 			</if>
 		</where>
 
-		<if test="order_by !=null">
-			ORDER BY #{order_by} desc
+		<if test="orderBy !=null">
+			ORDER BY audit_time desc
 		</if>
 
-		<if test="order_by ==null">
+		<if test="orderBy ==null">
 			ORDER BY id desc
 		</if>
-
 		
 		<if test="startIndex !=null and pageSize !=null">
 			LIMIT #{startIndex},#{pageSize}
@@ -1106,10 +1105,10 @@
 			<if test="reportResult != null">
 				and report_result = #{reportResult}
 			</if>
-			<if test="beginDate != null and beginDate !='' ">
+			<if test="beginDate != null">
     		<![CDATA[ and submit_time >= #{beginDate} ]]>
 			</if>
-			<if test="endDate != null and endDate !='' ">
+			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->

@@ -105,8 +105,6 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		JSONObject json = new JSONObject();
 		Map<String, Object> paramMap = null;
 		if (StringUtils.isNotBlank(reportInfoQuery)) {
-			// JSONObject parseObject = JSONObject.parseObject(reportInfoQuery);
-			// String str = parseObject.getString("reportInfoQuery");
 			paramMap = jsonToMap(reportInfoQuery);
 		} else {
 			paramMap = new HashMap<String, Object>();
@@ -135,12 +133,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		} else {
 			paramMap.put("keyword", null);
 		}
-		/*
-		 * Object begin = paramMap.get("beginDate"); Object end =
-		 * paramMap.get("endDate"); if(StringUtils.isBlank(begin)) {
-		 * paramMap.put("beginDate", null); } if(StringUtils.isBlank(end)) {
-		 * paramMap.put("endDate", null); }
-		 */
+		
 		// 判断是否有illnessId和illnessDegree这两个参数查询
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StringUtils.isNotBlank(paramMap.get("illnessId"))) {
@@ -176,7 +169,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		Page page = new Page(pageNo, pageSize, totalCount);
 
 		paramMap.put("startIndex", page.getStartIndex());
-		paramMap.put("order_by", "audit_time");
+		paramMap.put("orderBy", "audit_time");
 
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
 
@@ -198,8 +191,8 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			Account account = accountMapper.selectByPrimaryKey(reportInfo.getCheckAccountId());
 			sampleInfo.put("checkerName", account == null ? "" : account.getName());// 检测员
 			sampleInfo.put("sysReportCode", reportInfo.getSysReportCode());// 报告编号
-			sampleInfo.put("reportCreateTime", reportInfo.getAuditTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getAuditTime(), "yyyy-MM-dd"));// 出报告时间
+			sampleInfo.put("reportCreateTime", reportInfo.getAuditTime() == null ? null : DateUtil.formatDate(reportInfo.getAuditTime(), "yyyy-MM-dd"));// 出报告时间
+			
 			// 查询检测项目的名称
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());
 			sampleInfo.put("checkItemName", checkItem == null ? null : "【" + checkItem.getName() + "】");// 检测项目名称
