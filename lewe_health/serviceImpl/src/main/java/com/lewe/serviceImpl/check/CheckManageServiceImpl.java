@@ -392,19 +392,21 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				List<GasBagDefault> gasBagDefault = gasBagDefaultMapper.selectAllList();
 				for (GasBagDefault gasBag : gasBagDefault) {
 
-					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() <= 18 && gasBag.getType().intValue() == 1){
+					if (reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() <= 18
+							&& gasBag.getType().intValue() == 1) {
 						ReportCheckData checkData = new ReportCheckData();
 						checkData.setCheckTime(gasBag.getCheckTime());
 						checkData.setTimeSpace(gasBag.getTimeSpace());
 						checkDataList.add(checkData);
 					}
 
-					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() > 18 && gasBag.getType().intValue() == 0){
+					if (reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() > 18
+							&& gasBag.getType().intValue() == 0) {
 						ReportCheckData checkData = new ReportCheckData();
 						checkData.setCheckTime(gasBag.getCheckTime());
 						checkData.setTimeSpace(gasBag.getTimeSpace());
 						checkDataList.add(checkData);
-					} 
+					}
 				}
 			}
 
@@ -1353,14 +1355,16 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				List<GasBagDefault> gasBagDefault = gasBagDefaultMapper.selectAllList();
 				for (GasBagDefault gasBag : gasBagDefault) {
 
-					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() <= 18 && gasBag.getType().intValue() == 1){
+					if (reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() <= 18
+							&& gasBag.getType().intValue() == 1) {
 						ReportCheckData checkData = new ReportCheckData();
 						checkData.setCheckTime(gasBag.getCheckTime());
 						checkData.setTimeSpace(gasBag.getTimeSpace());
 						checkDataList.add(checkData);
 					}
 
-					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() > 18 && gasBag.getType().intValue() == 0){
+					if (reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() > 18
+							&& gasBag.getType().intValue() == 0) {
 						ReportCheckData checkData = new ReportCheckData();
 						checkData.setCheckTime(gasBag.getCheckTime());
 						checkData.setTimeSpace(gasBag.getTimeSpace());
@@ -1453,6 +1457,22 @@ public class CheckManageServiceImpl implements ICheckManageService {
 	private ShowFieldMapper showFieldMapper;
 
 	public JSONObject getShowFieldList(Long reportId, Account loginAccount, Object result) {
+
+		String[] mdField = null;
+		ReportInfo reportInfo = null;
+
+		if (reportId != null) {
+			reportInfo = reportInfoMapper.selectByPrimaryKey(reportId);
+			if (reportInfo != null) {
+				if (reportInfo.getHospitalId() != null) {
+					Hospital hospital = hospitalMapper.selectByPrimaryKey(reportInfo.getHospitalId());
+					if (hospital.getShowFieldIds() != null && StringUtils.isNotBlank(hospital.getShowFieldIds())) {
+						mdField = hospital.getShowFieldIds().split("\\,");
+					}
+				}
+			}
+		}
+
 		List<JSONObject> list = new ArrayList<JSONObject>();
 		if (loginAccount != null) {// 说明是B端账号调用
 			Account account = accountMapper.selectByPrimaryKey(loginAccount.getId());
@@ -1461,6 +1481,21 @@ public class CheckManageServiceImpl implements ICheckManageService {
 				if (StringUtils.isNotBlank(showFieldIds)) {
 					String[] arr = showFieldIds.split("\\,");
 					for (String id : arr) {
+
+						boolean has = true;
+						if (mdField != null) {
+							has = false;
+							for (String f : mdField) {
+								if (id.equals(f)) {
+									has = true;
+									break;
+								}
+							}
+						}
+						if (!has) {
+							continue;
+						}
+
 						ShowField showField = showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
 						if (showField != null) {
 							JSONObject json = new JSONObject();
@@ -1473,7 +1508,6 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			}
 		} else {
 			if (reportId != null) {// 说明是C端报告详情中用
-				ReportInfo reportInfo = reportInfoMapper.selectByPrimaryKey(reportId);
 				if (reportInfo != null) {
 					// 先看有没有审核员,有则查询审核员账号下能看到的字段
 					if (reportInfo.getAuditAccountId() != null) {
@@ -1483,6 +1517,21 @@ public class CheckManageServiceImpl implements ICheckManageService {
 							if (StringUtils.isNotBlank(showFieldIds)) {
 								String[] arr = showFieldIds.split("\\,");
 								for (String id : arr) {
+
+									boolean has = true;
+									if (mdField != null) {
+										has = false;
+										for (String f : mdField) {
+											if (id.equals(f)) {
+												has = true;
+												break;
+											}
+										}
+									}
+									if (!has) {
+										continue;
+									}
+
 									ShowField showField = showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
 									if (showField != null) {
 										JSONObject json = new JSONObject();
@@ -1501,6 +1550,20 @@ public class CheckManageServiceImpl implements ICheckManageService {
 							if (StringUtils.isNotBlank(showFieldIds)) {
 								String[] arr = showFieldIds.split("\\,");
 								for (String id : arr) {
+									boolean has = true;
+									if (mdField != null) {
+										has = false;
+										for (String f : mdField) {
+											if (id.equals(f)) {
+												has = true;
+												break;
+											}
+										}
+									}
+									if (!has) {
+										continue;
+									}
+
 									ShowField showField = showFieldMapper.selectByPrimaryKey(Integer.valueOf(id));
 									if (showField != null) {
 										JSONObject json = new JSONObject();
