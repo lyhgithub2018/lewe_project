@@ -174,9 +174,9 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			pageSize = Integer.valueOf(paramMap.get("pageSize").toString());
 		}
 		Page page = new Page(pageNo, pageSize, totalCount);
-		
+
 		paramMap.put("startIndex", page.getStartIndex());
-		paramMap.put("order_by", "audit_time desc");
+		paramMap.put("order_by", "audit_time");
 
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
 
@@ -467,30 +467,29 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	}
 
 	public HSSFWorkbook exportReportCountList(String reportInfoQuery, Account loginAccount, Object apiResult) {
+
 		Map<String, Object> paramMap = null;
 		if (StringUtils.isNotBlank(reportInfoQuery)) {
 			paramMap = jsonToMap(reportInfoQuery);
 		} else {
 			paramMap = new HashMap<String, Object>();
 		}
+		paramMap.put("reportStatus", ReportStatus.RESULT_CREATE.getValue());
 
-		List<Long> hosIdList = customerManageService.getUserHostList(loginAccount);
+		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+
 		// 这里做权限判定
-		if (hosIdList == null) {
+		if (hospitalIds == null) {
 			// 主账号
-		} else if (hosIdList.size() == 0) {
+		} else if (hospitalIds.size() == 0) {
 			// 无权限
-			hosIdList.add(0L);
-			paramMap.put("hospitalIdList", hosIdList);
+			hospitalIds.add(0L);
+			paramMap.put("hospitalIdList", hospitalIds);
 		} else {
 			// 非主账号，有权限
-			paramMap.put("hospitalIdList", hosIdList);
+			paramMap.put("hospitalIdList", hospitalIds);
 		}
 
-		paramMap.put("reportStatus", ReportStatus.RESULT_CREATE.getValue());
-		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-			paramMap.put("hospitalId", loginAccount.getHospitalId());
-		}
 		String keyword = "";
 		Object obj = paramMap.get("keyword");
 		if (StringUtils.isNotBlank(obj)) {
@@ -517,6 +516,8 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 				map.put("reportInfoIdList", reportInfoIdList);
 			}
 		}
+		paramMap.put("order_by", "audit_time");
+		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
 
 		Map<String, Object> queryMap = new HashMap<String, Object>();
 		List<HospitalRoom> roomList = hospitalRoomMapper.selectListByMap(queryMap);
@@ -555,7 +556,6 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			illMap.put(illness.getId(), illness.getName());
 		}
 
-		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
 		List<ReportCountExcel> dataList = new ArrayList<ReportCountExcel>();
 		for (ReportInfo reportInfo : list) {
 			JSONObject report = getReport(reportInfo, roomMap, ysMap, sbMap, acMap, syMap, illMap);

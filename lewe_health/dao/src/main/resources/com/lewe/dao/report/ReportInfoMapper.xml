@@ -813,10 +813,11 @@
 					#{reportInfoId}
 				</foreach>
 			</if>
+
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
-			<if test="submitQuestionnaireNotQuery0 != null">
+			<!-- <if test="submitQuestionnaireNotQuery0 != null">
 				and submit_questionnaire !=0
-			</if>
+			</if> -->
 		</where>
 	</select>
 	
@@ -869,9 +870,9 @@
 				</foreach>
 			</if>
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
-			<if test="submitQuestionnaireNotQuery0 != null">
+			<!-- <if test="submitQuestionnaireNotQuery0 != null">
 				and submit_questionnaire !=0
-			</if>
+			</if> -->
 		</where>
 		ORDER BY id DESC
 		<if test="startIndex !=null and pageSize !=null">
@@ -1051,7 +1052,7 @@
 		</where>
 
 		<if test="order_by !=null">
-			ORDER BY #{order_by}
+			ORDER BY #{order_by} desc
 		</if>
 
 		<if test="order_by ==null">
