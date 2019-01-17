@@ -24,13 +24,10 @@ import com.lewe.bean.sys.Symptom;
 import com.lewe.bean.sys.SysFile;
 import com.lewe.dao.check.CheckDeviceMapper;
 import com.lewe.dao.check.CheckItemMapper;
-import com.lewe.dao.check.CheckItemSubstrateMapper;
-import com.lewe.dao.check.GasBagDefaultMapper;
 import com.lewe.dao.check.SubstrateMapper;
 import com.lewe.dao.hospital.HospitalDoctorMapper;
 import com.lewe.dao.hospital.HospitalMapper;
 import com.lewe.dao.hospital.HospitalRoomMapper;
-import com.lewe.dao.report.ReportCheckDataMapper;
 import com.lewe.dao.report.ReportIllnessMapper;
 import com.lewe.dao.report.ReportInfoMapper;
 import com.lewe.dao.report.ReportSymptomMapper;
@@ -82,14 +79,10 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	private ReportSymptomMapper reportSymptomMapper;
 	@Autowired
 	private HospitalMapper hospitalMapper;
-	@Autowired
-	private GasBagDefaultMapper gasBagDefaultMapper;
-	@Autowired
-	private ReportCheckDataMapper reportCheckDataMapper;
+ 
 	@Autowired
 	private SubstrateMapper substrateMapper;
-	@Autowired
-	private CheckItemSubstrateMapper checkItemSubstrateMapper;
+	 
 
 	@Autowired
 	private ICustomerManageService customerManageService;

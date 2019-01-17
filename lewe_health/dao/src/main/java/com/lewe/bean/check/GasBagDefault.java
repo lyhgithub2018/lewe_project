@@ -11,10 +11,26 @@ public class GasBagDefault implements Serializable {
 
     private Integer checkTime;
 
+    private Integer type;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
+    }
+
+    /**
+     * @return the type
+     */
+    public Integer getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public void setId(Long id) {

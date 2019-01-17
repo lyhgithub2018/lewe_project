@@ -385,17 +385,29 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			json.put("allergyFood", reportInfo.getAllergyFood());// 过敏物品名称
 			// 检测数据
 			List<ReportCheckData> checkDataList = reportCheckDataMapper.selectListByMap(map);
+
 			if (checkDataList == null || checkDataList.size() == 0) {
 				checkDataList = new ArrayList<ReportCheckData>();
 				// 若未查询到检测数据,则取出默认的气袋数据规格
 				List<GasBagDefault> gasBagDefault = gasBagDefaultMapper.selectAllList();
 				for (GasBagDefault gasBag : gasBagDefault) {
-					ReportCheckData checkData = new ReportCheckData();
-					checkData.setCheckTime(gasBag.getCheckTime());
-					checkData.setTimeSpace(gasBag.getTimeSpace());
-					checkDataList.add(checkData);
+
+					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() <= 18 && gasBag.getType().intValue() == 1){
+						ReportCheckData checkData = new ReportCheckData();
+						checkData.setCheckTime(gasBag.getCheckTime());
+						checkData.setTimeSpace(gasBag.getTimeSpace());
+						checkDataList.add(checkData);
+					}
+
+					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() > 18 && gasBag.getType().intValue() == 0){
+						ReportCheckData checkData = new ReportCheckData();
+						checkData.setCheckTime(gasBag.getCheckTime());
+						checkData.setTimeSpace(gasBag.getTimeSpace());
+						checkDataList.add(checkData);
+					} 
 				}
 			}
+
 			List<JSONObject> jsonList = new ArrayList<JSONObject>();
 			for (ReportCheckData reportCheckData : checkDataList) {
 				JSONObject checkData = new JSONObject();
@@ -1333,15 +1345,27 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			json.put("allergyFood", reportInfo.getAllergyFood());// 过敏物品名称
 			// 检测数据
 			List<ReportCheckData> checkDataList = reportCheckDataMapper.selectListByMap(map);
+
 			if (checkDataList == null || checkDataList.size() == 0) {
 				checkDataList = new ArrayList<ReportCheckData>();
+
 				// 若未查询到检测数据,则取出默认的气袋数据规格
 				List<GasBagDefault> gasBagDefault = gasBagDefaultMapper.selectAllList();
 				for (GasBagDefault gasBag : gasBagDefault) {
-					ReportCheckData checkData = new ReportCheckData();
-					checkData.setCheckTime(gasBag.getCheckTime());
-					checkData.setTimeSpace(gasBag.getTimeSpace());
-					checkDataList.add(checkData);
+
+					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() <= 18 && gasBag.getType().intValue() == 1){
+						ReportCheckData checkData = new ReportCheckData();
+						checkData.setCheckTime(gasBag.getCheckTime());
+						checkData.setTimeSpace(gasBag.getTimeSpace());
+						checkDataList.add(checkData);
+					}
+
+					if(reportInfo.getSampleAge() != null && reportInfo.getSampleAge().intValue() > 18 && gasBag.getType().intValue() == 0){
+						ReportCheckData checkData = new ReportCheckData();
+						checkData.setCheckTime(gasBag.getCheckTime());
+						checkData.setTimeSpace(gasBag.getTimeSpace());
+						checkDataList.add(checkData);
+					}
 				}
 			}
 			json.put("gasCheckResult", reportInfo.getGasCheckResult());// 气体检测结果描述

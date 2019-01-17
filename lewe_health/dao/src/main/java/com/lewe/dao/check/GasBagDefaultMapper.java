@@ -16,5 +16,6 @@ public interface GasBagDefaultMapper {
     int updateByPrimaryKeySelective(GasBagDefault record);
 
     int updateByPrimaryKey(GasBagDefault record);
+    
     List<GasBagDefault> selectAllList();
 }

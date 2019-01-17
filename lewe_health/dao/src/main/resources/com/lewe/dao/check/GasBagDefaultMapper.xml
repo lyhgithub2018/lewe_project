@@ -6,10 +6,13 @@
     <result column="time_space" jdbcType="INTEGER" property="timeSpace" />
     <result column="check_point" jdbcType="INTEGER" property="checkPoint" />
     <result column="check_time" jdbcType="INTEGER" property="checkTime" />
+    <result column="type" jdbcType="INTEGER" property="type" />
   </resultMap>
+
   <sql id="Base_Column_List">
-    id, time_space, check_point, check_time
+    id, time_space, check_point, check_time,type
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -57,6 +60,7 @@
       </if>
     </trim>
   </insert>
+  
   <update id="updateByPrimaryKeySelective" parameterType="com.lewe.bean.check.GasBagDefault">
     update check_gas_bag_default
     <set>
