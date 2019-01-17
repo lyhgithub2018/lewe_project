@@ -498,10 +498,10 @@ public class CustomerServiceImpl implements ICustomerService {
 			keyword = keyword.replaceAll("\\s*", "");// 去除所有空格
 			paramMap.put("keyword", "%" + keyword + "%");// 编号,机构名
 		}
-		if (beginDate != null) {
+		if (beginDate != null && StringUtils.isNotBlank(beginDate)) {
 			paramMap.put("beginDate", beginDate);
 		}
-		if (endDate != null) {
+		if (endDate != null && StringUtils.isNotBlank(endDate)) {
 			paramMap.put("endDate", endDate);
 		}
 		paramMap.put("customerId", customerId);
