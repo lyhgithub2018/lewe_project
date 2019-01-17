@@ -174,8 +174,12 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			pageSize = Integer.valueOf(paramMap.get("pageSize").toString());
 		}
 		Page page = new Page(pageNo, pageSize, totalCount);
+		
 		paramMap.put("startIndex", page.getStartIndex());
+		paramMap.put("order_by", "audit_time desc");
+
 		List<ReportInfo> list = reportInfoMapper.selectListByMap(paramMap);
+
 		List<JSONObject> reportCountList = new ArrayList<JSONObject>();
 		for (ReportInfo reportInfo : list) {
 			JSONObject sampleInfo = new JSONObject();
@@ -194,8 +198,8 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			Account account = accountMapper.selectByPrimaryKey(reportInfo.getCheckAccountId());
 			sampleInfo.put("checkerName", account == null ? "" : account.getName());// 检测员
 			sampleInfo.put("sysReportCode", reportInfo.getSysReportCode());// 报告编号
-			sampleInfo.put("reportCreateTime", reportInfo.getReportCreateTime() == null ? null
-					: DateUtil.formatDate(reportInfo.getReportCreateTime(), "yyyy-MM-dd"));// 出报告时间
+			sampleInfo.put("reportCreateTime", reportInfo.getAuditTime() == null ? null
+					: DateUtil.formatDate(reportInfo.getAuditTime(), "yyyy-MM-dd"));// 出报告时间
 			// 查询检测项目的名称
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());
 			sampleInfo.put("checkItemName", checkItem == null ? null : "【" + checkItem.getName() + "】");// 检测项目名称

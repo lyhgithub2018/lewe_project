@@ -1049,11 +1049,21 @@
 				and hospital_scan_time = #{hospitalScanTime}
 			</if>
 		</where>
-		ORDER BY id DESC
+
+		<if test="order_by !=null">
+			ORDER BY #{order_by}
+		</if>
+
+		<if test="order_by ==null">
+			ORDER BY id desc
+		</if>
+
+		
 		<if test="startIndex !=null and pageSize !=null">
 			LIMIT #{startIndex},#{pageSize}
 		</if>
 	</select>
+
 	<select id="selectCountByMap" parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT count(id) FROM report_info

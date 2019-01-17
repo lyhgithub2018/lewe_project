@@ -669,6 +669,7 @@ public class CustomerServiceImpl implements ICustomerService {
 				jsonList.add(checkData);
 			}
 			json.put("checkDataList", jsonList);// 检测数据
+			json.put("adviceMsg", reportInfo.getAdviceMsg());// 检测数据
 		}
 		return json;
 	}
