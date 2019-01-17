@@ -128,7 +128,7 @@
       	</if>
       	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(name,code) LIKE #{keyword}
+	        and CONCAT(IFNULL(name,''),IFNULL(code,'')) LIKE #{keyword}
 	    </if>
 	    <if test="isDel != null">
         	and is_del = #{isDel}

@@ -120,7 +120,7 @@
   	<where>
 	    <!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null and keyword !=''">
-	        and CONCAT(account_phone,account_name) LIKE #{keyword}
+	        and CONCAT(IFNULL(account_phone,''),IFNULL(account_name,'')) LIKE #{keyword}
 	    </if>
 	    <if test="operateDate != null and operateDate !='' ">
     		<![CDATA[ and operateTime >= #{operateDate} ]]>
@@ -135,7 +135,7 @@
   	<where>
 	    <!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null and keyword !=''">
-	        and CONCAT(account_phone,account_name) LIKE #{keyword}
+	        and CONCAT(IFNULL(account_phone,''),IFNULL(account_name,'')) LIKE #{keyword}
 	    </if>
 	    <if test="operateDate != null and operateDate !='' ">
     		<![CDATA[ and operateTime >= #{operateDate} ]]>

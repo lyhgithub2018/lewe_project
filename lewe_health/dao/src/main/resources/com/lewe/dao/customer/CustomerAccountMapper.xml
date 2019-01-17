@@ -130,7 +130,7 @@
     	</if>
 	    <!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(a.phone,b.nick_name) LIKE #{keyword}
+	        and CONCAT(IFNULL(a.phone,''),IFNULL(b.nick_name,'')) LIKE #{keyword}
 	    </if>
     </where>
     ORDER BY a.id DESC
@@ -151,7 +151,7 @@
     	</if>
 	    <!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(a.phone,b.nick_name) LIKE #{keyword}
+	        and CONCAT(IFNULL(a.phone,''),IFNULL(b.nick_name,'')) LIKE #{keyword}
 	    </if>
     </where>
     ORDER BY a.id DESC

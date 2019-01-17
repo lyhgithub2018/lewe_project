@@ -804,7 +804,7 @@
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
 			<if test="keyword != null">
-				and CONCAT(customer_phone,sample_code,sample_name,sample_phone) LIKE
+				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE
 				#{keyword}
 			</if>
 			<if test="reportInfoIdList != null">
@@ -860,7 +860,7 @@
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
 			<if test="keyword != null and keyword !=''">
-				and CONCAT(customer_phone,sample_code,sample_name,sample_phone) LIKE
+				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE
 				#{keyword}
 			</if>
 			<if test="reportInfoIdList != null">
@@ -921,7 +921,7 @@
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
 			<if test="keyword != null and keyword !=''">
-				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
 			</if>
 			
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
@@ -972,7 +972,7 @@
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
 			<if test="keyword != null and keyword !=''">
-				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
 			</if>
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
 			<if test="submitQuestionnaireNotQuery0 != null">
@@ -1038,7 +1038,7 @@
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
 			<if test="keyword != null and keyword !=''">
-				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
 			</if>
 			<if test="reportInfoIdList != null">
 				and id in
@@ -1114,7 +1114,7 @@
 			</if>
 			<!-- 一个搜索关键词,多字段查询 -->
 			<if test="keyword != null and keyword !=''">
-				and CONCAT(sample_code,sample_name,sample_phone) LIKE #{keyword}
+				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
 			</if>
 			<if test="reportInfoIdList != null">
 				and id in

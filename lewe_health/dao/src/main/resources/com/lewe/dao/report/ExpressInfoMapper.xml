@@ -165,7 +165,7 @@
     	</if>
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null and keyword !=''">
-	        and CONCAT(express_name,express_code) LIKE #{keyword}
+	        and CONCAT(IFNULL(express_name,''),IFNULL(express_code,'')) LIKE #{keyword}
 	    </if>
 	    <if test="hospitalIdList != null">
             and hospital_id in
@@ -189,7 +189,7 @@
     	</if>
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null and keyword !=''">
-	        and CONCAT(express_name,express_code) LIKE #{keyword}
+	        and CONCAT(IFNULL(express_name,''),IFNULL(express_code,'')) LIKE #{keyword}
 	    </if>
 
 	    <if test="hospitalIdList != null">

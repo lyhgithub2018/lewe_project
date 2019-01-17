@@ -120,7 +120,7 @@
 	    </if>
 	    <!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(a.name, b.substrate_name) LIKE #{keyword}
+	        and CONCAT(IFNULL(a.name,''), IFNULL(b.substrate_name,'')) LIKE #{keyword}
 	    </if>
     </where>
      GROUP BY b.check_item_id) AS c 
@@ -139,7 +139,7 @@
 		    </if>
 		    <!-- 一个搜索关键词,多字段查询 -->
 	    	<if test="keyword != null">
-		        and CONCAT(a.name, b.substrate_name) LIKE #{keyword}
+		        and CONCAT(IFNULL(a.name,''), IFNULL(b.substrate_name,'')) LIKE #{keyword}
 		    </if>
 	    </where>
 	     GROUP BY b.check_item_id

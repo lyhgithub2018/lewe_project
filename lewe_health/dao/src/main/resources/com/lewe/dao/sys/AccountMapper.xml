@@ -248,7 +248,7 @@
     	</if>
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(name,account) LIKE #{keyword}
+	        and CONCAT(IFNULL(name,''),IFNULL(account,'')) LIKE #{keyword}
 	    </if>
 	    <if test="isDel != null">
         	and is_del = #{isDel}
@@ -279,7 +279,7 @@
     	</if>
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(name,account) LIKE #{keyword}
+	        and CONCAT(IFNULL(name,''),IFNULL(account,'')) LIKE #{keyword}
 	    </if>
 	    <if test="isDel != null">
         	and is_del = #{isDel}

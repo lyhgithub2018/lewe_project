@@ -269,7 +269,7 @@
     	</if>
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(hospital_name,hospital_code) LIKE #{keyword}
+	        and CONCAT(IFNULL(hospital_name,''),IFNULL(hospital_code,'')) LIKE #{keyword}
 	    </if>
 	    <if test="isDel != null">
         	and is_del = #{isDel}
@@ -304,7 +304,7 @@
 
     	<!-- 一个搜索关键词,多字段查询 -->
     	<if test="keyword != null">
-	        and CONCAT(hospital_name,hospital_code) LIKE #{keyword}
+	        and CONCAT(IFNULL(hospital_name,''),IFNULL(hospital_code,'')) LIKE #{keyword}
 	    </if>
 	    <if test="isDel != null">
         	and is_del = #{isDel}
