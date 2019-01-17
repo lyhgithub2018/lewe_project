@@ -925,9 +925,9 @@
 			</if>
 			
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
-			<if test="submitQuestionnaireNotQuery0 != null">
+			<!-- <if test="submitQuestionnaireNotQuery0 != null">
 				and submit_questionnaire !=0
-			</if>
+			</if> -->
 		</where>
 	</select>
 	<!-- 检测管理-检测样品列表查询 -->
@@ -975,9 +975,9 @@
 				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
 			</if>
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
-			<if test="submitQuestionnaireNotQuery0 != null">
+			<!-- <if test="submitQuestionnaireNotQuery0 != null">
 				and submit_questionnaire !=0
-			</if>
+			</if> -->
 		</where>
 		ORDER BY id DESC
 		<if test="startIndex !=null and pageSize !=null">
