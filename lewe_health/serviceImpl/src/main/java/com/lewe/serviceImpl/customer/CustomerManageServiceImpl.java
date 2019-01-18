@@ -175,6 +175,12 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		}
 		json.put("page", page);
 		json.put("customerInfoList", customerInfoList);
+
+		if (loginAccount != null && loginAccount.getAccountType() == AccountType.SUPERADMIN.getValue()) {
+			json.put("isSuper", "1");
+		}else {
+			json.put("isSuper", "0");
+		}
 		return json;
 	}
 
