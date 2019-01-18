@@ -79,10 +79,9 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	private ReportSymptomMapper reportSymptomMapper;
 	@Autowired
 	private HospitalMapper hospitalMapper;
- 
+
 	@Autowired
 	private SubstrateMapper substrateMapper;
-	 
 
 	@Autowired
 	private ICustomerManageService customerManageService;
@@ -133,7 +132,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		} else {
 			paramMap.put("keyword", null);
 		}
-		
+
 		// 判断是否有illnessId和illnessDegree这两个参数查询
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StringUtils.isNotBlank(paramMap.get("illnessId"))) {
@@ -191,8 +190,9 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			Account account = accountMapper.selectByPrimaryKey(reportInfo.getCheckAccountId());
 			sampleInfo.put("checkerName", account == null ? "" : account.getName());// 检测员
 			sampleInfo.put("sysReportCode", reportInfo.getSysReportCode());// 报告编号
-			sampleInfo.put("reportCreateTime", reportInfo.getAuditTime() == null ? null : DateUtil.formatDate(reportInfo.getAuditTime(), "yyyy-MM-dd"));// 出报告时间
-			
+			sampleInfo.put("reportCreateTime", reportInfo.getAuditTime() == null ? null
+					: DateUtil.formatDate(reportInfo.getAuditTime(), "yyyy-MM-dd"));// 出报告时间
+
 			// 查询检测项目的名称
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(reportInfo.getCheckItemId());
 			sampleInfo.put("checkItemName", checkItem == null ? null : "【" + checkItem.getName() + "】");// 检测项目名称
@@ -255,16 +255,29 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 			paramMap = new HashMap<String, Object>();
 		}
 
-		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-			paramMap.put("hospitalId", loginAccount.getHospitalId());
+		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+
+		// 这里做权限判定
+		if (hospitalIds == null) {
+			// 主账号
+		} else if (hospitalIds.size() == 0) {
+			// 无权限
+			hospitalIds.add(0L);
+			paramMap.put("hospitalIdList", hospitalIds);
+		} else {
+			// 非主账号，有权限
+			paramMap.put("hospitalIdList", hospitalIds);
 		}
+
 		// 查询日期
-		Object queryDate = paramMap.get("queryDate");
-		paramMap.put("queryDate", queryDate);
-		if (StringUtils.isBlank(queryDate)) {
-			// 默认查询当天的
-			paramMap.put("queryDate", DateUtil.getCurDate("yyyy-MM-dd"));
+		if (json.get("beginDate") != null && StringUtils.isNotBlank(json.get("beginDate").toString())) {
+			paramMap.put("beginDate", json.get("beginDate").toString());
 		}
+
+		if (json.get("endDate") != null && StringUtils.isNotBlank(json.get("endDate").toString())) {
+			paramMap.put("endDate", json.get("endDate").toString());
+		}
+
 		Integer totalCount = usedCountMapper.selectUsedCountByMap(paramMap);
 		if (totalCount == null || totalCount == 0) {
 			json.put("page", null);
@@ -281,35 +294,17 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		}
 		Page page = new Page(pageNo, pageSize, totalCount);
 		paramMap.put("startIndex", page.getStartIndex());
+
 		List<UsedCountInfo> list = usedCountMapper.selectUsedCountListByMap(paramMap);
 		for (UsedCountInfo usedCount : list) {
 			// 渠道名称
 			Channel channel = channelMapper.selectByPrimaryKey(usedCount.getChannelId());
 			usedCount.setChannelName(channel == null ? null : channel.getName());
+
 			// 检测项目名称
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(usedCount.getCheckItemId());
 			usedCount.setCheckItemName(checkItem == null ? null : checkItem.getName());
 
-			// 门店确认数(channel_id,hospital_id,check_item_id,hospital_scan_time四个字段查询)
-			paramMap.put("hospitalScanTime", queryDate);
-			usedCount.setHospitalConfirmCount(reportInfoMapper.selectCountByMap(paramMap));
-			paramMap.remove("hospitalScanTime");
-			// 物流数(channel_id,hospital_id,check_item_id,expressTime四个字段查询)
-			paramMap.put("expressTime", queryDate);// 快递单号绑定时间
-			usedCount.setExpressCount(reportInfoMapper.selectCountByMap(paramMap));
-			paramMap.remove("expressTime");
-
-			// 检测中数量(channel_id,hospital_id,check_item_id,hospitalScanTime,checkStatus5个字段查询)
-			paramMap.put("hospitalScanTime", queryDate);
-			paramMap.put("checkStatus", 0);// 检测状态 0：待检测 1：已检测
-			usedCount.setCheckIngCount(reportInfoMapper.selectCountByMap(paramMap));
-			paramMap.remove("hospitalScanTime");
-
-			// 检测完成数量(channel_id,hospital_id,check_item_id,checkTime,checkStatus5个字段查询)
-			paramMap.put("checkTime", queryDate);
-			paramMap.put("checkStatus", 1);
-			usedCount.setCheckFinshCount(reportInfoMapper.selectCountByMap(paramMap));
-			usedCount.setQueryDate(queryDate == null ? null : queryDate.toString());
 		}
 		json.put("page", page);
 		json.put("usedCountList", list);
@@ -573,66 +568,76 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 	}
 
 	public HSSFWorkbook exportUsedCountList(String usedCountQuery, Account loginAccount, Object apiResult) {
+		JSONObject json = new JSONObject();
 		Map<String, Object> paramMap = null;
 		if (StringUtils.isNotBlank(usedCountQuery)) {
-			// JSONObject parseObject = JSONObject.parseObject(usedCountQuery);
-			// String str = parseObject.getString("usedCountQuery");
 			paramMap = jsonToMap(usedCountQuery);
 		} else {
 			paramMap = new HashMap<String, Object>();
 		}
-		if (loginAccount != null && loginAccount.getAccountType() != AccountType.SUPERADMIN.getValue()) {
-			paramMap.put("hospitalId", loginAccount.getHospitalId());
+
+		List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
+
+		// 这里做权限判定
+		if (hospitalIds == null) {
+			// 主账号
+		} else if (hospitalIds.size() == 0) {
+			// 无权限
+			hospitalIds.add(0L);
+			paramMap.put("hospitalIdList", hospitalIds);
+		} else {
+			// 非主账号，有权限
+			paramMap.put("hospitalIdList", hospitalIds);
 		}
 
 		// 查询日期
-		Object queryDate = paramMap.get("queryDate");
-		paramMap.put("queryDate", queryDate);
-		if (StringUtils.isBlank(queryDate)) {
-			// 默认查询当天的
-			paramMap.put("queryDate", DateUtil.getCurDate("yyyy-MM-dd"));
+		if (json.get("beginDate") != null && StringUtils.isNotBlank(json.get("beginDate").toString())) {
+			paramMap.put("beginDate", json.get("beginDate").toString());
 		}
-		List<UsedCountExcel> dataList = new ArrayList<UsedCountExcel>();
+
+		if (json.get("endDate") != null && StringUtils.isNotBlank(json.get("endDate").toString())) {
+			paramMap.put("endDate", json.get("endDate").toString());
+		}
+
+		Integer totalCount = usedCountMapper.selectUsedCountByMap(paramMap);
+		if (totalCount == null || totalCount == 0) {
+			// 定义excel列名称字段名
+			String[] keyFields = { "queryDate", "areaCodeName", "channelName", "queryDate", "hospitalName", "num",
+					"checkItemName" };
+			String[] valueFields = { "日期", "地区", "渠道", "门店", "用量", "项目名称" };
+			// 生成Excel文件
+			HSSFWorkbook book = ExcelUtil.createUsedCountExcel("用量统计报表", keyFields, valueFields,
+					new ArrayList<UsedCountInfo>());
+			return book;
+		}
+		int pageNo = 1;
+		int pageSize = 10000;
+		if (StringUtils.isNotBlank(paramMap.get("pageNo"))) {
+			pageNo = Integer.valueOf(paramMap.get("pageNo").toString());
+		}
+		if (StringUtils.isNotBlank(paramMap.get("pageSize"))) {
+			pageSize = Integer.valueOf(paramMap.get("pageSize").toString());
+		}
+		Page page = new Page(pageNo, pageSize, totalCount);
+		paramMap.put("startIndex", page.getStartIndex());
+
 		List<UsedCountInfo> list = usedCountMapper.selectUsedCountListByMap(paramMap);
+
 		for (UsedCountInfo usedCount : list) {
-			UsedCountExcel usedExcel = new UsedCountExcel();
 			// 渠道名称
 			Channel channel = channelMapper.selectByPrimaryKey(usedCount.getChannelId());
-			usedExcel.setChannelName(channel == null ? null : channel.getName());
+			usedCount.setChannelName(channel == null ? null : channel.getName());
+
 			// 检测项目名称
 			CheckItem checkItem = checkItemMapper.selectByPrimaryKey(usedCount.getCheckItemId());
-			usedExcel.setCheckItemName(checkItem == null ? null : checkItem.getName());
-			usedExcel.setHospitalName(usedCount.getHospitalName());
-			usedExcel.setAreaCodeName(usedCount.getAreaCodeName());
-			// 门店确认数
-			paramMap.put("hospitalScanTime", queryDate);
-			usedExcel.setHospitalConfirmCount(reportInfoMapper.selectCountByMap(paramMap));
-			paramMap.remove("hospitalScanTime");
-
-			// 物流数
-			paramMap.put("expressTime", queryDate);// 快递单号绑定时间
-			usedExcel.setExpressCount(reportInfoMapper.selectCountByMap(paramMap));
-			paramMap.remove("expressTime");
-
-			// 检测中数量
-			paramMap.put("hospitalScanTime", queryDate);
-			paramMap.put("checkStatus", 0);// 检测状态 0：待检测 1：已检测
-			usedExcel.setCheckIngCount(reportInfoMapper.selectCountByMap(paramMap));
-			paramMap.remove("hospitalScanTime");
-
-			// 检测完成数量
-			paramMap.put("checkTime", queryDate);
-			paramMap.put("checkStatus", 1);
-			usedExcel.setCheckFinshCount(reportInfoMapper.selectCountByMap(paramMap));
-			usedExcel.setQueryDate(queryDate == null ? DateUtil.getCurDate("yyyy-MM-dd") : queryDate.toString());
-			dataList.add(usedExcel);
+			usedCount.setCheckItemName(checkItem == null ? null : checkItem.getName());
 		}
 		// 定义excel列名称字段名
-		String[] keyFields = { "channelName", "hospitalName", "areaCodeName", "queryDate", "checkItemName",
-				"hospitalConfirmCount", "expressCount", "checkIngCount", "checkFinshCount" };
-		String[] valueFields = { "渠道名称", "机构名称", "地区", "时间", "项目名称", "门店确认", "物流数", "检测中", "检测完成" };
+		String[] keyFields = { "queryDate", "areaCodeName", "channelName", "queryDate", "hospitalName", "num",
+				"checkItemName" };
+		String[] valueFields = { "日期", "地区", "渠道", "门店", "用量", "项目名称" };
 		// 生成Excel文件
-		HSSFWorkbook book = ExcelUtil.createUsedCountExcel("用量统计报表", keyFields, valueFields, dataList);
+		HSSFWorkbook book = ExcelUtil.createUsedCountExcel("用量统计报表", keyFields, valueFields, list);
 		return book;
 	}
 

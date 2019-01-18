@@ -3,38 +3,55 @@
 <mapper namespace="com.lewe.dao.report.UsedCountMapper">
   
   <select id="selectUsedCountByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
-  	SELECT COUNT(c.num) FROM (
 	  	SELECT 
-		  COUNT(a.id) AS num
+		  COUNT(a.id) AS num, DATE_FORMAT(a.audit_time, '%Y-%m-%d') as audit_time_a
 		FROM
 		  report_info AS a  LEFT JOIN hospital AS b 
 		  ON a.hospital_id = b.id
   	<where>
-  		a.channel_id IS NOT NULL AND a.hospital_id IS NOT NULL AND a.check_item_id IS NOT NULL
+
+  		a.channel_id IS NOT NULL 
+			AND a.hospital_id IS NOT NULL 
+			AND a.check_item_id IS NOT NULL
+
     	<if test="channelId != null">
     		a.channel_id = #{channelId}
     	</if>
+
     	<if test="hospitalId != null">
     		and a.hospital_id = #{hospitalId}
     	</if>
+
     	<if test="checkItemId != null">
     		and a.check_item_id = #{checkItemId}
     	</if>
+
     	<if test="provinceCode != null">
     		and b.province_code = #{provinceCode}
     	</if>
+
     	<if test="cityCode != null">
     		and b.city_code = #{cityCode}
     	</if>
+
     	<if test="countyCode != null">
     		and b.county_code = #{countyCode}
     	</if>
-    	<if test="queryDate != null">
-    		and DATE_FORMAT(a.hospital_scan_time, '%Y-%m-%d') = #{queryDate}
+
+    	<if test="beginDate != null">
+    		and audit_time_a >= #{beginDate}
     	</if>
+
+			<if test="endDate != null">
+    		and audit_time_a <= #{endDate}
+    	</if>
+
     </where>
-    GROUP BY a.channel_id, a.hospital_id, a.check_item_id )AS c
+    GROUP BY  audit_time_a,a.channel_id, a.hospital_id, a.check_item_id order by a.audit_time desc
   </select>
+
+
+
   <select id="selectUsedCountListByMap" parameterType="java.util.Map" resultType="com.lewe.bean.report.vo.UsedCountInfo">
   	SELECT 
 	  a.channel_id as channelId,
@@ -42,12 +59,15 @@
 	  b.hospital_name as hospitalName,
 	  b.area_code_name as areaCodeName,
 	  a.check_item_id as checkItemId,
-	  a.hospital_scan_time 
+	  a.hospital_scan_time , COUNT(a.id) AS num, DATE_FORMAT(a.audit_time, '%Y-%m-%d') as queryDate
 	FROM
 	  report_info AS a  LEFT JOIN hospital AS b 
 	  ON a.hospital_id = b.id
   	<where>
-  		a.channel_id IS NOT NULL AND a.hospital_id IS NOT NULL AND a.check_item_id IS NOT NULL
+  		a.channel_id IS NOT NULL
+			 AND a.hospital_id IS NOT NULL
+			  AND a.check_item_id IS NOT NULL
+
     	<if test="channelId != null">
     		a.channel_id = #{channelId}
     	</if>
@@ -66,11 +86,18 @@
     	<if test="countyCode != null">
     		and b.county_code = #{countyCode}
     	</if>
-    	<if test="queryDate != null">
-    		and DATE_FORMAT(a.hospital_scan_time, '%Y-%m-%d') = #{queryDate}
+
+      <if test="beginDate != null">
+    		and queryDate >= #{beginDate}
     	</if>
+
+			<if test="endDate != null">
+    		and queryDate <= #{endDate}
+    	</if>
+
     </where>
-    GROUP BY a.channel_id, a.hospital_id, a.check_item_id 
+    GROUP BY  queryDate,a.channel_id, a.hospital_id, a.check_item_id order by a.audit_time desc
+
     <if test="startIndex !=null and pageSize !=null">
     	LIMIT #{startIndex},#{pageSize}
     </if>

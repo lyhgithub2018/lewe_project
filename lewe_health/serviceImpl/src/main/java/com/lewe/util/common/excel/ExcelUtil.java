@@ -31,6 +31,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lewe.bean.report.vo.UsedCountInfo;
 import com.lewe.serviceImpl.report.bo.ReportCountExcel;
 import com.lewe.serviceImpl.report.bo.UsedCountExcel;
 import com.lewe.util.common.StringUtils;
@@ -753,7 +754,7 @@ public class ExcelUtil {
 	 * @return
 	 */
 	public static HSSFWorkbook createUsedCountExcel(String bookTitle, String[] keyFields, String[] valueFields,
-		List<UsedCountExcel> dataList) {
+		List<UsedCountInfo> dataList) {
 		// 声明一个工作薄
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		// 生成一个表格

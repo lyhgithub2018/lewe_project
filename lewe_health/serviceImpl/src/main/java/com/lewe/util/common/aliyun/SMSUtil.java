@@ -26,7 +26,7 @@ public class SMSUtil {
     private static String signName = "乐观健康";
     private static String registTempleteCode = "SMS_151232210";//注册短信模板code
     private static String loginTempleteCode = "SMS_151177310";//登录短信模板code
-    private static String reportNoticeTempleteCode = "SMS_151177378";//报告通知模板短信code
+    private static String reportNoticeTempleteCode = "SMS_156280952";// "SMS_151177378";//报告通知模板短信code
     
     public static final Logger logger = LoggerFactory.getLogger(SMSUtil.class); 
 

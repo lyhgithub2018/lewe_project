@@ -371,27 +371,33 @@ public class HospitalController extends BaseController {
 			Account loginAccount = getSessionAccount(request, result);
 			if (loginAccount != null) {
 				if ("1".equals(type)) {// 渠道下拉列表
+
+					List<Integer> channalIdList = customerManageService.getUserChannelList(loginAccount);
 					List<Channel> channelList = channelMapper.selectByMap(map);
 					for (Channel channel : channelList) {
+						if (channalIdList != null && !channalIdList.contains(channel.getId())) {
+							continue;
+						}
 						JSONObject json = new JSONObject();
 						json.put("id", channel.getId());
 						json.put("name", channel.getName());
 						list.add(json);
 					}
+
 				} else if ("2".equals(type)) {// 门店机构下拉列表
 					Map<String, Object> mapHospital = new HashMap<String, Object>();
 					mapHospital.put("isDel", 0);// 仅查询没删除的数据
 
 					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
-					if(hospitalIds != null && hospitalIds.size() == 0){
+					if (hospitalIds != null && hospitalIds.size() == 0) {
 						hospitalIds.add(0L);
 					}
 
-					if(hospitalIds != null ){
-						mapHospital.put("idList",hospitalIds);
+					if (hospitalIds != null) {
+						mapHospital.put("idList", hospitalIds);
 					}
 					logger.error(JSON.toJSONString(mapHospital));
-					
+
 					List<Hospital> hospitalList = hospitalMapper.selectListByMap(mapHospital);
 					for (Hospital hospital : hospitalList) {
 						JSONObject json = new JSONObject();
@@ -400,14 +406,14 @@ public class HospitalController extends BaseController {
 						list.add(json);
 					}
 				} else if ("3".equals(type)) {// 科室下拉列表
-					
+
 					String hospitalId = request.getParameter("hospitalId");
-					if(!StringUtils.isBlank(hospitalId)){
+					if (!StringUtils.isBlank(hospitalId)) {
 						map.put("hospitalId", Long.parseLong(hospitalId));
 					}
 
 					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
-					if(hospitalIds != null && hospitalIds.size() == 0){
+					if (hospitalIds != null && hospitalIds.size() == 0) {
 						hospitalIds.add(0L);
 					}
 					map.put("hospitalIdList", hospitalIds);
@@ -421,16 +427,16 @@ public class HospitalController extends BaseController {
 					}
 				} else if ("4".equals(type)) {// 医生下拉列表
 					String hospitalId = request.getParameter("hospitalId");
-					if(!StringUtils.isBlank(hospitalId)){
+					if (!StringUtils.isBlank(hospitalId)) {
 						map.put("hospitalId", Long.parseLong(hospitalId));
 					}
 
 					List<Long> hospitalIds = customerManageService.getUserHostList(loginAccount);
-					if(hospitalIds != null && hospitalIds.size() == 0){
+					if (hospitalIds != null && hospitalIds.size() == 0) {
 						hospitalIds.add(0L);
 					}
 					map.put("hospitalIdList", hospitalIds);
-					
+
 					List<HospitalDoctor> doctorList = hospitalDoctorMapper.selectListByMap(map);
 					for (HospitalDoctor hospitalDoctor : doctorList) {
 						JSONObject json = new JSONObject();

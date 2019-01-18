@@ -110,5 +110,14 @@ public interface ICustomerManageService {
 	 */
 	public List<Long> getUserHostList(Account loginAccount);
 
+	/**
+	 * 获取某个人的机构权限
+	 * @param loginAccount
+	 * @return 如果是主账号，返回 null
+	 * 如果是没有权限 返回空
+	 */
+	public List<Integer> getUserChannelList(Account loginAccount);
+
+
 
 }

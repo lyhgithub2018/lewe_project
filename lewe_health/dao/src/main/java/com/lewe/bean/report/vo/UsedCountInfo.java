@@ -14,13 +14,26 @@ public class UsedCountInfo {
     private String queryDate;//查询日期
     private Integer checkItemId;//检测项目的id
     private String checkItemName;//检测项目的名称
-    private Integer hospitalConfirmCount;//门店确认数量
-    private Integer expressCount;//物流数
-    private Integer checkIngCount;//检测中数量
-    private Integer checkFinshCount;//检测完成数量
+	private Integer num;//物流数 
+	
 	public Integer getChannelId() {
 		return channelId;
 	}
+	
+	/**
+	 * @return the num
+	 */
+	public Integer getNum() {
+		return num;
+	}
+
+	/**
+	 * @param num the num to set
+	 */
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+
 	public void setChannelId(Integer channelId) {
 		this.channelId = channelId;
 	}
@@ -66,29 +79,5 @@ public class UsedCountInfo {
 	public void setCheckItemName(String checkItemName) {
 		this.checkItemName = checkItemName;
 	}
-	public Integer getHospitalConfirmCount() {
-		return hospitalConfirmCount;
-	}
-	public void setHospitalConfirmCount(Integer hospitalConfirmCount) {
-		this.hospitalConfirmCount = hospitalConfirmCount;
-	}
-	public Integer getExpressCount() {
-		return expressCount;
-	}
-	public void setExpressCount(Integer expressCount) {
-		this.expressCount = expressCount;
-	}
-	public Integer getCheckIngCount() {
-		return checkIngCount;
-	}
-	public void setCheckIngCount(Integer checkIngCount) {
-		this.checkIngCount = checkIngCount;
-	}
-	public Integer getCheckFinshCount() {
-		return checkFinshCount;
-	}
-	public void setCheckFinshCount(Integer checkFinshCount) {
-		this.checkFinshCount = checkFinshCount;
-	}
-    
+ 
 }

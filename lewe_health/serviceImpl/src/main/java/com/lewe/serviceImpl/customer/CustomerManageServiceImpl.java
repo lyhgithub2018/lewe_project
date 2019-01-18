@@ -618,6 +618,60 @@ public class CustomerManageServiceImpl implements ICustomerManageService {
 		return hospitalIdList;
 	}
 
+	/**
+	 * 获取某个人的机构权限
+	 * 
+	 * @param loginAccount
+	 * @return 如果是主账号，返回 null 如果是没有权限 返回空
+	 */
+	public List<Integer> getUserChannelList(Account loginAccount) {
+
+		if (loginAccount.getAccountType() == AccountType.SUPERADMIN.getValue()) {
+			logger.error(JSON.toJSONString(loginAccount));
+			return null;
+		}
+
+		// 如果不是主账号，需要考虑机构的权限问题 机构组》机构》个人
+		List<Long> hospitalIdList = new ArrayList<Long>();
+
+		// 如果机构组不为空，需要读取机构组下面的机构
+		if (loginAccount.getHospitalGroupId() != null) {
+			// 读取机构组的信息
+			HospitalGroup hospitalGroup = hospitalGroupMapper.selectByPrimaryKey(loginAccount.getHospitalGroupId());
+
+			// 解析机构组信息
+			if (hospitalGroup != null && hospitalGroup.getHospitalIds() != null
+					&& !StringUtils.isBlank(hospitalGroup.getHospitalIds())) {
+				String[] hospitalList = hospitalGroup.getHospitalIds().split(",");
+				for (int hospitalIndex = 0; hospitalIndex < hospitalList.length; hospitalIndex++) {
+					hospitalIdList.add(Long.parseLong(hospitalList[hospitalIndex]));
+				}
+			}
+		}
+
+		// 加上自己的机构权限
+		if (StringUtils.isNotBlank(loginAccount.getHospitalId())) {
+			hospitalIdList.add(loginAccount.getHospitalId());
+		}
+
+		if(hospitalIdList.isEmpty()){
+			return  new ArrayList<Integer>();
+		}
+
+		List<Integer> channelIdList = new ArrayList<Integer>();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("idList", hospitalIdList);
+		List<Hospital> hosList = hospitalMapper.selectListByMap(map);
+		for (Hospital var : hosList) {
+			if(var.getChannelId() != null){
+				channelIdList.add(var.getChannelId());
+			}
+		}
+
+		return channelIdList;
+	}
+
+
 	public int addExpressInfo(String expressName, String expressCode, String customerInfoIds, Integer channelId,
 			Long hospitalId, Account loginAccount, Object apiResult) {
 		ApiResult result = (ApiResult) apiResult;
