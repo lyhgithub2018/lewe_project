@@ -43,11 +43,11 @@
 			</if>
 
 			<if test="beginDate != null">
-    		<![CDATA[and audit_time_a >= #{beginDate}]]>
+    		<![CDATA[and a.audit_time >= #{beginDate}]]>
 			</if>
 
 			<if test="endDate != null">
-    		<![CDATA[ and audit_time_a <= #{endDate} ]]>
+    		<![CDATA[ and a.audit_time <= #{endDate} ]]>
 			</if>
 
 		</where>
@@ -99,11 +99,11 @@
 			</if>
 
 			<if test="beginDate != null">
-    		<![CDATA[and queryDate >= #{beginDate}]]>
+    		<![CDATA[and a.audit_time >= #{beginDate}]]>
 			</if>
 
 			<if test="endDate != null">
-    		<![CDATA[and queryDate <= #{endDate}]]>
+    		<![CDATA[and a.audit_time <= #{endDate}]]>
 			</if>
 
 		</where>

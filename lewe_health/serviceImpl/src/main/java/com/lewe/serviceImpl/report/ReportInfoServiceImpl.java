@@ -275,7 +275,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		}
 
 		if (json.get("endDate") != null && StringUtils.isNotBlank(json.get("endDate").toString())) {
-			paramMap.put("endDate", json.get("endDate").toString());
+			paramMap.put("endDate", json.get("endDate").toString() + " 23:59:59");
 		}
 
 		Integer totalCount = usedCountMapper.selectUsedCountByMap(paramMap);
