@@ -19,7 +19,7 @@
 			a.check_item_id IS NOT NULL
 
 			<if test="channelId != null">
-				a.channel_id = #{channelId}
+			and	a.channel_id = #{channelId}
 			</if>
 
 			<if test="hospitalId != null">
@@ -80,7 +80,7 @@
 			a.check_item_id IS NOT NULL
 
 			<if test="channelId != null">
-				a.channel_id = #{channelId}
+			 and	a.channel_id = #{channelId}
 			</if>
 			<if test="hospitalId != null">
 				and a.hospital_id = #{hospitalId}
