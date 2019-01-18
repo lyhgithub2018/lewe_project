@@ -4,7 +4,7 @@
 
 	<select id="selectUsedCountByMap" parameterType="java.util.Map"
 		resultType="java.lang.Integer">
-		select count(*) as num from (SELECT
+		select count(c.*) as num from (SELECT
 		COUNT(a.id) AS num, DATE_FORMAT(a.audit_time, '%Y-%m-%d') as
 		audit_time_a
 		FROM
@@ -52,7 +52,7 @@
 
 		</where>
 		GROUP BY audit_time_a,a.channel_id, a.hospital_id, a.check_item_id
-		)
+		) as c
 	</select>
 
 
