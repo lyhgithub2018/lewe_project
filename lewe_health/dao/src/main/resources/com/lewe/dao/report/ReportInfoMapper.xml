@@ -802,11 +802,19 @@
 			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
-			<!-- 一个搜索关键词,多字段查询 -->
-			<if test="keyword != null">
-				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE
-				#{keyword}
+			
+			<if test="keyword1 != null and keyword1 !=''">
+				and sample_code LIKE #{keyword1}
 			</if>
+			
+			<if test="keyword2 != null and keyword2 !=''">
+				and sample_name LIKE #{keyword2}
+			</if>
+
+			<if test="keyword3 != null and keyword3 !=''">
+				and sample_phone LIKE #{keyword3}
+			</if>
+
 			<if test="reportInfoIdList != null">
 				and id in
 				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
@@ -858,11 +866,19 @@
 			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
-			<!-- 一个搜索关键词,多字段查询 -->
-			<if test="keyword != null and keyword !=''">
-				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE
-				#{keyword}
+			
+			<if test="keyword1 != null and keyword1 !=''">
+				and sample_code LIKE #{keyword1}
 			</if>
+			
+			<if test="keyword2 != null and keyword2 !=''">
+				and sample_name LIKE #{keyword2}
+			</if>
+
+			<if test="keyword3 != null and keyword3 !=''">
+				and sample_phone LIKE #{keyword3}
+			</if>
+
 			<if test="reportInfoIdList != null">
 				and id in
 				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
@@ -919,9 +935,17 @@
 			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
-			<!-- 一个搜索关键词,多字段查询 -->
-			<if test="keyword != null and keyword !=''">
-				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
+			 
+			<if test="keyword1 != null and keyword1 !=''">
+				and sample_code LIKE #{keyword1}
+			</if>
+			
+			<if test="keyword2 != null and keyword2 !=''">
+				and sample_name LIKE #{keyword2}
+			</if>
+
+			<if test="keyword3 != null and keyword3 !=''">
+				and sample_phone LIKE #{keyword3}
 			</if>
 			
 			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
@@ -970,14 +994,19 @@
 			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
-			<!-- 一个搜索关键词,多字段查询 -->
-			<if test="keyword != null and keyword !=''">
-				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
+			
+			<if test="keyword1 != null and keyword1 !=''">
+				and sample_code LIKE #{keyword1}
 			</if>
-			<!-- 该参数用于排除 submitQuestionnaire字段值为0的数据 -->
-			<!-- <if test="submitQuestionnaireNotQuery0 != null">
-				and submit_questionnaire !=0
-			</if> -->
+			
+			<if test="keyword2 != null and keyword2 !=''">
+				and sample_name LIKE #{keyword2}
+			</if>
+
+			<if test="keyword3 != null and keyword3 !=''">
+				and sample_phone LIKE #{keyword3}
+			</if>
+
 		</where>
 		ORDER BY id DESC
 		<if test="startIndex !=null and pageSize !=null">
@@ -1036,10 +1065,19 @@
 			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
-			<!-- 一个搜索关键词,多字段查询 -->
-			<if test="keyword != null and keyword !=''">
-				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
+			
+			<if test="keyword1 != null and keyword1 !=''">
+				and sample_code LIKE #{keyword1}
 			</if>
+			
+			<if test="keyword2 != null and keyword2 !=''">
+				and sample_name LIKE #{keyword2}
+			</if>
+
+			<if test="keyword3 != null and keyword3 !=''">
+				and sample_phone LIKE #{keyword3}
+			</if>
+			
 			<if test="reportInfoIdList != null">
 				and id in
 				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
@@ -1111,10 +1149,19 @@
 			<if test="endDate != null">
     		<![CDATA[ and submit_time <= #{endDate} ]]>
 			</if>
-			<!-- 一个搜索关键词,多字段查询 -->
-			<if test="keyword != null and keyword !=''">
-				and CONCAT(IFNULL(customer_phone,''),IFNULL(sample_code,''),IFNULL(sample_name,''),IFNULL(sample_phone,'')) LIKE #{keyword}
+			
+			<if test="keyword1 != null and keyword1 !=''">
+				and sample_code LIKE #{keyword1}
 			</if>
+			
+			<if test="keyword2 != null and keyword2 !=''">
+				and sample_name LIKE #{keyword2}
+			</if>
+
+			<if test="keyword3 != null and keyword3 !=''">
+				and sample_phone LIKE #{keyword3}
+			</if>
+
 			<if test="reportInfoIdList != null">
 				and id in
 				<foreach collection="reportInfoIdList" item="reportInfoId" index="index" open="(" close=")" separator=",">
