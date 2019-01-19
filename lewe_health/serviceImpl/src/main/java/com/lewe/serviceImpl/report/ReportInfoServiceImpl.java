@@ -602,8 +602,7 @@ public class ReportInfoServiceImpl implements IReportInfoService {
 		Integer totalCount = usedCountMapper.selectUsedCountByMap(paramMap);
 		if (totalCount == null || totalCount == 0) {
 			// 定义excel列名称字段名
-			String[] keyFields = { "queryDate", "areaCodeName", "channelName", "queryDate", "hospitalName", "num",
-					"checkItemName" };
+			String[] keyFields = { "queryDate", "areaCodeName", "channelName", "hospitalName", "num", "checkItemName" };
 			String[] valueFields = { "日期", "地区", "渠道", "门店", "用量", "项目名称" };
 			// 生成Excel文件
 			HSSFWorkbook book = ExcelUtil.createUsedCountExcel("用量统计报表", keyFields, valueFields,
