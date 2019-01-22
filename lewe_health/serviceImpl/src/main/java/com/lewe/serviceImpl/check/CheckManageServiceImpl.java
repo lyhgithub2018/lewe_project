@@ -892,6 +892,8 @@ public class CheckManageServiceImpl implements ICheckManageService {
 			int CH4Sub0 = CH4max - CH4Con0;
 			int H2Sub0 = H2max - H2Con0;
 			int CH4_H2Sub0 = (CH4max + H2max) - (CH4Con0 + H2Con0);
+			CH4_H2Sub0 = addMax - (CH4Con0 + H2Con0);
+
 			logger.error("CH4Sub0=" + CH4Sub0 + ";H2Sub0=" + H2Sub0 + ";" + "CH4_H2Sub0=" + CH4_H2Sub0 + ";");
 			if (CH4Sub0 > 52 || H2Sub0 > 80 || CH4_H2Sub0 > 55) {
 				reslut = 3;
