@@ -154,6 +154,11 @@ public class UploadFileController extends BaseController {
 				fileType = "jpg";
 			}
 
+			//修改
+			if (fileType.equals("jpeg") || fileType.equals("JPEG")) {
+				fileType = "jpg";
+			}
+
 			// 自己定义文件唯一名称
 			String fileName = DateUtil.getDays() + System.currentTimeMillis() + "." + fileType;
 
@@ -171,7 +176,7 @@ public class UploadFileController extends BaseController {
 			// 目标路径
 			String destPath = uploadPath + fileName;
 			File localFile = new File(destPath);
-			if( localFile.exists() && localFile.isFile() ){
+			if (localFile.exists() && localFile.isFile()) {
 				localFile.delete();
 			}
 
@@ -232,7 +237,8 @@ public class UploadFileController extends BaseController {
 								SysFile eachFile = sysFileMapper.selectByPrimaryKey(Long.valueOf(id));
 								if (eachFile != null) {
 									// 上传图片到美年端
-									String param = "vid=" + reportInfo.getSampleCode() + "&itemId=10160&fileType=" + eachFile.getType();
+									String param = "vid=" + reportInfo.getSampleCode() + "&itemId=10160&fileType="
+											+ eachFile.getType();
 									MeiNianReportUtil.uploadFile(param, eachFile.getUrl());
 								}
 							}
